@@ -32,6 +32,16 @@ public class AuthoringApp extends JFrame implements MenuListener, ActionListener
 		
 	public AuthoringApp(){
 		drawMenuBar();
+		exit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			
+			if(e.getSource().equals(exit)) {
+				System.exit(0);
+			}
+			}
+		});
 		loadFile.addActionListener(new ActionListener() {
 
 			@Override
