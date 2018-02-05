@@ -136,6 +136,15 @@ public class AuthoringApp {
 			
 		});
 		
+		((JButton) compMap.get("editRemoveLine")).addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+			
+		});
+		
 		
 		
 		((JButton) compMap.get("insertPause")).addActionListener(new ActionListener(){
