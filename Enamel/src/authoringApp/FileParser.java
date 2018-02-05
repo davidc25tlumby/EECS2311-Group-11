@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 public class FileParser {
 	
-	private String[] parsedText;
+	private LinkedList<String> parsedText;
 	
 	
 	// Constructor
@@ -29,16 +29,16 @@ public class FileParser {
 		
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String string= "";
-        ArrayList<String> lines = new ArrayList<String>();
+        LinkedList<String> lines = new LinkedList<String>();
         while((string = reader.readLine()) != null){
             lines.add(string);
         }
-       parsedText = lines.toArray(new String[lines.size()]);
+       parsedText=lines;
 		
 	}
 	
 	// Returns the parsed file;
-	public String[] getArray() {
+	public LinkedList<String> getArray() {
 		return parsedText;
 	}
 
