@@ -64,7 +64,8 @@ public class AuthoringApp {
 				JTextField numCell = (JTextField) tempMap.get("numCell");
 				JTextField numCol = (JTextField) tempMap.get("numCol");
 				// System.out.println(tempMap);
-				// ********************************************************************************************************
+				
+				
 				((JButton) tempMap.get("createButton")).addActionListener(new ActionListener() {
 
 					public void actionPerformed(java.awt.event.ActionEvent evt) {
