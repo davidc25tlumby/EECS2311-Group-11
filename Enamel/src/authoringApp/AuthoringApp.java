@@ -262,7 +262,18 @@ public class AuthoringApp {
 
 			}
 
+		});    
+		
+		((JMenuItem) compMap.get("textPaneEditingMenuItem")).addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				((JTextPane) compMap.get("scenarioPane")).setEditable(true);
+
+			}
+
 		});
+		
+		
 
 	}
 
