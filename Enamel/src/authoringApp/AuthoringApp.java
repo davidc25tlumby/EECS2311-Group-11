@@ -158,10 +158,12 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				f = openFileChooser(new File("FactoryScenarios/"), "txt");
+				
 				if (f != null) {
 					currentFile = f;
 					gui.setTitle("Authoring App - " + currentFile.getName());
 					SaveAsFile save = new SaveAsFile("txt", new File(currentFile.getAbsolutePath()));
+					
 					try {
 						save.stringArrayToFile(fileStr);
 					} catch (IOException e1) {

@@ -59,9 +59,6 @@ public class JTextPaneController extends JTextPane{
 	public void updateTextPane() {
 		//TODO: prints the scenarioList into the TextPane line by line.
 		//Each line should have the "n:" prefix where n is the line number.
-		for(int i =0; i<scenarioList.size();i++) {
-			editor.setText(String.valueOf(scenarioList));   //not sure abt thos one
-			
-		}
+		
 	}
 }
