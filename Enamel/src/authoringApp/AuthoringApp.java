@@ -70,6 +70,16 @@ public class AuthoringApp {
 
 					public void actionPerformed(java.awt.event.ActionEvent evt) {
 						// synchronized(this) {
+						((JButton) compMap.get("insertText")).setToolTipText("Insert Text");
+						((JButton) compMap.get("insertPause")).setToolTipText("Pause the program");
+						((JButton) compMap.get("insertSkip")).setToolTipText("Insert Text");
+						((JButton) compMap.get("insertUserInput")).setToolTipText("Insert Text");
+						((JButton) compMap.get("insertRepeatButton")).setToolTipText("Insert Text");
+						((JButton) compMap.get("insertRepeat")).setToolTipText("Insert Text");
+						((JButton) compMap.get("insertEndRepeat")).setToolTipText("Insert Text");
+						((JButton) compMap.get("insertResetButtons")).setToolTipText("Insert Text");
+						((JButton) compMap.get("insertSound")).setToolTipText("Insert Text");
+						((JButton) compMap.get("editRemoveLine")).setToolTipText("Insert Text");
 						cell = Integer.parseInt(numCell.getText());
 						col = Integer.parseInt(numCol.getText());
 						System.out.println(cell);
@@ -113,8 +123,11 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (e.getSource().equals("loadScenarioMenuItem")) {
+					
 					isOpened = true;
 					stateChanged();
+					
+					
 				}
 
 				if (!isSaved) {
@@ -158,11 +171,13 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				f = openFileChooser(new File("FactoryScenarios/"), "txt");
+			    
 				
 				if (f != null) {
 					currentFile = f;
 					gui.setTitle("Authoring App - " + currentFile.getName());
 					SaveAsFile save = new SaveAsFile("txt", new File(currentFile.getAbsolutePath()));
+				
 					
 					try {
 						save.stringArrayToFile(fileStr);
@@ -178,6 +193,8 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
+				
 				f = openFileChooser(new File("FactoryScenarios/"), "txt");
 				if (f != null) {
 					currentFile = f;
@@ -193,6 +210,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
 
 				String temp = ((JTextField) compMap.get("inputTextField")).getText();
 				System.out.println(temp);
@@ -232,15 +250,27 @@ public class AuthoringApp {
 					JOptionPane.showMessageDialog(gui, "pause need to have a number");
 					throw new IllegalArgumentException();
 				}
-				try {
-					int temp = Integer.parseInt((((JTextField) compMap.get("inputTextField")).getText()));
+				
+				int temp = Integer.parseInt((((JTextField) compMap.get("inputTextField")).getText()));
+					try {
+						Thread.sleep((long) ((temp) *1000));
+					} catch (NumberFormatException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
 					fileStr.add("/~pause:" + temp);
+					
 					updateScenarioPane(true);
 
-				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(gui, "pause need to have a number");
-				}
-
+				
+					//JOptionPane.showMessageDialog(gui, "pause need to have a number");
+				
+                  
+				
 			}
 
 		});
