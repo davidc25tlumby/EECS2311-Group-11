@@ -19,7 +19,7 @@ import org.apache.commons.io.FilenameUtils;
 import enamel.ScenarioParser;
 import enamel.ToyAuthoring;
 
-public class AuthoringApp {
+public class AuthoringApp extends Thread {
 
 	private static JFrame gui;
 	private static JFileChooser fc = new JFileChooser();
@@ -41,6 +41,9 @@ public class AuthoringApp {
 				gui.setVisible(true);
 				compMap = ((AuthoringAppGUI) gui).getCompMap();
 				addActionListeners();
+				
+				
+				
 			}
 		});
 	}
@@ -70,7 +73,7 @@ public class AuthoringApp {
 
 					public void actionPerformed(java.awt.event.ActionEvent evt) {
 						// synchronized(this) {
-						((JButton) compMap.get("insertText")).setToolTipText("Insert Text");
+						((JButton) compMap.get("insertText")).setToolTipText("Inserts the text into the TextPane");
 						((JButton) compMap.get("insertPause")).setToolTipText("Pause the program");
 						((JButton) compMap.get("insertSkip")).setToolTipText("Insert Text");
 						((JButton) compMap.get("insertUserInput")).setToolTipText("Insert Text");
@@ -195,12 +198,13 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				
 				
+				
 				f = openFileChooser(new File("FactoryScenarios/"), "txt");
 				if (f != null) {
 					currentFile = f;
 					ToyAuthoring ta = new ToyAuthoring(f.getAbsolutePath());
 					ta.start();
-
+					
 				}
 			}
 
@@ -245,22 +249,21 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// ((JTextField) compMap.get("inputTextField")).setText("");
-
+                
 				if (((JTextField) compMap.get("inputTextField")).getText().isEmpty()) {
 					JOptionPane.showMessageDialog(gui, "pause need to have a number");
 					throw new IllegalArgumentException();
 				}
 				
 				int temp = Integer.parseInt((((JTextField) compMap.get("inputTextField")).getText()));
-					try {
-						Thread.sleep((long) ((temp) *1000));
-					} catch (NumberFormatException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+				
+				try {
+					Thread.sleep(temp * 1000);
+					updateScenarioPane(true);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 					
 					fileStr.add("/~pause:" + temp);
 					
