@@ -255,6 +255,7 @@ public class AuthoringApp extends Thread {
 					throw new IllegalArgumentException();
 				}
 				
+				
 				int temp = Integer.parseInt((((JTextField) compMap.get("inputTextField")).getText()));
 				
 				try {
