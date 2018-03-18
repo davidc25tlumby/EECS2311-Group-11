@@ -213,7 +213,9 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         insertSkip.setName("insertSkip"); // NOI18N
 
         consoleTextPane.setEditable(false);
+        consoleTextPane.setName("consolePane");
         consoleScrollPane.setViewportView(consoleTextPane);
+        consoleScrollPane.setName("consoleScrollPane");
 
         editLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         editLabel.setText("Edit:");

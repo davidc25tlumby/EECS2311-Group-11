@@ -24,6 +24,7 @@ public class JTextPaneController extends JTextPane {
 	private static final long serialVersionUID = 4947922282601680749L;
 	private JTextPane tp;
 	private JScrollPane sp;
+
 	HTMLDocument doc;
 	Element e;
 
@@ -39,10 +40,9 @@ public class JTextPaneController extends JTextPane {
 	public JTextPaneController(JTextPane tp, JScrollPane sp) {
 		this.tp = tp;
 		this.sp = sp;
-
 		try {
 			tp.setPage(getClass().getResource("defaultHTML.html"));
-
+			doc = (HTMLDocument) tp.getDocument();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -60,7 +60,7 @@ public class JTextPaneController extends JTextPane {
 	 */
 	public LinkedList<Integer> newDocCreated(LinkedList<String> fileStr) {
 
-		doc = (HTMLDocument) tp.getDocument();
+		//doc = (HTMLDocument) tp.getDocument();
 		LinkedList<Integer> n = new LinkedList<Integer>();
 		n.add(0);
 		for (int i = 1; i <= fileStr.size(); i++) {
@@ -95,6 +95,18 @@ public class JTextPaneController extends JTextPane {
 			e1.printStackTrace();
 		}
 
+	}
+	
+	public void addElement(String temp){
+		e = doc.getElement("main");
+		
+		try {
+			doc.insertBeforeEnd(e, "<p>" + temp + "</p>");
+		} catch (BadLocationException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 }

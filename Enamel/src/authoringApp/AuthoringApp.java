@@ -20,11 +20,11 @@ public class AuthoringApp {
 	private static JFrame gui;
 	private static JFileChooser fc = new JFileChooser();
 	private static File f, currentFile, error;
-	private static LinkedList<String> fileStr;
+	private static LinkedList<String> fileStr, consoleStr;
 	private static LinkedList<Integer> id;
 	private static JPanel errorPanel;
 	private static HashMap<String, Component> compMap;
-	private static JTextPaneController controller;
+	private static JTextPaneController controller, consoleController;
 	
 	private static int currentLine = 0, cell = 0, col = 0;
 	private static boolean isSaved = true, isOpened = false;
@@ -48,6 +48,7 @@ public class AuthoringApp {
 				id = new LinkedList<Integer>();
 				id.add(0);
 				controller = new JTextPaneController((JTextPane) compMap.get("scenarioPane"), (JScrollPane) compMap.get("scenarioScrollPane"));
+				consoleController = new JTextPaneController((JTextPane) compMap.get("consolePane"), (JScrollPane) compMap.get("consoleScrollPane"));
 				addActionListeners();
 				
 			}
@@ -252,22 +253,49 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				if (((JTextField) compMap.get("inputTextField")).getText().isEmpty()) {
-					JOptionPane.showMessageDialog(gui, "pause need to have a number");
-					throw new IllegalArgumentException();
+				String temp = getInputText();
+				int n;
+				if (temp.isEmpty()) {
+					consoleController.addElement("NullArgumentException, expected input: integer. Enter an integer into the textfield before pressing /~pause:int. See help contentes for usage.");
 				}
-				try {
-					int temp = Integer.parseInt((((JTextField) compMap.get("inputTextField")).getText()));
-					id.add(id.getLast()+1);
-					fileStr.add("/~pause:" + temp);
-					controller.addElement("/~pause:" + temp, id.getLast());
+				else{
+					try {
+						n = Integer.parseInt(temp);
+						if (n > 0) {
+							id.add(id.getLast()+1);
+							fileStr.add("/~pause:" + n);
+							controller.addElement("/~pause:" + n, id.getLast());
+						}
+						else{
+							consoleController.addElement("IllegalArgumentException, expected input: integer. Value must be greater than 0. See help contents for usage.");
+						}
 
-				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(gui, "pause need to have a number");
+					} catch (NumberFormatException ex) {
+						consoleController.addElement("IllegalArgumentException, expected input: integer. Value must be an integer. See help contents for usage.");
+					}
 				}
 
 			}
 
+		});
+		
+		((JButton) compMap.get("insertSkipButton")).addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				String temp = getInputText();
+				int n;
+				String s;
+				
+				if (temp.isEmpty()) {
+					consoleController.addElement("NullArgumentException, expected input: integer string. Enter an integer followed by a string into the textfield before pressing /~skip-button:int string. See help contentes for usage.");
+				}
+				else{
+					
+				}
+			}
+			
 		});
 
 		((JButton) compMap.get("insertRepeat")).addActionListener(new ActionListener() {
@@ -534,5 +562,7 @@ public class AuthoringApp {
 		return null;
 	}
 	
-	
+	public static String getInputText(){
+		return ((JTextField) compMap.get("inputTextField")).getText();
+	}
 }
