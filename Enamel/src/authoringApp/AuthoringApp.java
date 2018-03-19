@@ -532,7 +532,7 @@ public class AuthoringApp {
 		fc.setCurrentDirectory(currentDir);
 		int returnVal = fc.showOpenDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String selectedExt = selectedextension();                                 //Used refactoring here
+			String selectedExt = selectedextension();                                    //Used refactoring here
 			if (!ext.equals(selectedExt)) {
 				errorPanel = new JPanel();
 				JOptionPane.showMessageDialog(errorPanel, "Could not open file, Wrong file type", "Error",
