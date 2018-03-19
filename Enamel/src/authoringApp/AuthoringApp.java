@@ -129,8 +129,8 @@ public class AuthoringApp {
 
 				((JButton) tempMap.get("cancelButton")).addActionListener(new ActionListener() {
 					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						cell = Integer.parseInt(numCell.getText());
-						col = Integer.parseInt(numCol.getText());;
+						//cell = Integer.parseInt(numCell.getText());
+						//col = Integer.parseInt(numCol.getText());;
 						isOpened = false;
 						temp.dispose();
 					}
@@ -504,7 +504,7 @@ public class AuthoringApp {
 		fc.setCurrentDirectory(currentDir);
 		int returnVal = fc.showOpenDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String selectedExt = FilenameUtils.getExtension(fc.getSelectedFile().getName());
+			String selectedExt = selectedextension();                                 //Used refactoring here
 			if (!ext.equals(selectedExt)) {
 				errorPanel = new JPanel();
 				JOptionPane.showMessageDialog(errorPanel, "Could not open file, Wrong file type", "Error",
@@ -516,12 +516,17 @@ public class AuthoringApp {
 		}
 		return null;
 	}
+
+	private static String selectedextension() {
+		String selectedExt = FilenameUtils.getExtension(fc.getSelectedFile().getName());
+		return selectedExt;
+	}
 	
 	public static File saveFileChooser(File currentDir, String ext) {
 		fc.setCurrentDirectory(currentDir);
 		int returnVal = fc.showSaveDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String selectedExt = FilenameUtils.getExtension(fc.getSelectedFile().getName());
+			String selectedExt = selectedextension();
 			if (!ext.equals(selectedExt)) {
 				/* final JPanel */errorPanel = new JPanel();
 				JOptionPane.showMessageDialog(errorPanel, "Could not save file, Wrong file type", "Error",
