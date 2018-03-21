@@ -210,7 +210,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         displayAddButton.setEnabled(false);
         displayAddButton.setName("displayAddButton"); // NOI18N
 
-        insertSkip.setText("/~skip:string");
+        insertSkip.setText("/~skipString");
         insertSkip.setEnabled(false);
         insertSkip.setName("insertSkip"); // NOI18N
 
