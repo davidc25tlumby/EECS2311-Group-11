@@ -61,31 +61,34 @@ public class AuthoringApp {
 	 * Implements all the action listeners for various components within the GUI.
 	 */
 	protected static void addActionListeners() {
-		gui.addKeyListener(new KeyListener(){
+		((JTextPane) compMap.get("scenarioPane")).addKeyListener(new KeyListener(){
+
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println(true);
+				int keyCode = e.getKeyCode();
+				switch (keyCode){
+					case KeyEvent.VK_UP:
+						//handle up
+						System.out.println(1);
+					break;
+					case KeyEvent.VK_DOWN:
+						//handle down
+						System.out.println(2);
+					break;
+				}
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println(true);
 			}
 
 			@Override
 			public void keyTyped(KeyEvent e) {
 				// TODO Auto-generated method stub
-				if (e.getKeyChar() == KeyEvent.VK_DOWN){
-					currentLine++;
-					System.out.println("Line: " + currentLine + " ID: " + id.get(currentLine));
-				}
-				else if (e.getKeyChar() == KeyEvent.VK_UP){
-					currentLine--;
-					System.out.println("Line: " + currentLine + " ID: " + id.get(currentLine));
-				}
 			}
+			
 		});
 		
 		((JMenuItem) compMap.get("newMenuItem")).addActionListener(new ActionListener() {

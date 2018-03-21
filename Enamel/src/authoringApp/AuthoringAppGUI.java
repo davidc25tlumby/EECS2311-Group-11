@@ -3,6 +3,8 @@ package authoringApp;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Image;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
@@ -498,4 +500,5 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane scenarioScrollPane;
     private javax.swing.JRadioButtonMenuItem ttsMenuItem;
     private javax.swing.JMenuItem undoMenuItem;
+
 }
