@@ -68,10 +68,10 @@ public class AuthoringApp {
 				int v = validString(temp);
 				
 				if (v == 0){
-					nullArgumentException("Text");
+					nullArgumentException();
 				}
 				else if (v == 1){
-					illegalArgumentException("Text");
+					illegalArgumentException("string");
 				}
 				else if (v == 2){
 					id.add(id.getLast()+1);
@@ -93,35 +93,29 @@ public class AuthoringApp {
 				int v = validString(temp);
 				
 				if (v == 0) {
-					nullArgumentException("/~pause:int");
+					nullArgumentException();
 				}
 				else if (v == 1){
-					illegalArgumentException("/~pause:int");
+					illegalArgumentException("int");
 				}
 				else if (v == 2){
 					if (s.length != 1){
-						illegalArgumentException("/~pause:int");
+						illegalArgumentException("int");
 					}
 					else{
 						if (isNumeric(temp)){
 							n = Integer.parseInt(temp);
-							if (n < 0){
-								illegalArgumentException("/~pause:int");
-							}
-							else if (n >= 0 && n < col){
+							if (n >= 0){
 								id.add(id.getLast()+1);
 								fileStr.add("/~pause:" + n);
 								controller.addElement("/~pause:" + n, id.getLast());
 							}
 							else {
-								id.add(id.getLast()+1);
-								fileStr.add("/~pause:" + n);
-								controller.addElement("/~pause:" + n, id.getLast());
-								indexOutOfBoundsWarning();
+								illegalArgumentException("int");
 							}
 						}
 						else{
-							illegalArgumentException("/~pause:int");
+							illegalArgumentException("int");
 						}
 					}
 				}
@@ -141,32 +135,29 @@ public class AuthoringApp {
 				int v = validString(temp);
 				
 				if (v == 0) {
-					nullArgumentException("/~skip-button:int string");
+					nullArgumentException();
 				}
 				else if (v == 1){
-					illegalArgumentException("/~skip-button:int string");
+					illegalArgumentException("int string");
 				}
 				else if (v == 2){
 					if (s.length != 2){
-						illegalArgumentException("/~skip-button:int string");
+						illegalArgumentException("int string");
 					}
 					else{
 						if (isNumeric(s[0]) && !isNumeric(s[1])){
 							n = Integer.parseInt(s[0]);
-							if (n < 0){
-								illegalArgumentException("/~skip-button:int string");
-							}
-							else if (n >= 0 && n < col){
+							if (n >= 0 && n < col){
 								id.add(id.getLast() + 1);
 								fileStr.add("/~skip-button:" + temp);
 								controller.addElement("/~skip-button:" + temp, id.getLast());
 							}
 							else {
-								id.add(id.getLast() + 1);
-								fileStr.add("/~skip-button:" + temp);
-								controller.addElement("/~skip-button:" + temp, id.getLast());
-								indexOutOfBoundsWarning();
+								indexOutOfBoundsException("Button");
 							}
+						}
+						else{
+							illegalArgumentException("int string");
 						}
 					}
 				}
@@ -184,14 +175,14 @@ public class AuthoringApp {
 				int v = validString(temp);
 				
 				if (v == 0) {
-					nullArgumentException("/~skipString");
+					nullArgumentException();
 				}
 				else if (v == 1){
-					illegalArgumentException("/~skipString");
+					illegalArgumentException("string");
 				}
 				else if (v == 2){
 					if (s.length != 1){
-						illegalArgumentException("/~skipString");
+						illegalArgumentException("string");
 					}
 					else{
 						if (!isNumeric(temp)){
@@ -200,7 +191,7 @@ public class AuthoringApp {
 							controller.addElement("/~" + temp, id.getLast());
 						}
 						else{
-							illegalArgumentException("/~skipString");
+							illegalArgumentException("string");
 						}
 					}
 				}
@@ -230,35 +221,29 @@ public class AuthoringApp {
 				int v = validString(temp);
 				
 				if (v == 0) {
-					nullArgumentException("/~repeat-button:int");
+					nullArgumentException();
 				}
 				else if (v == 1){
-					illegalArgumentException("/~repeat-button:int");
+					illegalArgumentException("int");
 				}
 				else if (v == 2){
 					if (s.length != 1){
-						illegalArgumentException("/~repeat-button:int");
+						illegalArgumentException("int");
 					}
 					else{
 						if (isNumeric(temp)){
 							n = Integer.parseInt(temp);
-							if (n < 0){
-								illegalArgumentException("/~repeat-button:int");
-							}
-							else if (n >= 0 && n < col){
+							if (n >= 0 && n < col){
 								id.add(id.getLast()+1);
 								fileStr.add("/~pause:" + n);
 								controller.addElement("/~repeat-button:" + n, id.getLast());
 							}
 							else {
-								id.add(id.getLast()+1);
-								fileStr.add("/~pause:" + n);
-								controller.addElement("/~repeat-button:" + n, id.getLast());
-								indexOutOfBoundsWarning();
+								indexOutOfBoundsException("Button");
 							}
 						}
 						else{
-							illegalArgumentException("/~repeat-button:int");
+							illegalArgumentException("int");
 						}
 					}
 				}
@@ -299,7 +284,7 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				f = openFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
-				if (f!=null)
+				if (f != null)
 				{
 					fileStr.add("/~sound:"+f.getName());
 					id.add(id.getLast()+1);
@@ -314,142 +299,180 @@ public class AuthoringApp {
 				@SuppressWarnings("rawtypes")
 				JComboBox cb = (JComboBox) compMap.get("displayComboBox");
 				String cbStr = (String) cb.getItemAt(cb.getSelectedIndex());
+				String temp = getInputText();
+				String[] s = temp.split("\\s+");
+				int n, m;
+				int v = validString(temp);
 
-				if (cbStr.equals("Display String")) {
-					if (((JTextField) compMap.get("inputTextField")).getText().isEmpty()) {
-						JOptionPane.showMessageDialog(gui, "need a string");
-						throw new IllegalArgumentException();
-					} else {
-						String tmp = ((JTextField) compMap.get("inputTextField")).getText();
-						fileStr.add("/~disp-string:" + tmp);
-						id.add(id.getLast() + 1);
-						controller.addElement("/~disp-string:" + tmp, id.getLast());
-
+				if (cbStr.equals("/~disp-string:string")) {
+					if (v == 0) {
+						nullArgumentException();
+					}
+					else if (v == 1){
+						illegalArgumentException("string");
+					}
+					else if (v == 2){
+						if (temp.length() > cell){
+							illegalArgumentException("string");
+						}
+						else{
+							id.add(id.getLast()+1);
+							fileStr.add("/~disp-string:" + temp);
+							controller.addElement("/~disp-string:" + temp, id.getLast());
+						}
 					}
 				}
-				else if (cbStr.equals("Display Clear All")) {
-
-					fileStr.add("/~disp-clearAll:");
+				else if (cbStr.equals("/~disp-clearAll")) {
+					fileStr.add("/~disp-clearAll");
 					id.add(id.getLast() + 1);
 					controller.addElement("/~disp-clearAll", id.getLast());
-
 				}		
-				else if (cbStr.equals("Display Clear Cell")) {
-					if (((JTextField) compMap.get("inputTextField")).getText().isEmpty()) {
-						JOptionPane.showMessageDialog(gui, "need a number");
-						throw new IllegalArgumentException();
-					} else {
-						try {
-						int tmp = Integer.parseInt(((JTextField) compMap.get("inputTextField")).getText());
-						if (tmp>cell||tmp<0) 
-						{
-							JOptionPane.showMessageDialog(gui, "there are no cell "+tmp+" to clear");
-
+				else if (cbStr.equals("/~disp-clear-cell:int")) {
+					if (v == 0) {
+						nullArgumentException();
+					}
+					else if (v == 1){
+						illegalArgumentException("int");
+					}
+					else if (v == 2){
+						if (s.length != 1){
+							illegalArgumentException("int");
 						}
-						fileStr.add("/~disp-clear-cell:" + tmp);
-						id.add(id.getLast() + 1);
-						controller.addElement("/~disp-clear-cell:" + tmp, id.getLast());
-						}
-						catch (Exception e1)
-						{
-							JOptionPane.showMessageDialog(gui, "Display Clear Cell need to have a number");
-
+						else{
+							if (isNumeric(temp)){
+								n = Integer.parseInt(temp);
+								if (n >= 0 && n < cell){
+									id.add(id.getLast()+1);
+									fileStr.add("/~disp-clear-cell:" + temp);
+									controller.addElement("/~disp-clear-cell:" + temp, id.getLast());
+								}
+								else{
+									indexOutOfBoundsException("Cell");
+								}
+							}
+							else{
+								illegalArgumentException("int");
+							}
 						}
 					}
 				}			
-				else if (cbStr.equals("Display Cell Pins")) {
-					if (((JTextField) compMap.get("inputTextField")).getText().isEmpty()) {
-						JOptionPane.showMessageDialog(gui, "need a binary string of length 8");
-						throw new IllegalArgumentException();
-					} else {
-						
-						String tmp = ((JTextField) compMap.get("inputTextField")).getText();
-						if (tmp.length()!=8 || !tmp.matches("[01]+"))
-						{
-							JOptionPane.showMessageDialog(gui, "need a binary string of length 8");
-							throw new IllegalArgumentException();
+				else if (cbStr.equals("/~disp-cell-pins:int string")) {
+					if (v == 0) {
+						nullArgumentException();
+					}
+					else if (v == 1){
+						illegalArgumentException("int string");
+					}
+					else if (v == 2){
+						if (s.length != 2){
+							illegalArgumentException("int string");
 						}
-						
-						fileStr.add("/~disp-cell-pins:" + tmp);
-						id.add(id.getLast() + 1);
-						controller.addElement("/~disp-cell-pins:" + tmp, id.getLast());
-						
-						
+						else{
+							if (isNumeric(s[0]) && isBinaryChar(s[1])){
+								n = Integer.parseInt(s[0]);
+								if (n >= 0 && n < cell){
+									id.add(id.getLast() + 1);
+									fileStr.add("/~disp-cell-pins:" + temp);
+									controller.addElement("/~disp-cell-pins:" + temp, id.getLast());
+								}
+								else{
+									indexOutOfBoundsException("Cell");
+								}
+							}
+							else{
+								illegalArgumentException("int string");
+							}
+						}
 					}
 				}			
-				else if (cbStr.equals("Display Cell Char")) {
-					if (((JTextField) compMap.get("inputTextField")).getText().isEmpty()) {
-						JOptionPane.showMessageDialog(gui, "need a number and a character");
-						throw new IllegalArgumentException();
-					} else {
-						
-						String tmp[] = ((JTextField) compMap.get("inputTextField")).getText().split(" ");
-						tmp[1]=tmp[1].toUpperCase();
-						
-						if (tmp.length!=2 || !tmp[1].matches("[A-Z]")||!tmp[0].matches("[0-9]+"))
-						{
-							JOptionPane.showMessageDialog(gui, "need a number and a character");
-							throw new IllegalArgumentException();
+				else if (cbStr.equals("/~disp-cell-char:int char")) {
+					if (v == 0) {
+						nullArgumentException();
+					}
+					else if (v == 1){
+						illegalArgumentException("int char");
+					}
+					else if (v == 2){
+						if (s.length != 2){
+							illegalArgumentException("int char");
 						}
-						
-						fileStr.add("/~disp-cell-char:" + tmp[0]+" "+tmp[1]);
-						id.add(id.getLast() + 1);
-						controller.addElement("/~disp-cell-char:"+ tmp[0]+" "+tmp[1], id.getLast());
-		
-					
+						else{
+							if (isNumeric(s[0]) && isChar(s[1])){
+								n = Integer.parseInt(s[0]);
+								if (n >= 0 && n < cell){
+									id.add(id.getLast() + 1);
+									fileStr.add("/~disp-cell-char:" + temp);
+									controller.addElement("/~disp-cell-char:" + temp, id.getLast());
+								}
+								else{
+									indexOutOfBoundsException("Cell");
+								}
+							}
+							else{
+								illegalArgumentException("int char");
+							}
+						}
 					}
 				}
-				else if (cbStr.equals("Display Cell Raise")) {
-					if (((JTextField) compMap.get("inputTextField")).getText().isEmpty()) {
-						JOptionPane.showMessageDialog(gui, "need a number and a character");
-						throw new IllegalArgumentException();
-					} else {
-						
-						String tmp[] = ((JTextField) compMap.get("inputTextField")).getText().split(" ");
-						tmp[1]=tmp[1].toUpperCase();
-						
-						if (tmp.length!=2 || !tmp[1].matches("[0-9]+")||!tmp[0].matches("[0-9]+"))
-						{
-							JOptionPane.showMessageDialog(gui, "need a number and a character");
-							throw new IllegalArgumentException();
+				else if (cbStr.equals("/~disp-cell-raise:int1 int2")) {
+					if (v == 0) {
+						nullArgumentException();
+					}
+					else if (v == 1){
+						illegalArgumentException("int1 int2");
+					}
+					else if (v == 2){
+						if (s.length != 2){
+							illegalArgumentException("int1 int2");
 						}
-						if (Integer.parseInt(tmp[0])>cell||Integer.parseInt(tmp[0])<0||Integer.parseInt(tmp[1])>col||Integer.parseInt(tmp[1])<0)
-						{
-							JOptionPane.showMessageDialog(gui, "invalid number, out of range");
-							throw new IllegalArgumentException();
+						else{
+							if (isNumeric(s[0]) && isNumeric(s[1]) && s[0].length() == 1 && s[1].length() == 1){
+								n = Integer.parseInt(s[0]);
+								m = Integer.parseInt(s[1]);
+								if (n >= 0 && n < cell && m >= 0 && m < 8){
+									id.add(id.getLast() + 1);
+									fileStr.add("/~disp-cell-raise:" + temp);
+									controller.addElement("/~disp-cell-raise:" + temp, id.getLast());
+								}
+								else{
+									indexOutOfBoundsException("Cell");
+								}
+							}
+							else{
+								illegalArgumentException("int1 int2");
+							}
 						}
-						
-						fileStr.add("/~disp-cell-raise:" + tmp[0]+" "+tmp[1]);
-						id.add(id.getLast() + 1);
-						controller.addElement("/~disp-cell-raise:"+ tmp[0]+" "+tmp[1], id.getLast());
 					}
 				}
 				
-				if (cbStr.equals("Display Cell Lower")) {
-					if (((JTextField) compMap.get("inputTextField")).getText().isEmpty()) {
-						JOptionPane.showMessageDialog(gui, "need a number and a character");
-						throw new IllegalArgumentException();
-					} else {
-						
-						String tmp[] = ((JTextField) compMap.get("inputTextField")).getText().split(" ");
-						tmp[1]=tmp[1].toUpperCase();
-						
-						if (tmp.length!=2 || !tmp[1].matches("[0-9]+")||!tmp[0].matches("[0-9]+"))
-						{
-							JOptionPane.showMessageDialog(gui, "need a number and a character");
-							throw new IllegalArgumentException();
+				if (cbStr.equals("/~disp-cell-lower:int1 int2")) {
+					if (v == 0) {
+						nullArgumentException();
+					}
+					else if (v == 1){
+						illegalArgumentException("int1 int2");
+					}
+					else if (v == 2){
+						if (s.length != 2){
+							illegalArgumentException("int1 int2");
 						}
-						if (Integer.parseInt(tmp[0])>cell||Integer.parseInt(tmp[0])<0||Integer.parseInt(tmp[1])>col||Integer.parseInt(tmp[1])<0)
-						{
-							JOptionPane.showMessageDialog(gui, "invalid number, out of range");
-							throw new IllegalArgumentException();
+						else{
+							if (isNumeric(s[0]) && isNumeric(s[1]) && s[0].length() == 1 && s[1].length() == 1){
+								n = Integer.parseInt(s[0]);
+								m = Integer.parseInt(s[1]);
+								if (n >= 0 && n < cell && m >= 0 && m < 8){
+									id.add(id.getLast() + 1);
+									fileStr.add("/~disp-cell-lower:" + temp);
+									controller.addElement("/~disp-cell-lower:" + temp, id.getLast());
+								}
+								else{
+									indexOutOfBoundsException("Cell");
+								}
+							}
+							else{
+								illegalArgumentException("int1 int2");
+							}
 						}
-						
-						fileStr.add("/~disp-cell-lower:" + tmp[0]+" "+tmp[1]);
-						id.add(id.getLast() + 1);
-						controller.addElement("/~disp-cell-lower:"+ tmp[0]+" "+tmp[1], id.getLast());
-
-					
 					}
 				}
 
@@ -706,17 +729,26 @@ public class AuthoringApp {
 		return ((JTextField) compMap.get("inputTextField")).getText();
 	}
 	
-	public static void nullArgumentException(String s){
-		consoleController.addElement("NullArgumentException: No input detected. See help contents for usage of " + s + ".");
+	public static void nullArgumentException(){
+		consoleController.addElement("NullArgumentException: No input detected. See \"Help\" for user manual.");
 	}
 	
-	public static void illegalArgumentException(String s){
-		consoleController.addElement("IllegalArgumentException: Invalid input detected. See help contents for usage of " + s + ".");
+	public static void illegalArgumentException(String expected){
+		consoleController.addElement("IllegalArgumentException, Expected: " + expected + ". See \"Help\" for user manual.");
 	}
 	
-	public static void indexOutOfBoundsWarning(){
-		int n = col - 1;
-		consoleController.addElement("Warning: Button value should have a range of [0, " + n + "].");
+	public static void indexOutOfBoundsException(String type){
+		String range = "";
+		int n;
+		if (type == "Button"){
+			n = col - 1;
+			range = "[0," + n + "]";
+		}
+		else if (type == "Cell"){
+			n = cell - 1;
+			range = "[0," + n + "]";
+		}
+		consoleController.addElement("indexOutOfBoundsException: " + type + " value should have a range of " + range + ". See \"Help\" for user manual.");
 	}
 	
 	public static int validString(String s){
@@ -731,6 +763,13 @@ public class AuthoringApp {
 		}
 	}
 	
+	public static boolean validFileFormat(String ext){
+		if (ext.contains("ext")){
+			return true;
+		}
+		return false;
+	}
+	
 	public static boolean isNumeric(String s){
 		  try  
 		  {  
@@ -741,5 +780,27 @@ public class AuthoringApp {
 		    return false;  
 		  }  
 		  return true;  
+	}
+	
+	public static boolean isBinaryChar(String s){
+		if (s.length()!=8 || !s.matches("[01]+"))
+		{
+			return false;
+		}  
+		return true;
+	}
+	
+	public static boolean isChar(String s){
+		if (s.length() != 1)
+		{
+			return false;
+		}
+		else{
+			char c = s.charAt(0);
+			if (Character.isLetter(c)){
+				return true;
+			}
+			return false;
+		}
 	}
 }
