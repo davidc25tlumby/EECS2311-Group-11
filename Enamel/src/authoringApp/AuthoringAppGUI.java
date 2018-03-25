@@ -134,7 +134,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         loadAndRunMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         ttsMenuItem = new javax.swing.JRadioButtonMenuItem();
-        helpContentsMenuItem = new javax.swing.JMenuItem();
+        userManualMenuItem = new javax.swing.JMenuItem();
         helpMenuSeperator1 = new javax.swing.JPopupMenu.Separator();
         aboutMenuItem = new javax.swing.JMenuItem();
 
@@ -155,12 +155,12 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         inputTextField.setText("(Insert text/argument)");
         inputTextField.setName("inputTextField"); // NOI18N
 
-        editRemoveLine.setText("Remove Line");
+        editRemoveLine.setText("Remove Line (Del)");
         editRemoveLine.setToolTipText("");
         editRemoveLine.setEnabled(false);
         editRemoveLine.setName("editRemoveLine"); // NOI18N
 
-        insertText.setText("Text");
+        insertText.setText("Text (Ctrl + Enter)");
         insertText.setEnabled(false);
         insertText.setName("insertText"); // NOI18N
 
@@ -327,9 +327,9 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         ttsMenuItem.setName("ttsMenuItem"); // NOI18N
         helpMenu.add(ttsMenuItem);
 
-        helpContentsMenuItem.setText("Help contents");
-        helpContentsMenuItem.setName("helpContentsMenuItem"); // NOI18N
-        helpMenu.add(helpContentsMenuItem);
+        userManualMenuItem.setText("User Manual");
+        userManualMenuItem.setName("userManualMenuItem"); // NOI18N
+        helpMenu.add(userManualMenuItem);
 
         helpMenuSeperator1.setName("helpMenuSeperator1"); // NOI18N
         helpMenu.add(helpMenuSeperator1);
@@ -472,7 +472,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JPopupMenu.Separator fileMenuSeperator1;
     private javax.swing.JPopupMenu.Separator fileMenuSeperator2;
-    private javax.swing.JMenuItem helpContentsMenuItem;
+    private javax.swing.JMenuItem userManualMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JPopupMenu.Separator helpMenuSeperator1;
     private javax.swing.JTextField inputTextField;
