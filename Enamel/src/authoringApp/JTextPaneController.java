@@ -60,13 +60,20 @@ public class JTextPaneController extends JTextPane {
 	 */
 	public LinkedList<Integer> newDocCreated(LinkedList<String> fileStr) {
 
-		//doc = (HTMLDocument) tp.getDocument();
 		LinkedList<Integer> n = new LinkedList<Integer>();
-		n.add(0);
-		for (int i = 1; i <= fileStr.size(); i++) {
+		if (fileStr.size() > 0) {
+			e = doc.getElement("main");
+			try {
+				doc.insertAfterStart(e, "<p id=\"0\">" + fileStr.get(0) + "</p>");
+				n.add(0);
+			} catch (BadLocationException | IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		for (int i = 1; i < fileStr.size(); i++) {
 			e = doc.getElement(new Integer(i - 1).toString());
 			try {
-				doc.insertAfterEnd(e, "<p id=\"" + i + "\">" + fileStr.get(i - 1) + "</p>");
+				doc.insertAfterEnd(e, "<p id=\"" + i + "\">" + fileStr.get(i) + "</p>");
 				n.add(i);
 			} catch (BadLocationException | IOException e1) {
 				e1.printStackTrace();
@@ -101,12 +108,12 @@ public class JTextPaneController extends JTextPane {
 		e = doc.getElement("main");
 		
 		try {
-			doc.insertBeforeEnd(e, "<p>" + temp + "</p>");
+			doc.insertAfterStart(e, "<p>" + temp + "</p>");
 		} catch (BadLocationException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 	}
-
+	
 }

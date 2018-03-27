@@ -26,7 +26,7 @@ public class AuthoringApp {
 	private static HashMap<String, Component> compMap;
 	private static JTextPaneController controller, consoleController;
 	
-	private static int currentLine = 0, cell = 0, col = 0;
+	private static int currentLine = 2, cell = 0, col = 0;
 	private static boolean isSaved = true, isOpened = false;
 	private static String currentID;
 
@@ -74,13 +74,15 @@ public class AuthoringApp {
 					illegalArgumentException("string");
 				}
 				else if (v == 2){
-					id.add(id.getLast()+1);
+					id.add(id.getLast() + 1);
 					fileStr.add(temp);
-					controller.addElement(temp, id.getLast());
+					controller.addElement(temp, currentLine - 1);
 				}
 			}
 
 		});
+		
+		
 		
 		((JButton) compMap.get("insertPause")).addActionListener(new ActionListener() {
 
@@ -486,7 +488,7 @@ public class AuthoringApp {
 	 * Implements all the action listeners for various components within the GUI.
 	 */
 	protected static void addActionListeners() {
-		((JTextPane) compMap.get("scenarioPane")).addKeyListener(new KeyListener(){
+		((JFrame) gui).addKeyListener(new KeyListener(){
 
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -495,11 +497,23 @@ public class AuthoringApp {
 				switch (keyCode){
 					case KeyEvent.VK_UP:
 						//handle up
-						System.out.println(1);
+						if (currentLine == 2) {
+							System.out.println("Line " + 2);
+						}
+						else {
+							currentLine--;
+							System.out.println("Line " + currentLine);
+						}
 					break;
 					case KeyEvent.VK_DOWN:
 						//handle down
-						System.out.println(2);
+						if (currentLine == fileStr.size()) {
+							System.out.println("Line " + fileStr.size());
+						}
+						else {
+							currentLine++;
+							System.out.println("Line " + currentLine);
+						}
 					break;
 				}
 			}
@@ -542,14 +556,11 @@ public class AuthoringApp {
 						isOpened = true;
 						stateChanged();
 						
-						
 						fileStr.add("Cell " + cell );
 						fileStr.add("Button " + col );
 						((JTextField) compMap.get("inputTextField")).setText("");
 						id = controller.newDocCreated(fileStr);
 
-						id.add(1);
-						id.add(2);
 						temp.dispose();
 					}
 					
@@ -658,7 +669,7 @@ public class AuthoringApp {
 	 */
 	protected static void stateChanged() {
 		if (isOpened) { 
-			System.out.println(true);
+			//System.out.println(true);
 			compMap.get("saveAsMenuItem").setEnabled(true);
 			compMap.get("insertText").setEnabled(true);
 			compMap.get("insertPause").setEnabled(true);
@@ -673,6 +684,8 @@ public class AuthoringApp {
 			compMap.get("displayComboBox").setEnabled(true);
 			compMap.get("displayAddButton").setEnabled(true);
 			compMap.get("editRemoveLine").setEnabled(true);
+			compMap.get("upButton").setEnabled(true);
+			compMap.get("downButton").setEnabled(true);
 		}
 	}
 
