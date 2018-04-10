@@ -29,7 +29,9 @@ public class AuthoringApp {
 	private static int currentLine = 2, cell = 0, col = 0;
 	private static boolean isSaved = true, isOpened = false;
 	private static String currentID;
-
+	/*private static final String NAVIGATE_UP = "UP";
+	private static final String NAVIGATE_DOWN = "DOWN";
+	private static final int WIFW = JComponent.WHEN_IN_FOCUSED_WINDOW;*/
 
 	/**
 	 * Initializes the application by drawing the GUI and initializing a controller for the JTextPane. LinkedLists are created for an id+string pair that represents elements on the JTextPane.
@@ -51,10 +53,83 @@ public class AuthoringApp {
 				consoleController = new JTextPaneController((JTextPane) compMap.get("consolePane"), (JScrollPane) compMap.get("consoleScrollPane"));
 				addActionListeners();
 				addEditorButtons();
+				addKeyBindings();
 			}
 			
 		});
 		
+	}
+
+	protected static void addKeyBindings() {
+		// TODO Auto-generated method stub
+		JRootPane rp = gui.getRootPane();
+		InputMap im = rp.getInputMap();
+		ActionMap am = rp.getActionMap();
+		
+		im.put(KeyStroke.getKeyStroke("UP"), "navUp");
+		im.put(KeyStroke.getKeyStroke("DOWN"), "navDown");
+		im.put(KeyStroke.getKeyStroke("ENTER"), "newLine");
+		im.put(KeyStroke.getKeyStroke("DELETE"), "delLine");
+		
+		am.put("navUp", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -5971069686488190353L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("nav up");
+			}
+			
+		});
+		
+		am.put("navDown", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 6683017700153087856L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("nav down");
+			}
+			
+		});
+		
+		am.put("newLine", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -7879264567501986325L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("new ln");
+			}
+			
+		});
+		
+		am.put("delLine", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -7593553052034429973L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("del ln");
+			}
+			
+		});
 	}
 
 	protected static void addEditorButtons() {
@@ -488,47 +563,28 @@ public class AuthoringApp {
 	 * Implements all the action listeners for various components within the GUI.
 	 */
 	protected static void addActionListeners() {
-		((JFrame) gui).addKeyListener(new KeyListener(){
+		
+		/*((JButton) compMap.get("upButton")).getInputMap(WIFW).put(KeyStroke.getKeyStroke("UP"), NAVIGATE_UP);
+		((JButton) compMap.get("downButton")).getInputMap(WIFW).put(KeyStroke.getKeyStroke("DOWN"), NAVIGATE_DOWN);
+		
+		((JButton) compMap.get("upButton")).getActionMap().put(NAVIGATE_UP, navigateUp());
+		((JButton) compMap.get("downButton")).getActionMap().put(NAVIGATE_DOWN, navigateDown());*/
+		
+		/*((JButton) compMap.get("downButton")).addActionListener(new ActionListener() {
 
 			@Override
-			public void keyPressed(KeyEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				int keyCode = e.getKeyCode();
-				switch (keyCode){
-					case KeyEvent.VK_UP:
-						//handle up
-						if (currentLine == 2) {
-							System.out.println("Line " + 2);
-						}
-						else {
-							currentLine--;
-							System.out.println("Line " + currentLine);
-						}
-					break;
-					case KeyEvent.VK_DOWN:
-						//handle down
-						if (currentLine == fileStr.size()) {
-							System.out.println("Line " + fileStr.size());
-						}
-						else {
-							currentLine++;
-							System.out.println("Line " + currentLine);
-						}
-					break;
+				if (currentLine == fileStr.size()) {
+					System.out.println("Line " + fileStr.size());
+				}
+				else {
+					currentLine++;
+					System.out.println("Line " + currentLine);
 				}
 			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-			}
 			
-		});
+		});*/
 		
 		((JMenuItem) compMap.get("newMenuItem")).addActionListener(new ActionListener() {
 
@@ -664,6 +720,18 @@ public class AuthoringApp {
 		}); 
 	}
 	
+	/*private static Action navigateDown() {
+		// TODO Auto-generated method stub
+		System.out.println("down pressed");
+		return null;
+	}
+
+	private static Action navigateUp() {
+		// TODO Auto-generated method stub
+		System.out.println("up pressed");
+		return null;
+	}*/
+
 	/**
 	 * Enables the components when a scenario file is opened in the application.
 	 */

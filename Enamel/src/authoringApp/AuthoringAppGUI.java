@@ -525,4 +525,5 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
     private javax.swing.JRadioButtonMenuItem ttsMenuItem;
     private javax.swing.JMenuItem undoMenuItem;
     private javax.swing.JButton upButton;
+
 }
