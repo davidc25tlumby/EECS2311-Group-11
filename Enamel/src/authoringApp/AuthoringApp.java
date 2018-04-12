@@ -82,6 +82,13 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("nav up");
+				//controller.addElement("<p class=\"highlight\"> testing </p>", currentLine - 1);
+				//controller.removeAttribute("test", 1);
+				if (currentLine != 0){
+					controller.removeAttribute(currentLine);
+					currentLine--;
+					controller.setAttribute(currentLine);
+				}
 			}
 			
 		});
@@ -97,6 +104,11 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("nav down");
+				if (currentLine != fileStr.size()) {
+					controller.removeAttribute(currentLine);
+					currentLine++;
+					controller.setAttribute(currentLine);
+				}
 			}
 			
 		});

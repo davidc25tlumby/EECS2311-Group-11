@@ -1,13 +1,18 @@
 package authoringApp;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.LinkedList;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleContext;
 import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.StyleConstants;
 
 /**
  * Extension of JTextPane implementing features to add HTML DOM format and CSS
@@ -27,6 +32,8 @@ public class JTextPaneController extends JTextPane {
 
 	HTMLDocument doc;
 	Element e;
+	//SimpleAttributeSet aset = new SimpleAttributeSet();
+	AttributeSet highlight, white;
 
 	/**
 	 * Initializes the JTextPaneControllers and sets the JTextPane to display
@@ -47,6 +54,12 @@ public class JTextPaneController extends JTextPane {
 			e1.printStackTrace();
 		}
 
+		StyleContext scHighlight = StyleContext.getDefaultStyleContext();
+		StyleContext scWhite = StyleContext.getDefaultStyleContext();
+		highlight = scHighlight.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.WHITE);
+		highlight = scHighlight.addAttributes(highlight, scHighlight.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Background, Color.BLUE));
+		white = scWhite.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.BLACK);
+		white = scWhite.addAttributes(white, scWhite.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Background, Color.WHITE));
 	}
 
 	/**
@@ -116,4 +129,20 @@ public class JTextPaneController extends JTextPane {
 		}
 	}
 	
+	public void removeElement(int i){
+		e = doc.getElement(new Integer(i).toString());
+		doc.removeElement(e);
+	}
+	
+	public void removeAttribute(int i){
+		e = doc.getElement(new Integer(i).toString());
+		doc.setParagraphAttributes(e.getStartOffset(), e.getEndOffset(), white, false);	
+		System.out.println(tp.getText());
+	}
+	
+	public void setAttribute(int i){
+		e = doc.getElement(new Integer(i).toString());
+		doc.setParagraphAttributes(e.getStartOffset(), e.getEndOffset(), highlight, false);
+		System.out.println(tp.getText());
+	}
 }
