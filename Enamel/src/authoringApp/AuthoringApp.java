@@ -29,9 +29,6 @@ public class AuthoringApp {
 	private static int currentLine = 2, cell = 0, col = 0;
 	private static boolean isSaved = true, isOpened = false;
 	private static String currentID;
-	/*private static final String NAVIGATE_UP = "UP";
-	private static final String NAVIGATE_DOWN = "DOWN";
-	private static final int WIFW = JComponent.WHEN_IN_FOCUSED_WINDOW;*/
 
 	/**
 	 * Initializes the application by drawing the GUI and initializing a controller for the JTextPane. LinkedLists are created for an id+string pair that represents elements on the JTextPane.
@@ -46,11 +43,6 @@ public class AuthoringApp {
 				gui = new AuthoringAppGUI();
 				gui.setVisible(true);
 				compMap = ((AuthoringAppGUI) gui).getCompMap();
-				fileStr = new LinkedList<String>();
-				id = new LinkedList<Integer>();
-				id.add(0);
-				controller = new JTextPaneController((JTextPane) compMap.get("scenarioPane"), (JScrollPane) compMap.get("scenarioScrollPane"));
-				consoleController = new JTextPaneController((JTextPane) compMap.get("consolePane"), (JScrollPane) compMap.get("consoleScrollPane"));
 				addActionListeners();
 				addEditorButtons();
 				addKeyBindings();
@@ -63,7 +55,7 @@ public class AuthoringApp {
 	protected static void addKeyBindings() {
 		// TODO Auto-generated method stub
 		JRootPane rp = gui.getRootPane();
-		InputMap im = rp.getInputMap();
+		InputMap im = rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 		ActionMap am = rp.getActionMap();
 		
 		im.put(KeyStroke.getKeyStroke("UP"), "navUp");
@@ -606,7 +598,7 @@ public class AuthoringApp {
 				if (!isSaved) {
 					JOptionPane.showMessageDialog(gui, "please save first");
 				}
-
+				initializeComponents();
 				isSaved = false;
 				NewFileGUI temp = new NewFileGUI();
 				temp.setVisible(true);
@@ -659,6 +651,7 @@ public class AuthoringApp {
 				if (!isSaved) {
 				}
 				try {
+					initializeComponents();
 					f = openFileChooser(new File("FactoryScenarios/"), "txt");
 					if (f != null) {
 						currentFile = f;
@@ -732,6 +725,17 @@ public class AuthoringApp {
 		}); 
 	}
 	
+	protected static void initializeComponents() {
+		// TODO Auto-generated method stub
+		fileStr = new LinkedList<String>();
+		id = new LinkedList<Integer>();
+		id.add(0);
+		((JTextPane) compMap.get("scenarioPane")).setText("");
+		((JTextPane) compMap.get("consolePane")).setText("");
+		controller = new JTextPaneController((JTextPane) compMap.get("scenarioPane"), (JScrollPane) compMap.get("scenarioScrollPane"));
+		consoleController = new JTextPaneController((JTextPane) compMap.get("consolePane"), (JScrollPane) compMap.get("consoleScrollPane"));
+	}
+
 	/*private static Action navigateDown() {
 		// TODO Auto-generated method stub
 		System.out.println("down pressed");
