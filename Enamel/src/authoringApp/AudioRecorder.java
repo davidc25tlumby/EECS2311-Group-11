@@ -44,6 +44,7 @@ public class AudioRecorder {
             System.out.println("Start recording...");
  
             // starts recording
+            
             AudioSystem.write(inputstream, type, path);
  
         } catch (LineUnavailableException ex) {
