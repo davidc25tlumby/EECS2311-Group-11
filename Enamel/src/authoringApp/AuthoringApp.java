@@ -52,6 +52,9 @@ public class AuthoringApp {
 		
 	}
 
+	/**
+	 * Initializes and implements the KeyBindings that will be associated with the GUIs JFrame.
+	 */
 	protected static void addKeyBindings() {
 		// TODO Auto-generated method stub
 		JRootPane rp = gui.getRootPane();
@@ -136,6 +139,9 @@ public class AuthoringApp {
 		});
 	}
 
+	/**
+	 * Initializes and implements the JButtons that the users will interact with.
+	 */
 	protected static void addEditorButtons() {
 		// TODO Auto-generated method stub
 		((JButton) compMap.get("insertText")).addActionListener(new ActionListener() {
@@ -564,31 +570,9 @@ public class AuthoringApp {
 	}
 
 	/**
-	 * Implements all the action listeners for various components within the GUI.
+	 * Initializes and implements the JMenuItems that the user will interact with.
 	 */
 	protected static void addActionListeners() {
-		
-		/*((JButton) compMap.get("upButton")).getInputMap(WIFW).put(KeyStroke.getKeyStroke("UP"), NAVIGATE_UP);
-		((JButton) compMap.get("downButton")).getInputMap(WIFW).put(KeyStroke.getKeyStroke("DOWN"), NAVIGATE_DOWN);
-		
-		((JButton) compMap.get("upButton")).getActionMap().put(NAVIGATE_UP, navigateUp());
-		((JButton) compMap.get("downButton")).getActionMap().put(NAVIGATE_DOWN, navigateDown());*/
-		
-		/*((JButton) compMap.get("downButton")).addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				if (currentLine == fileStr.size()) {
-					System.out.println("Line " + fileStr.size());
-				}
-				else {
-					currentLine++;
-					System.out.println("Line " + currentLine);
-				}
-			}
-			
-		});*/
 		
 		((JMenuItem) compMap.get("newMenuItem")).addActionListener(new ActionListener() {
 
@@ -725,6 +709,9 @@ public class AuthoringApp {
 		}); 
 	}
 	
+	/**
+	 * Initializes various objects associated with the JTextPanes. Calling this method resets the JTextPanes and the LinkedLists of strings and ID's.
+	 */
 	protected static void initializeComponents() {
 		// TODO Auto-generated method stub
 		fileStr = new LinkedList<String>();
@@ -735,18 +722,6 @@ public class AuthoringApp {
 		controller = new JTextPaneController((JTextPane) compMap.get("scenarioPane"), (JScrollPane) compMap.get("scenarioScrollPane"));
 		consoleController = new JTextPaneController((JTextPane) compMap.get("consolePane"), (JScrollPane) compMap.get("consoleScrollPane"));
 	}
-
-	/*private static Action navigateDown() {
-		// TODO Auto-generated method stub
-		System.out.println("down pressed");
-		return null;
-	}
-
-	private static Action navigateUp() {
-		// TODO Auto-generated method stub
-		System.out.println("up pressed");
-		return null;
-	}*/
 
 	/**
 	 * Enables the components when a scenario file is opened in the application.
@@ -800,11 +775,21 @@ public class AuthoringApp {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @return The extension of the selected file.
+	 */
 	private static String selectedextension() {
 		String selectedExt = FilenameUtils.getExtension(fc.getSelectedFile().getName());
 		return selectedExt;
 	}
 	
+	/**
+	 * 
+	 * @param currentDir The default directory to open the fileChooser at.
+	 * @param ext The expected extension of the file chosen by the user.
+	 * @return The file selected by the user. If the file is invalid or if the user cancels, returns null.
+	 */
 	public static File saveFileChooser(File currentDir, String ext) {
 		fc.setCurrentDirectory(currentDir);
 		int returnVal = fc.showSaveDialog(null);
@@ -822,18 +807,33 @@ public class AuthoringApp {
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @return The text that is typed into the JTextField.
+	 */
 	public static String getInputText(){
 		return ((JTextField) compMap.get("inputTextField")).getText();
 	}
 	
+	/**
+	 * Prints into the console a NullArgumentException
+	 */
 	public static void nullArgumentException(){
 		consoleController.addElement("NullArgumentException: No input detected. See \"Help\" for user manual.");
 	}
 	
+	/**
+	 * Prints into the console a illegalArgumentException
+	 * @param expected the expected input types.
+	 */
 	public static void illegalArgumentException(String expected){
 		consoleController.addElement("IllegalArgumentException, Expected: " + expected + ". See \"Help\" for user manual.");
 	}
 	
+	/**
+	 * Prints into the console an IndexOutOfBoundsException.
+	 * @param type The variable in which the exception occurred.
+	 */
 	public static void indexOutOfBoundsException(String type){
 		String range = "";
 		int n;
@@ -848,6 +848,11 @@ public class AuthoringApp {
 		consoleController.addElement("indexOutOfBoundsException: " + type + " value should have a range of " + range + ". See \"Help\" for user manual.");
 	}
 	
+	/**
+	 * Checks for the minimum requirements of JTextField inputs. The string should not be empty and should not contain the token "/~".
+	 * @param s The String to check
+	 * @return 0 if the string is empty, 1 if it contains "/~", 2 if valid.
+	 */
 	public static int validString(String s){
 		if (s.isEmpty()) {
 			return 0;
@@ -860,6 +865,11 @@ public class AuthoringApp {
 		}
 	}
 	
+	/**
+	 * TODO?? Currently unused and I don't know who put this here.
+	 * @param ext
+	 * @return
+	 */
 	public static boolean validFileFormat(String ext){
 		if (ext.contains("ext")){
 			return true;
@@ -867,6 +877,11 @@ public class AuthoringApp {
 		return false;
 	}
 	
+	/**
+	 * Checks if a string is an integer.
+	 * @param s The string to check.
+	 * @return True if the string is an integer, otherwise false.
+	 */
 	public static boolean isNumeric(String s){
 		  try  
 		  {  
@@ -879,6 +894,11 @@ public class AuthoringApp {
 		  return true;  
 	}
 	
+	/**
+	 * Checks if the string is an 8 bit binary value.
+	 * @param s The string to check.
+	 * @return True if the string is binary 8 bit, otherwise false.
+	 */
 	public static boolean isBinaryChar(String s){
 		if (s.length()!=8 || !s.matches("[01]+"))
 		{
@@ -887,6 +907,11 @@ public class AuthoringApp {
 		return true;
 	}
 	
+	/**
+	 * Checks if the string is a single character.
+	 * @param s The string to check.
+	 * @return True if the string is a character, otherwise false.
+	 */
 	public static boolean isChar(String s){
 		if (s.length() != 1)
 		{
