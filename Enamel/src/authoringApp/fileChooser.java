@@ -31,7 +31,30 @@ public class fileChooser {
 		}
 		return null;
 	}
+
+	/**
+	 * Opens a FileChooser interface for the user to select a file.
+	 * 
+	 * @param currentDir
+	 *            The directory that will first appear on the FileChooser.
+	 * @param ext
+	 *            Expected file extension to be returned.
+	 * @return The file selected by the user and is of the appropriate
+	 *         extension, otherwise null.
+	 */
+	/**
+	 * 
+	 * @param currentDir The default directory to open the fileChooser at.
+	 * @param ext The expected extension of the file chosen by the user.
+	 * @return The file selected by the user. If the file is invalid or if the user cancels, returns null.
+	 */
+
 	
+	/**
+	 * 
+	 * @return The text that is typed into the JTextField.
+	 */
+	 
 	public static File openFileChooser(File currentDir, String ext) {
 		JFileChooser fc= new JFileChooser();
 
