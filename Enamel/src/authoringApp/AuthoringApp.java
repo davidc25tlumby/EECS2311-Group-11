@@ -364,7 +364,7 @@ public class AuthoringApp {
 		((JButton) compMap.get("insertSound")).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				f = openFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
+				f = fileChooser.openFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
 				if (f != null)
 				{
 					fileStr.add("/~sound:"+f.getName());
@@ -652,7 +652,7 @@ public class AuthoringApp {
 				}
 				try {
 					initializeComponents();
-					f = openFileChooser(new File("FactoryScenarios/"), "txt");
+					f = fileChooser.openFileChooser(new File("FactoryScenarios/"), "txt");
 					if (f != null) {
 						currentFile = f;
 						gui.setTitle("Authoring App - " + currentFile.getName());
@@ -686,7 +686,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				f = saveFileChooser(new File("FactoryScenarios/"), "txt");
+				f = fileChooser.saveFileChooser(new File("FactoryScenarios/"), "txt");
 				if (f != null) {
 					currentFile = f;
 					gui.setTitle("Authoring App - " + currentFile.getName());
@@ -704,7 +704,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				f = openFileChooser(new File("FactoryScenarios/"), "txt");
+				f = fileChooser.openFileChooser(new File("FactoryScenarios/"), "txt");
 				if (f != null) {
 					currentFile = f;
 					ToyAuthoring ta = new ToyAuthoring(f.getAbsolutePath());
@@ -723,6 +723,17 @@ public class AuthoringApp {
 			}
 			
 		}); 
+//		((JMenuItem) compMap.get("recordButton")).addActionListener(new ActionListener() 
+//				{
+//
+//					@Override
+//					public void actionPerformed(ActionEvent e) {
+//						
+//						// TODO Auto-generated method stub
+//						
+//					}
+//			
+//				});
 	}
 	
 	protected static void initializeComponents() {
@@ -783,44 +794,13 @@ public class AuthoringApp {
 	 * @return The file selected by the user and is of the appropriate
 	 *         extension, otherwise null.
 	 */
-	public static File openFileChooser(File currentDir, String ext) {
-		fc.setCurrentDirectory(currentDir);
-		int returnVal = fc.showOpenDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String selectedExt = selectedextension();                                    //Used refactoring here
-			if (!ext.equals(selectedExt)) {
-				errorPanel = new JPanel();
-				JOptionPane.showMessageDialog(errorPanel, "Could not open file, Wrong file type", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return null;
-			} else {
-				return fc.getSelectedFile();
-			}
-		}
-		return null;
-	}
-
+	
 	private static String selectedextension() {
 		String selectedExt = FilenameUtils.getExtension(fc.getSelectedFile().getName());
 		return selectedExt;
 	}
 	
-	public static File saveFileChooser(File currentDir, String ext) {
-		fc.setCurrentDirectory(currentDir);
-		int returnVal = fc.showSaveDialog(null);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			String selectedExt = selectedextension();
-			if (!ext.equals(selectedExt)) {
-				/* final JPanel */errorPanel = new JPanel();
-				JOptionPane.showMessageDialog(errorPanel, "Could not save file, Wrong file type", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return null;
-			} else {
-				return fc.getSelectedFile();
-			}
-		}
-		return null;
-	}
+
 	
 	public static String getInputText(){
 		return ((JTextField) compMap.get("inputTextField")).getText();
