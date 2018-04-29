@@ -61,10 +61,172 @@ public class AuthoringApp {
 		InputMap im = rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 		ActionMap am = rp.getActionMap();
 		
+		JTextPane tp = ((JTextPane) compMap.get("scenarioPane"));
+		InputMap im2 = tp.getInputMap(JComponent.WHEN_FOCUSED);
+		ActionMap am2 = tp.getActionMap();
+		
+		JTextPane tp2 = ((JTextPane) compMap.get("consolePane"));
+		InputMap im3 = tp2.getInputMap(JComponent.WHEN_FOCUSED);
+		ActionMap am3 = tp2.getActionMap();
+		
 		im.put(KeyStroke.getKeyStroke("UP"), "navUp");
 		im.put(KeyStroke.getKeyStroke("DOWN"), "navDown");
 		im.put(KeyStroke.getKeyStroke("ENTER"), "newLine");
 		im.put(KeyStroke.getKeyStroke("DELETE"), "delLine");
+		
+		im2.put(KeyStroke.getKeyStroke("UP"), "navUp");
+		im2.put(KeyStroke.getKeyStroke("DOWN"), "navDown");
+		im2.put(KeyStroke.getKeyStroke("ENTER"), "newLine");
+		im2.put(KeyStroke.getKeyStroke("DELETE"), "delLine");
+		
+		im3.put(KeyStroke.getKeyStroke("UP"), "navUp");
+		im3.put(KeyStroke.getKeyStroke("DOWN"), "navDown");
+		im3.put(KeyStroke.getKeyStroke("ENTER"), "newLine");
+		im3.put(KeyStroke.getKeyStroke("DELETE"), "delLine");
+		
+		am3.put("navUp", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -5971069686488190353L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("nav up");
+				//controller.addElement("<p class=\"highlight\"> testing </p>", currentLine - 1);
+				//controller.removeAttribute("test", 1);
+				if (currentLine != 0){
+					controller.removeAttribute(currentLine);
+					currentLine--;
+					controller.setAttribute(currentLine);
+				}
+			}
+			
+		});
+		
+		am3.put("navDown", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 6683017700153087856L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("nav down");
+				if (currentLine != fileStr.size()) {
+					controller.removeAttribute(currentLine);
+					currentLine++;
+					controller.setAttribute(currentLine);
+				}
+			}
+			
+		});
+		
+		am3.put("newLine", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -7879264567501986325L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("new ln");
+			}
+			
+		});
+		
+		am3.put("delLine", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -7593553052034429973L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("del ln");
+			}
+			
+		});
+		
+		am2.put("navUp", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -5971069686488190353L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("nav up");
+				//controller.addElement("<p class=\"highlight\"> testing </p>", currentLine - 1);
+				//controller.removeAttribute("test", 1);
+				if (currentLine != 0){
+					controller.removeAttribute(currentLine);
+					currentLine--;
+					controller.setAttribute(currentLine);
+				}
+			}
+			
+		});
+		
+		am2.put("navDown", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 6683017700153087856L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("nav down");
+				if (currentLine != fileStr.size()) {
+					controller.removeAttribute(currentLine);
+					currentLine++;
+					controller.setAttribute(currentLine);
+				}
+			}
+			
+		});
+		
+		am2.put("newLine", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -7879264567501986325L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("new ln");
+			}
+			
+		});
+		
+		am2.put("delLine", new AbstractAction() {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -7593553052034429973L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("del ln");
+			}
+			
+		});
 		
 		am.put("navUp", new AbstractAction() {
 
