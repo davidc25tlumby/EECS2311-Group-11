@@ -29,7 +29,8 @@ public class AuthoringApp {
 	private static int currentLine = 2, cell = 0, col = 0;
 	private static boolean isSaved = true, isOpened = false;
 	private static String currentID;
-
+	private static AudioRecorder recorder;
+	private static boolean checkRecord=false;
 	/**
 	 * Initializes the application by drawing the GUI and initializing a controller for the JTextPane. LinkedLists are created for an id+string pair that represents elements on the JTextPane.
 	 * @param args unused
@@ -870,19 +871,43 @@ public class AuthoringApp {
 			}
 			
 		}); 
-//		((JMenuItem) compMap.get("recordButton")).addActionListener(new ActionListener() 
-//				{
-//
-//					@Override
-//					public void actionPerformed(ActionEvent e) {
-//						System.out.println("s");
-//						
-//						// TODO Auto-generated method stub
-//						
-//					}
-//			
-//				});
-//		
+		((recordButton) compMap.get("recordButton")).addActionListener(new ActionListener() 
+				{
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						File record=fileChooser.saveFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
+						if (record!=null)
+						{
+					        JOptionPane.showMessageDialog(null, "Start recording", "InfoBox: " + "warning", JOptionPane.INFORMATION_MESSAGE);
+							checkRecord=true;
+							recorder = new AudioRecorder(record);
+							recorder.start();
+							((recordButton) compMap.get("stopButton")).addActionListener(new ActionListener() 
+							{
+
+								@Override
+								public void actionPerformed(ActionEvent e) {
+									if (checkRecord)
+									{
+								        
+										recorder.finish();
+										JOptionPane.showMessageDialog(null, "Record stoped", "InfoBox: " + "Finish", JOptionPane.INFORMATION_MESSAGE);
+									}
+									// TODO Auto-generated method stub
+									
+								}
+						
+							});
+						}
+						// TODO Auto-generated method stub
+						
+					}
+			
+				});
+		
+	
+		
 		
 	}
 	

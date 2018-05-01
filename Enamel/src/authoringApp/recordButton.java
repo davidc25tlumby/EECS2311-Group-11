@@ -14,12 +14,13 @@ public class recordButton extends JLabel {
 
 	  public recordButton(String msg) {
 
-	    super(msg);
+	    super();
 	    try {
-        	Image img = ImageIO.read(getClass().getResource("resources/mic14.png"));
+        	Image img = ImageIO.read(getClass().getResource(msg));
         	setIcon(new ImageIcon(img));
         } catch (Exception ex) {
         	System.out.println(ex);
+        	System.out.println("s");
        	}
 	    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	    addMouseListener(new MouseAdapter() {

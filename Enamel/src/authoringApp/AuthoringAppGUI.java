@@ -86,7 +86,9 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 	 */
 	private void initComponents() {
 
-        recordButton = new recordButton("");
+        recordButton = new recordButton("resources/mic14.png");
+        stopButton = new recordButton("resources/stop.png");
+
 
         scenarioScrollPane = new javax.swing.JScrollPane();
         scenarioPane = new javax.swing.JTextPane();
@@ -351,6 +353,9 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         
         recordButton.setName("recordButton");
         authoringAppMenuBar.add(recordButton);
+        
+        stopButton.setName("stopButton");
+        authoringAppMenuBar.add(stopButton);
 
         setJMenuBar(authoringAppMenuBar);
 
@@ -477,6 +482,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 		});
 	}
     private recordButton recordButton; 
+    private recordButton stopButton; 
 
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuBar authoringAppMenuBar;
