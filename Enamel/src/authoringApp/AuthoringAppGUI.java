@@ -349,6 +349,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 
         authoringAppMenuBar.add(helpMenu);
         
+        recordButton.setName("recordButton");
         authoringAppMenuBar.add(recordButton);
 
         setJMenuBar(authoringAppMenuBar);
