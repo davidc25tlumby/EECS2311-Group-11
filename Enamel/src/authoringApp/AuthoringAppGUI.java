@@ -18,7 +18,6 @@ import javax.swing.JMenu;
  * @author Xiahan Chen, Huy Hoang Minh Cu, Qasim Mahir
  */
 public class AuthoringAppGUI extends javax.swing.JFrame {
-    private JLabel recordButton; 
 	/**
 	 * 
 	 */
@@ -31,14 +30,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 	 */
 	public AuthoringAppGUI() {
 		initComponents();
-        recordButton = new javax.swing.JLabel();
-        try {
-        	Image img = ImageIO.read(getClass().getResource("resources/mic14.png"));
-        	recordButton.setIcon(new ImageIcon(img));
-        } catch (Exception ex) {
-        	System.out.println(ex);
-       	}
-        authoringAppMenuBar.add(recordButton);
+       
 		createCompMap();
 	}
 
@@ -52,6 +44,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 			if (compList.get(i).getName() != null) {
 				//System.out.println(compList.get(i).getName());
 				this.compMap.put(compList.get(i).getName(), compList.get(i));
+				System.out.println(compList.get(i).getName());
 			}
 		}
 	}
@@ -92,6 +85,8 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 	 * Initializes all the components within this JFrame.
 	 */
 	private void initComponents() {
+
+        recordButton = new recordButton("");
 
         scenarioScrollPane = new javax.swing.JScrollPane();
         scenarioPane = new javax.swing.JTextPane();
@@ -353,6 +348,8 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         helpMenu.add(aboutMenuItem);
 
         authoringAppMenuBar.add(helpMenu);
+        
+        authoringAppMenuBar.add(recordButton);
 
         setJMenuBar(authoringAppMenuBar);
 
@@ -478,6 +475,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 			}
 		});
 	}
+    private recordButton recordButton; 
 
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuBar authoringAppMenuBar;

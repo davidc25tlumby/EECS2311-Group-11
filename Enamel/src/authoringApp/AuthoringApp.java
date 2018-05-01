@@ -814,6 +814,7 @@ public class AuthoringApp {
 				}
 			}
 		});
+		
 		((JMenuItem) compMap.get("saveMenuItem")).addActionListener(new ActionListener() {
 
 			@Override
@@ -874,12 +875,15 @@ public class AuthoringApp {
 //
 //					@Override
 //					public void actionPerformed(ActionEvent e) {
+//						System.out.println("s");
 //						
 //						// TODO Auto-generated method stub
 //						
 //					}
 //			
 //				});
+//		
+		
 	}
 	
 	/**

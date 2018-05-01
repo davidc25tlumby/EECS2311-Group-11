@@ -12,9 +12,9 @@ public class AudioRecorder {
     static final long RECORD_TIME = 60000;  // 1 minute
  
     // path of the wav file
-    File wavFile = new File("E:/Test/RecordAudio.wav");
+    File wavFile = new File("FactoryScenarios/AudioFiles/test.wav");
  
-    // format of audio file
+    // format of audio filed
     AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE;
  
     // the line from which audio data is captured
