@@ -82,10 +82,9 @@ public class AudioRecorder {
 
 	void start() {
 		try {
-		     new CaptureThread().start();
+			new CaptureThread().start();
 
-		}catch (Exception e)
-		{
+		} catch (Exception e) {
 			System.out.println(e);
 		}
 	}
