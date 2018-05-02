@@ -104,17 +104,17 @@ public class JTextPaneController extends JTextPane {
 	 * @param i
 	 *            The id to be inserted after.
 	 */
-	public void addElement(String temp, int i) {
-		e = doc.getElement(new Integer(i - 1).toString());
-
+	public int addElement(String temp, int i) {
+		e = doc.getElement(new Integer(i ).toString());
+		int iTemp=doc.getLength()+1;
 		try {
-			doc.insertAfterEnd(e, "<p id=\"" + i + "\">" + temp + "</p>");
+			doc.insertAfterEnd(e, "<p id=\"" + iTemp + "\">" + temp + "</p>");
 		} catch (BadLocationException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-
+		return iTemp;
 	}
 	
 	public void addElement(String temp){
@@ -127,6 +127,7 @@ public class JTextPaneController extends JTextPane {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+		
 	}
 	
 	public void removeElement(int i){
@@ -137,12 +138,12 @@ public class JTextPaneController extends JTextPane {
 	public void removeAttribute(int i){
 		e = doc.getElement(new Integer(i).toString());
 		doc.setParagraphAttributes(e.getStartOffset(),0 , white, false);	
-		System.out.println(tp.getText());
+//		System.out.println(tp.getText());
 	}
 	
 	public void setAttribute(int i){
 		e = doc.getElement(new Integer(i).toString());
 		doc.setParagraphAttributes(e.getStartOffset(), 0, highlight, false);
-		System.out.println(tp.getText());
+//		System.out.println(tp.getText());
 	}
 }

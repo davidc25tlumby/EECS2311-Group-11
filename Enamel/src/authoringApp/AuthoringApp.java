@@ -109,9 +109,9 @@ public class AuthoringApp {
 				// 1);
 				// controller.removeAttribute("test", 1);
 				if (currentLine > 0) {
-					controller.removeAttribute(currentLine);
+					controller.removeAttribute(id.get(currentLine));
 					currentLine--;
-					controller.setAttribute(currentLine);
+					controller.setAttribute(id.get(currentLine));
 				}
 			}
 
@@ -129,9 +129,9 @@ public class AuthoringApp {
 				// TODO Auto-generated method stub
 				System.out.println("nav down");
 				if (currentLine != fileStr.size()) {
-					controller.removeAttribute(currentLine);
+					controller.removeAttribute(id.get(currentLine));
 					currentLine++;
-					controller.setAttribute(currentLine);
+					controller.setAttribute(id.get(currentLine));
 				}
 			}
 
@@ -182,9 +182,9 @@ public class AuthoringApp {
 				// 1);
 				// controller.removeAttribute("test", 1);
 				if (currentLine != 0) {
-					controller.removeAttribute(currentLine);
+					controller.removeAttribute(id.get(currentLine));
 					currentLine--;
-					controller.setAttribute(currentLine);
+					controller.setAttribute(id.get(currentLine));
 				}
 			}
 
@@ -202,9 +202,9 @@ public class AuthoringApp {
 				// TODO Auto-generated method stub
 				System.out.println("nav down");
 				if (currentLine != fileStr.size()) {
-					controller.removeAttribute(currentLine);
+					controller.removeAttribute(id.get(currentLine));
 					currentLine++;
-					controller.setAttribute(currentLine);
+					controller.setAttribute(id.get(currentLine));
 				}
 			}
 
@@ -255,9 +255,9 @@ public class AuthoringApp {
 				// 1);
 				// controller.removeAttribute("test", 1);
 				if (currentLine != 0) {
-					controller.removeAttribute(currentLine);
+					controller.removeAttribute(id.get(currentLine));
 					currentLine--;
-					controller.setAttribute(currentLine);
+					controller.setAttribute(id.get(currentLine));
 				}
 			}
 
@@ -275,9 +275,9 @@ public class AuthoringApp {
 				// TODO Auto-generated method stub
 				System.out.println("nav down");
 				if (currentLine != fileStr.size()) {
-					controller.removeAttribute(currentLine);
+					controller.removeAttribute(id.get(currentLine));
 					currentLine++;
-					controller.setAttribute(currentLine);
+					controller.setAttribute(id.get(currentLine));
 				}
 			}
 
@@ -332,9 +332,11 @@ public class AuthoringApp {
 				} else if (v == 1) {
 					illegalArgumentException("string");
 				} else if (v == 2) {
-					id.add(id.getLast() + 1);
-					fileStr.add(temp);
-					controller.addElement(temp, currentLine - 1);
+					fileStr.add(currentLine+1,temp);
+					int idTemp=controller.addElement(temp, currentLine );
+					
+					id.add(currentLine+1,idTemp);
+
 				}
 			}
 
@@ -361,9 +363,10 @@ public class AuthoringApp {
 						if (isNumeric(temp)) {
 							n = Integer.parseInt(temp);
 							if (n >= 0) {
-								id.add(id.getLast() + 1);
-								fileStr.add("/~pause:" + n);
-								controller.addElement("/~pause:" + n, id.getLast());
+								fileStr.add(currentLine+1,"/~pause:" + n);
+								int idTemp=controller.addElement("/~pause:" + n, currentLine);
+								id.add(currentLine+1,idTemp);
+
 							} else {
 								illegalArgumentException("int");
 							}
@@ -398,9 +401,10 @@ public class AuthoringApp {
 						if (isNumeric(s[0]) && !isNumeric(s[1])) {
 							n = Integer.parseInt(s[0]);
 							if (n >= 0 && n < col) {
-								id.add(id.getLast() + 1);
-								fileStr.add("/~skip-button:" + temp);
-								controller.addElement("/~skip-button:" + temp, id.getLast());
+								fileStr.add(currentLine+1,"/~skip-button:" + temp);
+								int idTemp=controller.addElement("/~skip-button:" + temp, currentLine);
+								id.add(currentLine+1,idTemp);
+
 							} else {
 								indexOutOfBoundsException("Button");
 							}
@@ -431,9 +435,10 @@ public class AuthoringApp {
 						illegalArgumentException("string");
 					} else {
 						if (!isNumeric(temp)) {
-							id.add(id.getLast() + 1);
-							fileStr.add("/~" + temp);
-							controller.addElement("/~" + temp, id.getLast());
+							fileStr.add(currentLine+1,"/~" + temp);
+							int idTemp=controller.addElement("/~" + temp, currentLine);
+							id.add(currentLine+1,idTemp);
+
 						} else {
 							illegalArgumentException("string");
 						}
@@ -447,9 +452,10 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				id.add(id.getLast() + 1);
-				fileStr.add("/~user-input");
-				controller.addElement("/~user-input", id.getLast());
+				fileStr.add(currentLine+1,"/~user-input");
+				int idTemp=controller.addElement("/~user-input", currentLine);
+				id.add(currentLine+1,idTemp);
+
 			}
 
 		});
@@ -475,9 +481,10 @@ public class AuthoringApp {
 						if (isNumeric(temp)) {
 							n = Integer.parseInt(temp);
 							if (n >= 0 && n < col) {
-								id.add(id.getLast() + 1);
-								fileStr.add("/~pause:" + n);
-								controller.addElement("/~repeat-button:" + n, id.getLast());
+								fileStr.add(currentLine+1,"/~pause:" + n);
+								int idTemp=controller.addElement("/~repeat-button:" + n, currentLine);
+								id.add(currentLine+1,idTemp);
+
 							} else {
 								indexOutOfBoundsException("Button");
 							}
@@ -493,9 +500,10 @@ public class AuthoringApp {
 		((JButton) compMap.get("insertRepeat")).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				id.add(id.getLast() + 1);
-				fileStr.add("/~repeat");
-				controller.addElement("/~repeat", id.getLast());
+				fileStr.add(currentLine+1,"/~repeat");
+				int idTemp=controller.addElement("/~repeat", currentLine);
+				id.add(currentLine+1,idTemp);
+
 			}
 
 		});
@@ -503,9 +511,10 @@ public class AuthoringApp {
 		((JButton) compMap.get("insertEndRepeat")).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				id.add(id.getLast() + 1);
-				fileStr.add("/~endrepeat");
-				controller.addElement("/~endrepeat", id.getLast());
+				fileStr.add(currentLine+1,"/~endrepeat");
+				int idTemp=controller.addElement("/~endrepeat", currentLine);
+				id.add(currentLine+1,idTemp);
+
 			}
 
 		});
@@ -513,9 +522,10 @@ public class AuthoringApp {
 		((JButton) compMap.get("insertResetButtons")).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				id.add(id.getLast() + 1);
-				fileStr.add("/~reset-buttons");
-				controller.addElement("/~reset-buttons", id.getLast());
+				fileStr.add(currentLine+1,"/~reset-buttons");
+				int idTemp=controller.addElement("/~reset-buttons", currentLine);
+				id.add(currentLine+1,idTemp);
+
 			}
 		});
 
@@ -524,9 +534,10 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				f = fileChooser.openFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
 				if (f != null) {
-					fileStr.add("/~sound:" + f.getName());
-					id.add(id.getLast() + 1);
-					controller.addElement("/~sound:" + f.getName(), id.getLast());
+					fileStr.add(currentLine+1,"/~sound:" + f.getName());
+					int idTemp=controller.addElement("/~sound:" + f.getName(), currentLine);
+					id.add(currentLine+1,idTemp);
+
 				}
 			}
 		});
@@ -551,15 +562,17 @@ public class AuthoringApp {
 						if (temp.length() > cell) {
 							illegalArgumentException("string");
 						} else {
-							id.add(id.getLast() + 1);
-							fileStr.add("/~disp-string:" + temp);
-							controller.addElement("/~disp-string:" + temp, id.getLast());
+							fileStr.add(currentLine+1,"/~disp-string:" + temp);
+							int idTemp=controller.addElement("/~disp-string:" + temp, currentLine);
+							id.add(currentLine+1,idTemp);
+
 						}
 					}
 				} else if (cbStr.equals("/~disp-clearAll")) {
-					fileStr.add("/~disp-clearAll");
-					id.add(id.getLast() + 1);
-					controller.addElement("/~disp-clearAll", id.getLast());
+					fileStr.add(currentLine,"/~disp-clearAll");
+					int idTemp=controller.addElement("/~disp-clearAll", currentLine);
+					id.add(currentLine+1,idTemp);
+
 				} else if (cbStr.equals("/~disp-clear-cell:int")) {
 					if (v == 0) {
 						nullArgumentException();
@@ -572,9 +585,10 @@ public class AuthoringApp {
 							if (isNumeric(temp)) {
 								n = Integer.parseInt(temp);
 								if (n >= 0 && n < cell) {
-									id.add(id.getLast() + 1);
-									fileStr.add("/~disp-clear-cell:" + temp);
-									controller.addElement("/~disp-clear-cell:" + temp, id.getLast());
+									fileStr.add(currentLine+1,"/~disp-clear-cell:" + temp);
+									int idTemp=controller.addElement("/~disp-clear-cell:" + temp, currentLine);
+									id.add(currentLine+1,idTemp);
+
 								} else {
 									indexOutOfBoundsException("Cell");
 								}
@@ -595,9 +609,10 @@ public class AuthoringApp {
 							if (isNumeric(s[0]) && isBinaryChar(s[1])) {
 								n = Integer.parseInt(s[0]);
 								if (n >= 0 && n < cell) {
-									id.add(id.getLast() + 1);
-									fileStr.add("/~disp-cell-pins:" + temp);
-									controller.addElement("/~disp-cell-pins:" + temp, id.getLast());
+									fileStr.add(currentLine+1,"/~disp-cell-pins:" + temp);
+									int idTemp=controller.addElement("/~disp-cell-pins:" + temp, currentLine);
+									id.add(currentLine+1,idTemp);
+
 								} else {
 									indexOutOfBoundsException("Cell");
 								}
@@ -618,9 +633,10 @@ public class AuthoringApp {
 							if (isNumeric(s[0]) && isChar(s[1])) {
 								n = Integer.parseInt(s[0]);
 								if (n >= 0 && n < cell) {
-									id.add(id.getLast() + 1);
-									fileStr.add("/~disp-cell-char:" + temp);
-									controller.addElement("/~disp-cell-char:" + temp, id.getLast());
+									fileStr.add(currentLine+1,"/~disp-cell-char:" + temp);
+									int idTemp=controller.addElement("/~disp-cell-char:" + temp, currentLine);
+									id.add(currentLine+1,idTemp);
+
 								} else {
 									indexOutOfBoundsException("Cell");
 								}
@@ -642,9 +658,10 @@ public class AuthoringApp {
 								n = Integer.parseInt(s[0]);
 								m = Integer.parseInt(s[1]);
 								if (n >= 0 && n < cell && m >= 0 && m < 8) {
-									id.add(id.getLast() + 1);
-									fileStr.add("/~disp-cell-raise:" + temp);
-									controller.addElement("/~disp-cell-raise:" + temp, id.getLast());
+									fileStr.add(currentLine+1,"/~disp-cell-raise:" + temp);
+									int idTemp=controller.addElement("/~disp-cell-raise:" + temp, currentLine);
+									id.add(currentLine+1,idTemp);
+
 								} else {
 									indexOutOfBoundsException("Cell");
 								}
@@ -668,9 +685,10 @@ public class AuthoringApp {
 								n = Integer.parseInt(s[0]);
 								m = Integer.parseInt(s[1]);
 								if (n >= 0 && n < cell && m >= 0 && m < 8) {
-									id.add(id.getLast() + 1);
-									fileStr.add("/~disp-cell-lower:" + temp);
-									controller.addElement("/~disp-cell-lower:" + temp, id.getLast());
+									fileStr.add(currentLine+1,"/~disp-cell-lower:" + temp);
+									int idTemp=controller.addElement("/~disp-cell-lower:" + temp, currentLine);
+									id.add(currentLine+1,idTemp);
+
 								} else {
 									indexOutOfBoundsException("Cell");
 								}
