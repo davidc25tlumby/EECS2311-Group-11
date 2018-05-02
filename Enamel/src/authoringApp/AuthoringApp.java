@@ -774,6 +774,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				gui.setTitle("Authoring App - " + currentFile.getName());
 				SaveAsFile save = new SaveAsFile("txt", new File(currentFile.getAbsolutePath()));
 				try {
 					save.stringArrayToFile(fileStr);
@@ -881,6 +882,7 @@ public class AuthoringApp {
 	protected static void stateChanged() {
 		if (isOpened) {
 			// System.out.println(true);
+			compMap.get("saveMenuItem").setEnabled(true);
 			compMap.get("saveAsMenuItem").setEnabled(true);
 			compMap.get("insertText").setEnabled(true);
 			compMap.get("insertPause").setEnabled(true);
