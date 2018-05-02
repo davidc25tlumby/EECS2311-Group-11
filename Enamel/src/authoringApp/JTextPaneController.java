@@ -104,17 +104,15 @@ public class JTextPaneController extends JTextPane {
 	 * @param i
 	 *            The id to be inserted after.
 	 */
-	public int addElement(String temp, int i) {
+	public void addElement(String temp, int i, int j) {
 		e = doc.getElement(new Integer(i ).toString());
-		int iTemp=doc.getLength()+1;
 		try {
-			doc.insertAfterEnd(e, "<p id=\"" + iTemp + "\">" + temp + "</p>");
+			doc.insertAfterEnd(e, "<p id=\"" + j + "\">" + temp + "</p>");
 		} catch (BadLocationException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		return iTemp;
 	}
 	
 	public void addElement(String temp){

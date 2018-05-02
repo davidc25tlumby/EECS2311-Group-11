@@ -27,6 +27,7 @@ public class AuthoringApp {
 	private static JPanel errorPanel;
 	private static HashMap<String, Component> compMap;
 	private static JTextPaneController controller, consoleController;
+	private static int idCount;
 
 	private static int currentLine = 2, cell = 0, col = 0;
 	private static boolean isSaved = true, isOpened = false;
@@ -169,18 +170,11 @@ public class AuthoringApp {
 
 		am2.put("navUp", new AbstractAction() {
 
-			/**
-			 * 
-			 */
 			private static final long serialVersionUID = -5971069686488190353L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				System.out.println("nav up");
-				// controller.addElement("<p class=\"highlight\"> testing </p>", currentLine -
-				// 1);
-				// controller.removeAttribute("test", 1);
 				if (currentLine != 0) {
 					controller.removeAttribute(id.get(currentLine));
 					currentLine--;
@@ -192,9 +186,6 @@ public class AuthoringApp {
 
 		am2.put("navDown", new AbstractAction() {
 
-			/**
-			 * 
-			 */
 			private static final long serialVersionUID = 6683017700153087856L;
 
 			@Override
@@ -212,14 +203,10 @@ public class AuthoringApp {
 
 		am2.put("newLine", new AbstractAction() {
 
-			/**
-			 * 
-			 */
 			private static final long serialVersionUID = -7879264567501986325L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				System.out.println("new ln");
 			}
 
@@ -332,11 +319,7 @@ public class AuthoringApp {
 				} else if (v == 1) {
 					illegalArgumentException("string");
 				} else if (v == 2) {
-					fileStr.add(currentLine+1,temp);
-					int idTemp=controller.addElement(temp, currentLine );
-					
-					id.add(currentLine+1,idTemp);
-
+					addLine(temp);
 				}
 			}
 
@@ -363,10 +346,7 @@ public class AuthoringApp {
 						if (isNumeric(temp)) {
 							n = Integer.parseInt(temp);
 							if (n >= 0) {
-								fileStr.add(currentLine+1,"/~pause:" + n);
-								int idTemp=controller.addElement("/~pause:" + n, currentLine);
-								id.add(currentLine+1,idTemp);
-
+								addLine("/~pause:" + n);
 							} else {
 								illegalArgumentException("int");
 							}
@@ -401,10 +381,7 @@ public class AuthoringApp {
 						if (isNumeric(s[0]) && !isNumeric(s[1])) {
 							n = Integer.parseInt(s[0]);
 							if (n >= 0 && n < col) {
-								fileStr.add(currentLine+1,"/~skip-button:" + temp);
-								int idTemp=controller.addElement("/~skip-button:" + temp, currentLine);
-								id.add(currentLine+1,idTemp);
-
+								addLine("/~skip-button:" + temp);
 							} else {
 								indexOutOfBoundsException("Button");
 							}
@@ -435,10 +412,7 @@ public class AuthoringApp {
 						illegalArgumentException("string");
 					} else {
 						if (!isNumeric(temp)) {
-							fileStr.add(currentLine+1,"/~" + temp);
-							int idTemp=controller.addElement("/~" + temp, currentLine);
-							id.add(currentLine+1,idTemp);
-
+							addLine("/~" + temp);
 						} else {
 							illegalArgumentException("string");
 						}
@@ -452,9 +426,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				fileStr.add(currentLine+1,"/~user-input");
-				int idTemp=controller.addElement("/~user-input", currentLine);
-				id.add(currentLine+1,idTemp);
+				addLine("/~user-input");
 
 			}
 
@@ -481,10 +453,7 @@ public class AuthoringApp {
 						if (isNumeric(temp)) {
 							n = Integer.parseInt(temp);
 							if (n >= 0 && n < col) {
-								fileStr.add(currentLine+1,"/~pause:" + n);
-								int idTemp=controller.addElement("/~repeat-button:" + n, currentLine);
-								id.add(currentLine+1,idTemp);
-
+								addLine("/~repeat-button:" + n);
 							} else {
 								indexOutOfBoundsException("Button");
 							}
@@ -500,10 +469,7 @@ public class AuthoringApp {
 		((JButton) compMap.get("insertRepeat")).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				fileStr.add(currentLine+1,"/~repeat");
-				int idTemp=controller.addElement("/~repeat", currentLine);
-				id.add(currentLine+1,idTemp);
-
+				addLine("/~repeat");
 			}
 
 		});
@@ -511,10 +477,7 @@ public class AuthoringApp {
 		((JButton) compMap.get("insertEndRepeat")).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				fileStr.add(currentLine+1,"/~endrepeat");
-				int idTemp=controller.addElement("/~endrepeat", currentLine);
-				id.add(currentLine+1,idTemp);
-
+				addLine("/~endrepeat");
 			}
 
 		});
@@ -522,10 +485,7 @@ public class AuthoringApp {
 		((JButton) compMap.get("insertResetButtons")).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				fileStr.add(currentLine+1,"/~reset-buttons");
-				int idTemp=controller.addElement("/~reset-buttons", currentLine);
-				id.add(currentLine+1,idTemp);
-
+				addLine("/~reset-buttons");
 			}
 		});
 
@@ -534,10 +494,7 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				f = fileChooser.openFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
 				if (f != null) {
-					fileStr.add(currentLine+1,"/~sound:" + f.getName());
-					int idTemp=controller.addElement("/~sound:" + f.getName(), currentLine);
-					id.add(currentLine+1,idTemp);
-
+					addLine("/~sound:" + f.getName());
 				}
 			}
 		});
@@ -562,17 +519,11 @@ public class AuthoringApp {
 						if (temp.length() > cell) {
 							illegalArgumentException("string");
 						} else {
-							fileStr.add(currentLine+1,"/~disp-string:" + temp);
-							int idTemp=controller.addElement("/~disp-string:" + temp, currentLine);
-							id.add(currentLine+1,idTemp);
-
+							addLine("/~disp-string:" + temp);
 						}
 					}
 				} else if (cbStr.equals("/~disp-clearAll")) {
-					fileStr.add(currentLine,"/~disp-clearAll");
-					int idTemp=controller.addElement("/~disp-clearAll", currentLine);
-					id.add(currentLine+1,idTemp);
-
+					addLine("/~disp-clearAll");
 				} else if (cbStr.equals("/~disp-clear-cell:int")) {
 					if (v == 0) {
 						nullArgumentException();
@@ -585,10 +536,7 @@ public class AuthoringApp {
 							if (isNumeric(temp)) {
 								n = Integer.parseInt(temp);
 								if (n >= 0 && n < cell) {
-									fileStr.add(currentLine+1,"/~disp-clear-cell:" + temp);
-									int idTemp=controller.addElement("/~disp-clear-cell:" + temp, currentLine);
-									id.add(currentLine+1,idTemp);
-
+									addLine("/~disp-clear-cell:" + temp);
 								} else {
 									indexOutOfBoundsException("Cell");
 								}
@@ -609,10 +557,7 @@ public class AuthoringApp {
 							if (isNumeric(s[0]) && isBinaryChar(s[1])) {
 								n = Integer.parseInt(s[0]);
 								if (n >= 0 && n < cell) {
-									fileStr.add(currentLine+1,"/~disp-cell-pins:" + temp);
-									int idTemp=controller.addElement("/~disp-cell-pins:" + temp, currentLine);
-									id.add(currentLine+1,idTemp);
-
+									addLine("/~disp-cell-pins:" + temp);
 								} else {
 									indexOutOfBoundsException("Cell");
 								}
@@ -633,10 +578,7 @@ public class AuthoringApp {
 							if (isNumeric(s[0]) && isChar(s[1])) {
 								n = Integer.parseInt(s[0]);
 								if (n >= 0 && n < cell) {
-									fileStr.add(currentLine+1,"/~disp-cell-char:" + temp);
-									int idTemp=controller.addElement("/~disp-cell-char:" + temp, currentLine);
-									id.add(currentLine+1,idTemp);
-
+									addLine("/~disp-cell-char:" + temp);
 								} else {
 									indexOutOfBoundsException("Cell");
 								}
@@ -658,10 +600,7 @@ public class AuthoringApp {
 								n = Integer.parseInt(s[0]);
 								m = Integer.parseInt(s[1]);
 								if (n >= 0 && n < cell && m >= 0 && m < 8) {
-									fileStr.add(currentLine+1,"/~disp-cell-raise:" + temp);
-									int idTemp=controller.addElement("/~disp-cell-raise:" + temp, currentLine);
-									id.add(currentLine+1,idTemp);
-
+									addLine("/~disp-cell-char:" + temp);
 								} else {
 									indexOutOfBoundsException("Cell");
 								}
@@ -685,10 +624,7 @@ public class AuthoringApp {
 								n = Integer.parseInt(s[0]);
 								m = Integer.parseInt(s[1]);
 								if (n >= 0 && n < cell && m >= 0 && m < 8) {
-									fileStr.add(currentLine+1,"/~disp-cell-lower:" + temp);
-									int idTemp=controller.addElement("/~disp-cell-lower:" + temp, currentLine);
-									id.add(currentLine+1,idTemp);
-
+									addLine("/~disp-cell-lower:" + temp);
 								} else {
 									indexOutOfBoundsException("Cell");
 								}
@@ -714,45 +650,54 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				if (!isSaved) {
-					JOptionPane.showMessageDialog(gui, "please save first");
+				if (!isSaved){
+					//execute save then resume action
 				}
-				initializeComponents();
-				isSaved = false;
-				NewFileGUI temp = new NewFileGUI();
-				temp.setVisible(true);
-				HashMap<String, Component> tempMap = ((NewFileGUI) temp).getCompMap();
-				JTextField numCell = (JTextField) tempMap.get("numCell");
-				JTextField numCol = (JTextField) tempMap.get("numCol");
-				fileStr = new LinkedList<String>();
-				id = new LinkedList<Integer>();
-				((JButton) tempMap.get("createButton")).addActionListener(new ActionListener() {
+				else{
+					initializeComponents();
+					isSaved = false;
+					NewFileGUI temp = new NewFileGUI();
+					temp.setVisible(true);
+					HashMap<String, Component> tempMap = ((NewFileGUI) temp).getCompMap();
+					JTextField numCell = (JTextField) tempMap.get("numCell");
+					JTextField numCol = (JTextField) tempMap.get("numCol");
+					
+					((JButton) tempMap.get("createButton")).addActionListener(new ActionListener() {
 
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
+						public void actionPerformed(java.awt.event.ActionEvent evt) {
 
-						cell = Integer.parseInt(numCell.getText());
-						col = Integer.parseInt(numCol.getText());
-						isOpened = true;
-						stateChanged();
+							String cellStr = numCell.getText();
+							String colCell = numCol.getText();
+							if (isNumeric(cellStr) && isNumeric(colCell)){
+								cell = Integer.parseInt(numCell.getText());
+								col = Integer.parseInt(numCol.getText());
+								
+								isOpened = true;
+								isSaved = false;
+								stateChanged();
 
-						fileStr.add("Cell " + cell);
-						fileStr.add("Button " + col);
-						((JTextField) compMap.get("inputTextField")).setText("");
-						id = controller.newDocCreated(fileStr);
+								fileStr.add("Cell " + cell);
+								fileStr.add("Button " + col);
+								((JTextField) compMap.get("inputTextField")).setText("");
+								id = controller.newDocCreated(fileStr);
+								idCount = id.getLast();
+								currentLine = 0;
+								temp.dispose();
+							}
+							else{
+								//throw invalid input
+							}
+						}
 
-						temp.dispose();
-					}
+					});
 
-				});
-
-				((JButton) tempMap.get("cancelButton")).addActionListener(new ActionListener() {
-					public void actionPerformed(java.awt.event.ActionEvent evt) {
-						// cell = Integer.parseInt(numCell.getText());
-						// col = Integer.parseInt(numCol.getText());;
-						isOpened = false;
-						temp.dispose();
-					}
-				});
+					((JButton) tempMap.get("cancelButton")).addActionListener(new ActionListener() {
+						public void actionPerformed(java.awt.event.ActionEvent evt) {
+							isOpened = false;
+							temp.dispose();
+						}
+					});
+				}
 
 			}
 
@@ -767,6 +712,7 @@ public class AuthoringApp {
 				}
 
 				if (!isSaved) {
+					
 				}
 				try {
 					initializeComponents();
@@ -915,8 +861,6 @@ public class AuthoringApp {
 			compMap.get("displayComboBox").setEnabled(true);
 			compMap.get("displayAddButton").setEnabled(true);
 			compMap.get("editRemoveLine").setEnabled(true);
-			compMap.get("upButton").setEnabled(true);
-			compMap.get("downButton").setEnabled(true);
 		}
 	}
 
@@ -1040,5 +984,15 @@ public class AuthoringApp {
 			}
 			return false;
 		}
+	}
+	
+	public static void addLine(String temp){
+		fileStr.add(currentLine + 1,temp);
+		idCount++;
+		id.add(currentLine + 1, idCount);
+		controller.addElement(temp, id.get(currentLine), idCount);
+		controller.removeAttribute(id.get(currentLine));
+		currentLine++;
+		controller.setAttribute(id.get(currentLine));
 	}
 }
