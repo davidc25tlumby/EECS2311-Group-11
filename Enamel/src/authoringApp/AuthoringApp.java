@@ -343,6 +343,18 @@ public class AuthoringApp {
 	 * with.
 	 */
 	protected static void addEditorButtons() {
+		
+		((JButton) compMap.get("testButton")).addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				controller.removeElement(id.get(4));
+				controller.printText();
+			}
+			
+		});
+		
 		// TODO Auto-generated method stub
 		((JButton) compMap.get("insertText")).addActionListener(new ActionListener() {
 

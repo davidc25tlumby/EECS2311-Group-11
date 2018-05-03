@@ -144,4 +144,8 @@ public class JTextPaneController extends JTextPane {
 		doc.setParagraphAttributes(e.getStartOffset(), 0, highlight, false);
 		//System.out.println(tp.getText());
 	}
+	
+	public void printText(){
+		System.out.println(tp.getText());
+	}
 }
