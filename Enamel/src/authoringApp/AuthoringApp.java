@@ -155,6 +155,12 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("new ln");
+				if (currentLine + 1 != fileStr.size()){
+					addLine("");
+				}
+				else if (fileStr.getLast() != ""){
+					addLine("");
+				}
 			}
 
 		});
@@ -169,7 +175,19 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("del ln");
+				if (currentLine == 0){
+					controller.removeElement(id.getFirst());
+					fileStr.removeFirst();
+					id.removeFirst();
+					controller.setAttribute(id.getFirst());
+				}
+				else{
+					controller.removeElement(id.get(currentLine));
+					fileStr.remove(currentLine);
+					id.remove(currentLine);
+					currentLine--;
+					controller.setAttribute(id.get(currentLine));
+				}
 			}
 
 		});
@@ -224,6 +242,12 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("new ln");
+				if (currentLine + 1 != fileStr.size()){
+					addLine("");
+				}
+				else if (fileStr.getLast() != ""){
+					addLine("");
+				}
 			}
 
 		});
@@ -238,7 +262,19 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("del ln");
+				if (currentLine == 0){
+					controller.removeElement(id.getFirst());
+					fileStr.removeFirst();
+					id.removeFirst();
+					controller.setAttribute(id.getFirst());
+				}
+				else{
+					controller.removeElement(id.get(currentLine));
+					fileStr.remove(currentLine);
+					id.remove(currentLine);
+					currentLine--;
+					controller.setAttribute(id.get(currentLine));
+				}
 			}
 
 		});
@@ -317,7 +353,12 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("new ln");
+				if (currentLine + 1 != fileStr.size()){
+					addLine("");
+				}
+				else if (fileStr.getLast() != ""){
+					addLine("");
+				}
 			}
 
 		});
@@ -333,6 +374,19 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("del ln");
+				if (currentLine == 0){
+					controller.removeElement(id.getFirst());
+					fileStr.removeFirst();
+					id.removeFirst();
+					controller.setAttribute(id.getFirst());
+				}
+				else{
+					controller.removeElement(id.get(currentLine));
+					fileStr.remove(currentLine);
+					id.remove(currentLine);
+					currentLine--;
+					controller.setAttribute(id.get(currentLine));
+				}
 			}
 
 		});
@@ -349,7 +403,6 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				controller.removeElement(id.get(4));
 				controller.printText();
 			}
 			
@@ -545,6 +598,25 @@ public class AuthoringApp {
 				f = fileChooser.openFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
 				if (f != null) {
 					addLine("/~sound:" + f.getName());
+				}
+			}
+		});
+		
+		((JButton) compMap.get("editRemoveLine")).addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+				if (currentLine == 0){
+					controller.removeElement(id.getFirst());
+					fileStr.removeFirst();
+					id.removeFirst();
+					controller.setAttribute(id.getFirst());
+				}
+				else{
+					controller.removeElement(id.get(currentLine));
+					fileStr.remove(currentLine);
+					id.remove(currentLine);
+					currentLine--;
+					controller.setAttribute(id.get(currentLine));
 				}
 			}
 		});
