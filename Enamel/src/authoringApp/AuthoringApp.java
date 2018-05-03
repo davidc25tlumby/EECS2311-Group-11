@@ -105,7 +105,12 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("nav up");
-				if (currentLine > 0) {
+				if (currentLine == 0){
+					controller.removeAttribute(id.getFirst());
+					currentLine = id.size() - 1;
+					controller.setAttribute(id.getLast());
+				}
+				else{
 					controller.removeAttribute(id.get(currentLine));
 					currentLine--;
 					controller.setAttribute(id.get(currentLine));
@@ -125,7 +130,12 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("nav down");
-				if (currentLine != fileStr.size()) {
+				if (currentLine + 1 == fileStr.size()){
+					controller.removeAttribute(id.getLast());
+					currentLine = 0;
+					controller.setAttribute(id.getFirst());
+				}
+				else {
 					controller.removeAttribute(id.get(currentLine));
 					currentLine++;
 					controller.setAttribute(id.get(currentLine));
@@ -171,7 +181,12 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("nav up");
-				if (currentLine != 0) {
+				if (currentLine == 0){
+					controller.removeAttribute(id.getFirst());
+					currentLine = id.size() - 1;
+					controller.setAttribute(id.getLast());
+				}
+				else{
 					controller.removeAttribute(id.get(currentLine));
 					currentLine--;
 					controller.setAttribute(id.get(currentLine));
@@ -188,7 +203,12 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("nav down");
-				if (currentLine != fileStr.size()) {
+				if (currentLine + 1 == fileStr.size()){
+					controller.removeAttribute(id.getLast());
+					currentLine = 0;
+					controller.setAttribute(id.getFirst());
+				}
+				else {
 					controller.removeAttribute(id.get(currentLine));
 					currentLine++;
 					controller.setAttribute(id.get(currentLine));
@@ -238,7 +258,17 @@ public class AuthoringApp {
 				// currentLine -
 				// 1);
 				// controller.removeAttribute("test", 1);
-				if (currentLine != 0) {
+				/*if (currentLine != 0) {
+					controller.removeAttribute(id.get(currentLine));
+					currentLine--;
+					controller.setAttribute(id.get(currentLine));
+				}*/
+				if (currentLine == 0){
+					controller.removeAttribute(id.getFirst());
+					currentLine = id.size() - 1;
+					controller.setAttribute(id.getLast());
+				}
+				else{
 					controller.removeAttribute(id.get(currentLine));
 					currentLine--;
 					controller.setAttribute(id.get(currentLine));
@@ -258,7 +288,17 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("nav down");
-				if (currentLine != fileStr.size()) {
+				/*if (currentLine != fileStr.size()) {
+					controller.removeAttribute(id.get(currentLine));
+					currentLine++;
+					controller.setAttribute(id.get(currentLine));
+				}*/
+				if (currentLine + 1 == fileStr.size()){
+					controller.removeAttribute(id.getLast());
+					currentLine = 0;
+					controller.setAttribute(id.getFirst());
+				}
+				else {
 					controller.removeAttribute(id.get(currentLine));
 					currentLine++;
 					controller.setAttribute(id.get(currentLine));
