@@ -36,9 +36,9 @@ public class AuthoringApp {
 	private static boolean checkRecord = false;
 
 	/**
-	 * Initializes the application by drawing the GUI and initializing a controller
-	 * for the JTextPane. LinkedLists are created for an id+string pair that
-	 * represents elements on the JTextPane.
+	 * Initializes the application by drawing the GUI and initializing a
+	 * controller for the JTextPane. LinkedLists are created for an id+string
+	 * pair that represents elements on the JTextPane.
 	 * 
 	 * @param args
 	 *            unused
@@ -47,7 +47,6 @@ public class AuthoringApp {
 
 		java.awt.EventQueue.invokeLater(new Runnable() {
 
-			
 			public void run() {
 
 				gui = new AuthoringAppGUI();
@@ -63,8 +62,8 @@ public class AuthoringApp {
 	}
 
 	/**
-	 * Initializes and implements the KeyBindings that will be associated with the
-	 * GUIs JFrame.
+	 * Initializes and implements the KeyBindings that will be associated with
+	 * the GUIs JFrame.
 	 */
 	protected static void addKeyBindings() {
 		// TODO Auto-generated method stub
@@ -106,9 +105,6 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("nav up");
-				// controller.addElement("<p class=\"highlight\"> testing </p>", currentLine -
-				// 1);
-				// controller.removeAttribute("test", 1);
 				if (currentLine > 0) {
 					controller.removeAttribute(id.get(currentLine));
 					currentLine--;
@@ -238,7 +234,8 @@ public class AuthoringApp {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("nav up");
-				// controller.addElement("<p class=\"highlight\"> testing </p>", currentLine -
+				// controller.addElement("<p class=\"highlight\"> testing </p>",
+				// currentLine -
 				// 1);
 				// controller.removeAttribute("test", 1);
 				if (currentLine != 0) {
@@ -302,7 +299,8 @@ public class AuthoringApp {
 	}
 
 	/**
-	 * Initializes and implements the JButtons that the users will interact with.
+	 * Initializes and implements the JButtons that the users will interact
+	 * with.
 	 */
 	protected static void addEditorButtons() {
 		// TODO Auto-generated method stub
@@ -641,7 +639,8 @@ public class AuthoringApp {
 	}
 
 	/**
-	 * Initializes and implements the JMenuItems that the user will interact with.
+	 * Initializes and implements the JMenuItems that the user will interact
+	 * with.
 	 */
 	protected static void addActionListeners() {
 
@@ -650,10 +649,9 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				if (!isSaved){
-					//execute save then resume action
-				}
-				else{
+				if (!isSaved) {
+					// execute save then resume action
+				} else {
 					initializeComponents();
 					isSaved = false;
 					NewFileGUI temp = new NewFileGUI();
@@ -661,17 +659,17 @@ public class AuthoringApp {
 					HashMap<String, Component> tempMap = ((NewFileGUI) temp).getCompMap();
 					JTextField numCell = (JTextField) tempMap.get("numCell");
 					JTextField numCol = (JTextField) tempMap.get("numCol");
-					
+
 					((JButton) tempMap.get("createButton")).addActionListener(new ActionListener() {
 
 						public void actionPerformed(java.awt.event.ActionEvent evt) {
 
 							String cellStr = numCell.getText();
 							String colCell = numCol.getText();
-							if (isNumeric(cellStr) && isNumeric(colCell)){
+							if (isNumeric(cellStr) && isNumeric(colCell)) {
 								cell = Integer.parseInt(numCell.getText());
 								col = Integer.parseInt(numCol.getText());
-								
+
 								isOpened = true;
 								isSaved = false;
 								stateChanged();
@@ -682,10 +680,10 @@ public class AuthoringApp {
 								id = controller.newDocCreated(fileStr);
 								idCount = id.getLast();
 								currentLine = 0;
+								controller.setAttribute(id.get(currentLine));
 								temp.dispose();
-							}
-							else{
-								//throw invalid input
+							} else {
+								// throw invalid input
 							}
 						}
 
@@ -706,30 +704,31 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (e.getSource().equals("loadScenarioMenuItem")) {
-					isOpened = true;
-					stateChanged();
-				}
 
 				if (!isSaved) {
-					
-				}
-				try {
-					initializeComponents();
-					f = fileChooser.openFileChooser(new File("FactoryScenarios/"), "txt");
-					if (f != null) {
-						currentFile = f;
-						gui.setTitle("Authoring App - " + currentFile.getName());
-						FileParser fp = new FileParser(f);
-						fileStr = fp.getArray();
-					}
-					id = controller.newDocCreated(fileStr);
-					isOpened = true;
-					((JTextField) compMap.get("inputTextField")).setText("");
-					stateChanged();
+					// execute save then resume action
+				} else {
+					try {
+						initializeComponents();
+						f = fileChooser.openFileChooser(new File("FactoryScenarios/"), "txt");
+						if (f != null) {
+							currentFile = f;
+							gui.setTitle("Authoring App - " + currentFile.getName());
+							FileParser fp = new FileParser(f);
+							fileStr = fp.getArray();
+						}
+						id = controller.newDocCreated(fileStr);
+						idCount = id.getLast();
+						currentLine = 0;
+						controller.setAttribute(id.get(currentLine));
+						isSaved = false;
+						isOpened = true;
+						((JTextField) compMap.get("inputTextField")).setText("");
+						stateChanged();
 
-				} catch (IOException e1) {
-					e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
@@ -907,8 +906,8 @@ public class AuthoringApp {
 	}
 
 	/**
-	 * Checks for the minimum requirements of JTextField inputs. The string should
-	 * not be empty and should not contain the token "/~".
+	 * Checks for the minimum requirements of JTextField inputs. The string
+	 * should not be empty and should not contain the token "/~".
 	 * 
 	 * @param s
 	 *            The String to check
@@ -985,9 +984,9 @@ public class AuthoringApp {
 			return false;
 		}
 	}
-	
-	public static void addLine(String temp){
-		fileStr.add(currentLine + 1,temp);
+
+	public static void addLine(String temp) {
+		fileStr.add(currentLine + 1, temp);
 		idCount++;
 		id.add(currentLine + 1, idCount);
 		controller.addElement(temp, id.get(currentLine), idCount);

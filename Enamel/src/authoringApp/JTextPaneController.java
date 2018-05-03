@@ -136,12 +136,12 @@ public class JTextPaneController extends JTextPane {
 	public void removeAttribute(int i){
 		e = doc.getElement(new Integer(i).toString());
 		doc.setParagraphAttributes(e.getStartOffset(),0 , white, false);	
-//		System.out.println(tp.getText());
+		//System.out.println(tp.getText());
 	}
 	
 	public void setAttribute(int i){
 		e = doc.getElement(new Integer(i).toString());
 		doc.setParagraphAttributes(e.getStartOffset(), 0, highlight, false);
-//		System.out.println(tp.getText());
+		//System.out.println(tp.getText());
 	}
 }
