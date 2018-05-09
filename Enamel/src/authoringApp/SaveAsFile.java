@@ -34,7 +34,7 @@ public class SaveAsFile {
 		
 		if (this.ext == "txt") {
 
-		    for (int i = 0; i < s.size(); i++) {
+		    for (int i = 0; i < s.size() - 1; i++) {
 		      fw.write(s.get(i) + "\n");
 		    }
 		    fw.close();

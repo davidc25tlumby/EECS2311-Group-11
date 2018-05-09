@@ -469,19 +469,7 @@ public class AuthoringApp {
 		((JButton) compMap.get("editRemoveLine")).addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e){
-				if (currentLine == 0){
-					controller.removeElement(id.getFirst());
-					fileStr.removeFirst();
-					id.removeFirst();
-					controller.setAttribute(id.getFirst());
-				}
-				else{
-					controller.removeElement(id.get(currentLine));
-					fileStr.remove(currentLine);
-					id.remove(currentLine);
-					currentLine--;
-					controller.setAttribute(id.get(currentLine));
-				}
+				deleteLine();
 			}
 		});
 

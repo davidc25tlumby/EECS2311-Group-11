@@ -153,11 +153,10 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         inputTextField.setText("(Insert text/argument)");
         inputTextField.setName("inputTextField"); // NOI18N
 
-        editRemoveLine.setText("Remove Line (Alt + Del)");
+        editRemoveLine.setText("Remove Line (Del)");
         editRemoveLine.setToolTipText("");
         editRemoveLine.setEnabled(false);
         editRemoveLine.setName("editRemoveLine"); // NOI18N
-        editRemoveLine.setMnemonic(KeyEvent.VK_DELETE);
 
         insertText.setText("Text (Alt + Enter)");
         insertText.setEnabled(false);
