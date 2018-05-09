@@ -55,7 +55,6 @@ public class AuthoringApp {
 				compMap = ((AuthoringAppGUI) gui).getCompMap();
 				addActionListeners();
 				addEditorButtons();
-				addKeyBindings();
 			}
 
 		});
@@ -670,6 +669,9 @@ public class AuthoringApp {
 								idCount = id.getLast();
 								currentLine = 0;
 								controller.setAttribute(id.get(currentLine));
+								controller.addElement("", Integer.toString(id.getLast()), -2);
+								fileStr.addLast("");
+								id.add(-2);
 								temp.dispose();
 							} else {
 								// throw invalid input
@@ -710,6 +712,9 @@ public class AuthoringApp {
 						idCount = id.getLast();
 						currentLine = 0;
 						controller.setAttribute(id.get(currentLine));
+						controller.addElement("", Integer.toString(id.getLast()), -2);
+						fileStr.addLast("");
+						id.add(-2);
 						isSaved = false;
 						isOpened = true;
 						((JTextField) compMap.get("inputTextField")).setText("");
@@ -836,6 +841,7 @@ public class AuthoringApp {
 	 */
 	protected static void initializeComponents() {
 		// TODO Auto-generated method stub
+		addKeyBindings();
 		fileStr = new LinkedList<String>();
 		id = new LinkedList<Integer>();
 		id.add(0);
@@ -996,18 +1002,28 @@ public class AuthoringApp {
 
 	public static void addLine(String temp) {	
 		redoNode.clear();
-
-		fileStr.add(currentLine + 1, temp);
-		idCount++;
-		id.add(currentLine + 1, idCount);
-		controller.addElement(temp, Integer.toString(id.get(currentLine)), idCount);
 		
-		DataNode tempNode = new DataNode(id.get(currentLine), idCount, temp, currentLine + 1, true);
-		undoNode.push(tempNode);
-		
-		controller.removeAttribute(id.get(currentLine));
-		currentLine++;
-		controller.setAttribute(id.get(currentLine));
+		if (fileStr.size() == 1){
+			fileStr.addFirst(temp);
+			idCount++;
+			controller.removeAttribute(id.get(currentLine));
+			id.add(currentLine, idCount);
+			controller.addElement(temp, "main", idCount);
+			controller.setAttribute(id.get(currentLine));
+		}
+		else{
+			fileStr.add(currentLine + 1, temp);
+			idCount++;
+			id.add(currentLine + 1, idCount);
+			controller.addElement(temp, Integer.toString(id.get(currentLine)), idCount);
+			
+			DataNode tempNode = new DataNode(id.get(currentLine), idCount, temp, currentLine + 1, true);
+			undoNode.push(tempNode);
+			
+			controller.removeAttribute(id.get(currentLine));
+			currentLine++;
+			controller.setAttribute(id.get(currentLine));
+		}
 		
 	}
 	
@@ -1040,28 +1056,32 @@ public class AuthoringApp {
 	}
 	
 	protected static void navigateUp() {
-		if (currentLine == 0){
-			controller.removeAttribute(id.getFirst());
-			currentLine = id.size() - 1;
-			controller.setAttribute(id.getLast());
-		}
-		else{
-			controller.removeAttribute(id.get(currentLine));
-			currentLine--;
-			controller.setAttribute(id.get(currentLine));
+		if (fileStr.size() > 2){
+			if (currentLine == 0){
+				controller.removeAttribute(id.getFirst());
+				currentLine = id.size() - 2;
+				controller.setAttribute(id.get(currentLine));
+			}
+			else{
+				controller.removeAttribute(id.get(currentLine));
+				currentLine--;
+				controller.setAttribute(id.get(currentLine));
+			}
 		}
 	}
 	
 	protected static void navigateDown() {
-		if (currentLine + 1 == fileStr.size()){
-			controller.removeAttribute(id.getLast());
-			currentLine = 0;
-			controller.setAttribute(id.getFirst());
-		}
-		else {
-			controller.removeAttribute(id.get(currentLine));
-			currentLine++;
-			controller.setAttribute(id.get(currentLine));
+		if (fileStr.size() > 2){
+			if (currentLine == fileStr.size() - 2){
+				controller.removeAttribute(id.get(currentLine));
+				currentLine = 0;
+				controller.setAttribute(id.getFirst());
+			}
+			else {
+				controller.removeAttribute(id.get(currentLine));
+				currentLine++;
+				controller.setAttribute(id.get(currentLine));
+			}
 		}
 	}
 	
@@ -1069,22 +1089,24 @@ public class AuthoringApp {
 	protected static void deleteLine() {
 		// TODO Auto-generated method stub
 		redoNode.clear();
-		if (currentLine == 0){
-			DataNode tempNode = new DataNode(-1, id.getFirst(), fileStr.getFirst(), 0, false);
-			undoNode.push(tempNode);
-			controller.removeElement(id.getFirst());
-			fileStr.removeFirst();
-			id.removeFirst();
-			controller.setAttribute(id.getFirst());
-		}
-		else{
-			DataNode tempNode = new DataNode(id.get(currentLine - 1), id.get(currentLine), fileStr.get(currentLine), currentLine, false);
-			undoNode.push(tempNode);
-			controller.removeElement(id.get(currentLine));
-			fileStr.remove(currentLine);
-			id.remove(currentLine);
-			currentLine--;
-			controller.setAttribute(id.get(currentLine));
+		if (fileStr.size() > 1){
+			if (currentLine == 0){
+				DataNode tempNode = new DataNode(-1, id.getFirst(), fileStr.getFirst(), 0, false);
+				undoNode.push(tempNode);
+				controller.removeElement(id.getFirst());
+				fileStr.removeFirst();
+				id.removeFirst();
+				controller.setAttribute(id.getFirst());
+			}
+			else{
+				DataNode tempNode = new DataNode(id.get(currentLine - 1), id.get(currentLine), fileStr.get(currentLine), currentLine, false);
+				undoNode.push(tempNode);
+				controller.removeElement(id.get(currentLine));
+				fileStr.remove(currentLine);
+				id.remove(currentLine);
+				currentLine--;
+				controller.setAttribute(id.get(currentLine));
+			}
 		}
 	}
 	
@@ -1109,7 +1131,12 @@ public class AuthoringApp {
 		controller.removeElement(currentID);
 		fileStr.remove(curLine);
 		id.remove(curLine);
-		currentLine = curLine - 1;
+		if (curLine == 0){
+			currentLine = 0;
+		}
+		else{
+			currentLine = curLine - 1;
+		}
 		controller.setAttribute(id.get(currentLine));
 	}
 	
