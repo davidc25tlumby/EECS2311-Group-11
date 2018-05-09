@@ -133,14 +133,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("new ln");
-				if (currentLine + 1 != fileStr.size()){
-					addLine("");
-				}
-				else if (fileStr.getLast() != ""){
-					addLine("");
-				}
+				newLine();
 			}
 
 		});
@@ -187,13 +180,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("new ln");
-				if (currentLine + 1 != fileStr.size()){
-					addLine("");
-				}
-				else if (fileStr.getLast() != ""){
-					addLine("");
-				}
+				newLine();
 			}
 
 		});
@@ -250,13 +237,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				if (currentLine + 1 != fileStr.size()){
-					addLine("");
-				}
-				else if (fileStr.getLast() != ""){
-					addLine("");
-				}
+				newLine();
 			}
 
 		});
@@ -871,7 +852,6 @@ public class AuthoringApp {
 	 */
 	protected static void stateChanged() {
 		if (isOpened) {
-			// System.out.println(true);
 			compMap.get("saveMenuItem").setEnabled(true);
 			compMap.get("saveAsMenuItem").setEnabled(true);
 			compMap.get("insertText").setEnabled(true);
@@ -1060,7 +1040,6 @@ public class AuthoringApp {
 	}
 	
 	protected static void navigateUp() {
-		System.out.println("nav up");
 		if (currentLine == 0){
 			controller.removeAttribute(id.getFirst());
 			currentLine = id.size() - 1;
@@ -1074,7 +1053,6 @@ public class AuthoringApp {
 	}
 	
 	protected static void navigateDown() {
-		System.out.println("nav down");
 		if (currentLine + 1 == fileStr.size()){
 			controller.removeAttribute(id.getLast());
 			currentLine = 0;
@@ -1116,7 +1094,6 @@ public class AuthoringApp {
 			id.addFirst(currentID);
 			controller.addElement(element, "main", currentID);
 			currentLine = curLine;
-			System.out.println(currentID);
 			controller.setAttribute(currentID);
 		}
 		else{
@@ -1134,5 +1111,14 @@ public class AuthoringApp {
 		id.remove(curLine);
 		currentLine = curLine - 1;
 		controller.setAttribute(id.get(currentLine));
+	}
+	
+	protected static void newLine() {
+		if (currentLine + 1 != fileStr.size()){
+			addLine("");
+		}
+		else if (fileStr.getLast() != ""){
+			addLine("");
+		}
 	}
 }
