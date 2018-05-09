@@ -106,14 +106,25 @@ public class JTextPaneController extends JTextPane {
 	 * @param i
 	 *            The id to be inserted after.
 	 */
-	public void addElement(String temp, int i, int j) {
-		e = doc.getElement(new Integer(i ).toString());
-		try {
-			doc.insertAfterEnd(e, "<p id=\"" + j + "\">" + temp + "</p>");
-		} catch (BadLocationException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
+	public void addElement(String temp, String i, int j) {
+		e = doc.getElement(i);
+		if (i == "main"){
+			try {
+				doc.insertAfterStart(e, "<p id=\"" + j + "\">" + temp + "</p>");
+			} catch (BadLocationException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		else{
+			try {
+				doc.insertAfterEnd(e, "<p id=\"" + j + "\">" + temp + "</p>");
+			} catch (BadLocationException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 	

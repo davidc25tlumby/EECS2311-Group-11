@@ -287,7 +287,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.removeAttribute(id.get(currentLine));
+				controller.printText();
 			}
 			
 		});
@@ -1020,9 +1020,9 @@ public class AuthoringApp {
 		fileStr.add(currentLine + 1, temp);
 		idCount++;
 		id.add(currentLine + 1, idCount);
-		controller.addElement(temp, id.get(currentLine), idCount);
+		controller.addElement(temp, Integer.toString(id.get(currentLine)), idCount);
 		
-		DataNode tempNode = new DataNode(id.get(currentLine), idCount, temp, currentLine + 1);
+		DataNode tempNode = new DataNode(id.get(currentLine), idCount, temp, currentLine + 1, true);
 		undoNode.push(tempNode);
 		
 		controller.removeAttribute(id.get(currentLine));
@@ -1036,7 +1036,12 @@ public class AuthoringApp {
 			controller.removeAttribute(id.get(currentLine));
 			DataNode tempNode = redoNode.pop();
 			undoNode.push(tempNode);
-			addLineAfter(tempNode.element, tempNode.currentLine, tempNode.currentID, tempNode.prevID);
+			if (tempNode.adding){
+				addLineAfter(tempNode.element, tempNode.currentLine, tempNode.currentID, tempNode.prevID);
+			}
+			else{
+				deleteLine(tempNode.currentID, tempNode.currentLine);
+			}
 		}
 	}
 
@@ -1045,7 +1050,12 @@ public class AuthoringApp {
 			controller.removeAttribute(id.get(currentLine));
 			DataNode tempNode = undoNode.pop();
 			redoNode.push(tempNode);
-			deleteLine(tempNode.currentID, tempNode.currentLine);
+			if (tempNode.adding){
+				deleteLine(tempNode.currentID, tempNode.currentLine);
+			}
+			else{
+				addLineAfter(tempNode.element, tempNode.currentLine, tempNode.currentID, tempNode.prevID);
+			}
 		}
 	}
 	
@@ -1080,13 +1090,18 @@ public class AuthoringApp {
 
 	protected static void deleteLine() {
 		// TODO Auto-generated method stub
+		redoNode.clear();
 		if (currentLine == 0){
+			DataNode tempNode = new DataNode(-1, id.getFirst(), fileStr.getFirst(), 0, false);
+			undoNode.push(tempNode);
 			controller.removeElement(id.getFirst());
 			fileStr.removeFirst();
 			id.removeFirst();
 			controller.setAttribute(id.getFirst());
 		}
 		else{
+			DataNode tempNode = new DataNode(id.get(currentLine - 1), id.get(currentLine), fileStr.get(currentLine), currentLine, false);
+			undoNode.push(tempNode);
 			controller.removeElement(id.get(currentLine));
 			fileStr.remove(currentLine);
 			id.remove(currentLine);
@@ -1096,13 +1111,21 @@ public class AuthoringApp {
 	}
 	
 	public static void addLineAfter(String element, int curLine, int currentID, int prevID){
-		fileStr.add(curLine, element);
-		id.add(curLine, currentID);
-		controller.addElement(element, prevID, currentID);
-		
-		currentLine = curLine;
-		controller.setAttribute(id.get(currentLine));
-		
+		if (prevID == -1){
+			fileStr.addFirst(element);
+			id.addFirst(currentID);
+			controller.addElement(element, "main", currentID);
+			currentLine = curLine;
+			System.out.println(currentID);
+			controller.setAttribute(currentID);
+		}
+		else{
+			fileStr.add(curLine, element);
+			id.add(curLine, currentID);
+			controller.addElement(element, Integer.toString(prevID), currentID);	
+			currentLine = curLine;
+			controller.setAttribute(id.get(currentLine));
+		}		
 	}
 	
 	public static void deleteLine(int currentID, int curLine){
