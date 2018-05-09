@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleContext;
@@ -73,6 +74,7 @@ public class JTextPaneController extends JTextPane {
 	 */
 	public LinkedList<Integer> newDocCreated(LinkedList<String> fileStr) {
 
+		doc = (HTMLDocument) tp.getDocument();
 		LinkedList<Integer> n = new LinkedList<Integer>();
 		if (fileStr.size() > 0) {
 			e = doc.getElement("main");
@@ -147,5 +149,10 @@ public class JTextPaneController extends JTextPane {
 	
 	public void printText(){
 		System.out.println(tp.getText());
+	}
+
+	public Element getElement(String id) throws BadLocationException {
+		// TODO Auto-generated method stub
+		return doc.getElement(id);
 	}
 }

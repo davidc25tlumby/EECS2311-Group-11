@@ -3,12 +3,11 @@ package authoringApp;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
-import org.apache.commons.io.FilenameUtils;
+import javax.swing.text.BadLocationException;
+
 import enamel.ToyAuthoring;
 
 /**
@@ -20,20 +19,22 @@ import enamel.ToyAuthoring;
 public class AuthoringApp {
 
 	private static JFrame gui;
-	private static JFileChooser fc = new JFileChooser();
-	private static File f, currentFile, error;
-	private static LinkedList<String> fileStr, consoleStr;
+	//private static JFileChooser fc = new JFileChooser();
+	private static File f, currentFile;//, error;
+	private static LinkedList<String> fileStr;//, consoleStr;
 	private static LinkedList<Integer> id;
-	private static JPanel errorPanel;
+	//private static JPanel errorPanel;
 	private static HashMap<String, Component> compMap;
 	private static JTextPaneController controller, consoleController;
 	private static int idCount;
 
 	private static int currentLine = 2, cell = 0, col = 0;
 	private static boolean isSaved = true, isOpened = false;
-	private static String currentID;
+	//private static String currentID;
 	private static AudioRecorder recorder;
 	private static boolean checkRecord = false;
+	private static LinkedList<DataNode> undoNode = new LinkedList<DataNode>();
+	private static LinkedList<DataNode> redoNode = new LinkedList<DataNode>();
 
 	/**
 	 * Initializes the application by drawing the GUI and initializing a
@@ -104,17 +105,7 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("nav up");
-				if (currentLine == 0){
-					controller.removeAttribute(id.getFirst());
-					currentLine = id.size() - 1;
-					controller.setAttribute(id.getLast());
-				}
-				else{
-					controller.removeAttribute(id.get(currentLine));
-					currentLine--;
-					controller.setAttribute(id.get(currentLine));
-				}
+				navigateUp();
 			}
 
 		});
@@ -128,18 +119,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("nav down");
-				if (currentLine + 1 == fileStr.size()){
-					controller.removeAttribute(id.getLast());
-					currentLine = 0;
-					controller.setAttribute(id.getFirst());
-				}
-				else {
-					controller.removeAttribute(id.get(currentLine));
-					currentLine++;
-					controller.setAttribute(id.get(currentLine));
-				}
+				navigateDown();
 			}
 
 		});
@@ -174,20 +154,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				if (currentLine == 0){
-					controller.removeElement(id.getFirst());
-					fileStr.removeFirst();
-					id.removeFirst();
-					controller.setAttribute(id.getFirst());
-				}
-				else{
-					controller.removeElement(id.get(currentLine));
-					fileStr.remove(currentLine);
-					id.remove(currentLine);
-					currentLine--;
-					controller.setAttribute(id.get(currentLine));
-				}
+				deleteLine();
 			}
 
 		});
@@ -198,17 +165,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("nav up");
-				if (currentLine == 0){
-					controller.removeAttribute(id.getFirst());
-					currentLine = id.size() - 1;
-					controller.setAttribute(id.getLast());
-				}
-				else{
-					controller.removeAttribute(id.get(currentLine));
-					currentLine--;
-					controller.setAttribute(id.get(currentLine));
-				}
+				navigateUp();
 			}
 
 		});
@@ -219,18 +176,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("nav down");
-				if (currentLine + 1 == fileStr.size()){
-					controller.removeAttribute(id.getLast());
-					currentLine = 0;
-					controller.setAttribute(id.getFirst());
-				}
-				else {
-					controller.removeAttribute(id.get(currentLine));
-					currentLine++;
-					controller.setAttribute(id.get(currentLine));
-				}
+				navigateDown();
 			}
 
 		});
@@ -262,19 +208,7 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				if (currentLine == 0){
-					controller.removeElement(id.getFirst());
-					fileStr.removeFirst();
-					id.removeFirst();
-					controller.setAttribute(id.getFirst());
-				}
-				else{
-					controller.removeElement(id.get(currentLine));
-					fileStr.remove(currentLine);
-					id.remove(currentLine);
-					currentLine--;
-					controller.setAttribute(id.get(currentLine));
-				}
+				deleteLine();
 			}
 
 		});
@@ -288,27 +222,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("nav up");
-				// controller.addElement("<p class=\"highlight\"> testing </p>",
-				// currentLine -
-				// 1);
-				// controller.removeAttribute("test", 1);
-				/*if (currentLine != 0) {
-					controller.removeAttribute(id.get(currentLine));
-					currentLine--;
-					controller.setAttribute(id.get(currentLine));
-				}*/
-				if (currentLine == 0){
-					controller.removeAttribute(id.getFirst());
-					currentLine = id.size() - 1;
-					controller.setAttribute(id.getLast());
-				}
-				else{
-					controller.removeAttribute(id.get(currentLine));
-					currentLine--;
-					controller.setAttribute(id.get(currentLine));
-				}
+				navigateUp();
 			}
 
 		});
@@ -322,23 +236,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("nav down");
-				/*if (currentLine != fileStr.size()) {
-					controller.removeAttribute(id.get(currentLine));
-					currentLine++;
-					controller.setAttribute(id.get(currentLine));
-				}*/
-				if (currentLine + 1 == fileStr.size()){
-					controller.removeAttribute(id.getLast());
-					currentLine = 0;
-					controller.setAttribute(id.getFirst());
-				}
-				else {
-					controller.removeAttribute(id.get(currentLine));
-					currentLine++;
-					controller.setAttribute(id.get(currentLine));
-				}
+				navigateDown();
 			}
 
 		});
@@ -373,20 +271,7 @@ public class AuthoringApp {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("del ln");
-				if (currentLine == 0){
-					controller.removeElement(id.getFirst());
-					fileStr.removeFirst();
-					id.removeFirst();
-					controller.setAttribute(id.getFirst());
-				}
-				else{
-					controller.removeElement(id.get(currentLine));
-					fileStr.remove(currentLine);
-					id.remove(currentLine);
-					currentLine--;
-					controller.setAttribute(id.get(currentLine));
-				}
+				deleteLine();
 			}
 
 		});
@@ -402,8 +287,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				controller.printText();
+				controller.removeAttribute(id.get(currentLine));
 			}
 			
 		});
@@ -913,6 +797,25 @@ public class AuthoringApp {
 			}
 
 		});
+		
+		((JMenuItem) compMap.get("undoMenuItem")).addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				performUndo();
+			}
+
+		});
+		
+		((JMenuItem) compMap.get("redoMenuItem")).addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				performRedo();
+			}
+
+		});
+		
 		((recordButton) compMap.get("recordButton")).addActionListener(new ActionListener() {
 
 			@Override
@@ -984,6 +887,8 @@ public class AuthoringApp {
 			compMap.get("displayComboBox").setEnabled(true);
 			compMap.get("displayAddButton").setEnabled(true);
 			compMap.get("editRemoveLine").setEnabled(true);
+			compMap.get("undoMenuItem").setEnabled(true);
+			compMap.get("redoMenuItem").setEnabled(true);
 		}
 	}
 
@@ -1109,13 +1014,102 @@ public class AuthoringApp {
 		}
 	}
 
-	public static void addLine(String temp) {
+	public static void addLine(String temp) {	
+		redoNode.clear();
+
 		fileStr.add(currentLine + 1, temp);
 		idCount++;
 		id.add(currentLine + 1, idCount);
 		controller.addElement(temp, id.get(currentLine), idCount);
+		
+		DataNode tempNode = new DataNode(id.get(currentLine), idCount, temp, currentLine + 1);
+		undoNode.push(tempNode);
+		
 		controller.removeAttribute(id.get(currentLine));
 		currentLine++;
+		controller.setAttribute(id.get(currentLine));
+		
+	}
+	
+	protected static void performRedo() {
+		if (!redoNode.isEmpty()){
+			controller.removeAttribute(id.get(currentLine));
+			DataNode tempNode = redoNode.pop();
+			undoNode.push(tempNode);
+			addLineAfter(tempNode.element, tempNode.currentLine, tempNode.currentID, tempNode.prevID);
+		}
+	}
+
+	protected static void performUndo() {
+		if (!undoNode.isEmpty()){
+			controller.removeAttribute(id.get(currentLine));
+			DataNode tempNode = undoNode.pop();
+			redoNode.push(tempNode);
+			deleteLine(tempNode.currentID, tempNode.currentLine);
+		}
+	}
+	
+	protected static void navigateUp() {
+		System.out.println("nav up");
+		if (currentLine == 0){
+			controller.removeAttribute(id.getFirst());
+			currentLine = id.size() - 1;
+			controller.setAttribute(id.getLast());
+		}
+		else{
+			controller.removeAttribute(id.get(currentLine));
+			currentLine--;
+			controller.setAttribute(id.get(currentLine));
+		}
+	}
+	
+	protected static void navigateDown() {
+		System.out.println("nav down");
+		if (currentLine + 1 == fileStr.size()){
+			controller.removeAttribute(id.getLast());
+			currentLine = 0;
+			controller.setAttribute(id.getFirst());
+		}
+		else {
+			controller.removeAttribute(id.get(currentLine));
+			currentLine++;
+			controller.setAttribute(id.get(currentLine));
+		}
+	}
+	
+
+	protected static void deleteLine() {
+		// TODO Auto-generated method stub
+		if (currentLine == 0){
+			controller.removeElement(id.getFirst());
+			fileStr.removeFirst();
+			id.removeFirst();
+			controller.setAttribute(id.getFirst());
+		}
+		else{
+			controller.removeElement(id.get(currentLine));
+			fileStr.remove(currentLine);
+			id.remove(currentLine);
+			currentLine--;
+			controller.setAttribute(id.get(currentLine));
+		}
+	}
+	
+	public static void addLineAfter(String element, int curLine, int currentID, int prevID){
+		fileStr.add(curLine, element);
+		id.add(curLine, currentID);
+		controller.addElement(element, prevID, currentID);
+		
+		currentLine = curLine;
+		controller.setAttribute(id.get(currentLine));
+		
+	}
+	
+	public static void deleteLine(int currentID, int curLine){
+		controller.removeElement(currentID);
+		fileStr.remove(curLine);
+		id.remove(curLine);
+		currentLine = curLine - 1;
 		controller.setAttribute(id.get(currentLine));
 	}
 }
