@@ -19,27 +19,28 @@ import enamel.ToyAuthoring;
 public class AuthoringApp {
 
 	private static JFrame gui;
-	//private static JFileChooser fc = new JFileChooser();
-	private static File f, currentFile;//, error;
-	private static LinkedList<String> fileStr;//, consoleStr;
+	// private static JFileChooser fc = new JFileChooser();
+	private static File f, currentFile;// , error;
+	private static LinkedList<String> fileStr;// , consoleStr;
 	private static LinkedList<Integer> id;
-	//private static JPanel errorPanel;
+	// private static JPanel errorPanel;
 	private static HashMap<String, Component> compMap;
 	private static JTextPaneController controller, consoleController;
 	private static int idCount;
 
 	private static int currentLine = 2, cell = 0, col = 0;
 	private static boolean isSaved = true, isOpened = false;
-	//private static String currentID;
+	// private static String currentID;
 	private static AudioRecorder recorder;
 	private static boolean checkRecord = false;
 	private static LinkedList<DataNode> undoNode = new LinkedList<DataNode>();
 	private static LinkedList<DataNode> redoNode = new LinkedList<DataNode>();
+	private static int lineFocus = 0;
 
 	/**
-	 * Initializes the application by drawing the GUI and initializing a
-	 * controller for the JTextPane. LinkedLists are created for an id+string
-	 * pair that represents elements on the JTextPane.
+	 * Initializes the application by drawing the GUI and initializing a controller
+	 * for the JTextPane. LinkedLists are created for an id+string pair that
+	 * represents elements on the JTextPane.
 	 * 
 	 * @param args
 	 *            unused
@@ -62,8 +63,8 @@ public class AuthoringApp {
 	}
 
 	/**
-	 * Initializes and implements the KeyBindings that will be associated with
-	 * the GUIs JFrame.
+	 * Initializes and implements the KeyBindings that will be associated with the
+	 * GUIs JFrame.
 	 */
 	protected static void addKeyBindings() {
 		// TODO Auto-generated method stub
@@ -258,20 +259,19 @@ public class AuthoringApp {
 	}
 
 	/**
-	 * Initializes and implements the JButtons that the users will interact
-	 * with.
+	 * Initializes and implements the JButtons that the users will interact with.
 	 */
 	protected static void addEditorButtons() {
-		
-		((JButton) compMap.get("testButton")).addActionListener(new ActionListener(){
+
+		((JButton) compMap.get("testButton")).addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				controller.printText();
 			}
-			
+
 		});
-		
+
 		// TODO Auto-generated method stub
 		((JButton) compMap.get("insertText")).addActionListener(new ActionListener() {
 
@@ -465,10 +465,10 @@ public class AuthoringApp {
 				}
 			}
 		});
-		
+
 		((JButton) compMap.get("editRemoveLine")).addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e){
+			public void actionPerformed(ActionEvent e) {
 				deleteLine();
 			}
 		});
@@ -615,8 +615,7 @@ public class AuthoringApp {
 	}
 
 	/**
-	 * Initializes and implements the JMenuItems that the user will interact
-	 * with.
+	 * Initializes and implements the JMenuItems that the user will interact with.
 	 */
 	protected static void addActionListeners() {
 
@@ -771,7 +770,7 @@ public class AuthoringApp {
 			}
 
 		});
-		
+
 		((JMenuItem) compMap.get("undoMenuItem")).addActionListener(new ActionListener() {
 
 			@Override
@@ -780,7 +779,7 @@ public class AuthoringApp {
 			}
 
 		});
-		
+
 		((JMenuItem) compMap.get("redoMenuItem")).addActionListener(new ActionListener() {
 
 			@Override
@@ -789,7 +788,7 @@ public class AuthoringApp {
 			}
 
 		});
-		
+
 		((recordButton) compMap.get("recordButton")).addActionListener(new ActionListener() {
 
 			@Override
@@ -909,8 +908,8 @@ public class AuthoringApp {
 	}
 
 	/**
-	 * Checks for the minimum requirements of JTextField inputs. The string
-	 * should not be empty and should not contain the token "/~".
+	 * Checks for the minimum requirements of JTextField inputs. The string should
+	 * not be empty and should not contain the token "/~".
 	 * 
 	 * @param s
 	 *            The String to check
@@ -988,106 +987,125 @@ public class AuthoringApp {
 		}
 	}
 
-	public static void addLine(String temp) {	
+	public static void addLine(String temp) {
 		redoNode.clear();
-		
-		if (fileStr.size() == 1){
+
+		if (fileStr.size() == 1) {
 			fileStr.addFirst(temp);
 			idCount++;
 			controller.removeAttribute(id.get(currentLine));
 			id.add(currentLine, idCount);
 			controller.addElement(temp, "main", idCount);
 			controller.setAttribute(id.get(currentLine));
-		}
-		else{
+		} else {
 			fileStr.add(currentLine + 1, temp);
 			idCount++;
 			id.add(currentLine + 1, idCount);
 			controller.addElement(temp, Integer.toString(id.get(currentLine)), idCount);
-			
+
 			DataNode tempNode = new DataNode(id.get(currentLine), idCount, temp, currentLine + 1, true);
 			undoNode.push(tempNode);
-			
+
 			controller.removeAttribute(id.get(currentLine));
 			currentLine++;
 			controller.setAttribute(id.get(currentLine));
 		}
-		
+
 	}
-	
+
 	protected static void performRedo() {
-		if (!redoNode.isEmpty()){
+		if (!redoNode.isEmpty()) {
 			controller.removeAttribute(id.get(currentLine));
 			DataNode tempNode = redoNode.pop();
 			undoNode.push(tempNode);
-			if (tempNode.adding){
+			if (tempNode.adding) {
 				addLineAfter(tempNode.element, tempNode.currentLine, tempNode.currentID, tempNode.prevID);
-			}
-			else{
+			} else {
 				deleteLine(tempNode.currentID, tempNode.currentLine);
 			}
 		}
 	}
 
 	protected static void performUndo() {
-		if (!undoNode.isEmpty()){
+		if (!undoNode.isEmpty()) {
 			controller.removeAttribute(id.get(currentLine));
 			DataNode tempNode = undoNode.pop();
 			redoNode.push(tempNode);
-			if (tempNode.adding){
+			if (tempNode.adding) {
 				deleteLine(tempNode.currentID, tempNode.currentLine);
-			}
-			else{
+			} else {
 				addLineAfter(tempNode.element, tempNode.currentLine, tempNode.currentID, tempNode.prevID);
 			}
 		}
 	}
-	
+
 	protected static void navigateUp() {
-		if (fileStr.size() > 2){
-			if (currentLine == 0){
+		if (fileStr.size() > 2) {
+			if (currentLine == 0) {
 				controller.removeAttribute(id.getFirst());
 				currentLine = id.size() - 2;
 				controller.setAttribute(id.get(currentLine));
-			}
-			else{
+			} else {
 				controller.removeAttribute(id.get(currentLine));
 				currentLine--;
 				controller.setAttribute(id.get(currentLine));
 			}
 		}
+		if (currentLine < fileStr.size() - 29) {
+			lineFocus -= 19;
+			if (lineFocus < 29) {
+				lineFocus = currentLine;
+				((JScrollPane) compMap.get("scenarioScrollPane")).getVerticalScrollBar().setValue(1);
+			} else
+				((JScrollPane) compMap.get("scenarioScrollPane")).getVerticalScrollBar().setValue(lineFocus);
+		} else {
+			lineFocus = (fileStr.size() - 29) * 19 + 29 - (fileStr.size() - currentLine);
+			((JScrollPane) compMap.get("scenarioScrollPane")).getVerticalScrollBar().setValue(lineFocus);
+		}
+
+		System.out.println(lineFocus);
+
 	}
-	
+
 	protected static void navigateDown() {
-		if (fileStr.size() > 2){
-			if (currentLine == fileStr.size() - 2){
+		if (fileStr.size() > 2) {
+			if (currentLine == fileStr.size() - 2) {
 				controller.removeAttribute(id.get(currentLine));
 				currentLine = 0;
 				controller.setAttribute(id.getFirst());
-			}
-			else {
+			} else {
 				controller.removeAttribute(id.get(currentLine));
 				currentLine++;
 				controller.setAttribute(id.get(currentLine));
 			}
 		}
+
+		if (currentLine > 29) {
+			lineFocus += 19;
+			((JScrollPane) compMap.get("scenarioScrollPane")).getVerticalScrollBar().setValue(lineFocus);
+		} else {
+			lineFocus = currentLine;
+			((JScrollPane) compMap.get("scenarioScrollPane")).getVerticalScrollBar().setValue(1);
+
+		}
+		System.out.println(lineFocus);
+
 	}
-	
 
 	protected static void deleteLine() {
 		// TODO Auto-generated method stub
 		redoNode.clear();
-		if (fileStr.size() > 1){
-			if (currentLine == 0){
+		if (fileStr.size() > 1) {
+			if (currentLine == 0) {
 				DataNode tempNode = new DataNode(-1, id.getFirst(), fileStr.getFirst(), 0, false);
 				undoNode.push(tempNode);
 				controller.removeElement(id.getFirst());
 				fileStr.removeFirst();
 				id.removeFirst();
 				controller.setAttribute(id.getFirst());
-			}
-			else{
-				DataNode tempNode = new DataNode(id.get(currentLine - 1), id.get(currentLine), fileStr.get(currentLine), currentLine, false);
+			} else {
+				DataNode tempNode = new DataNode(id.get(currentLine - 1), id.get(currentLine), fileStr.get(currentLine),
+						currentLine, false);
 				undoNode.push(tempNode);
 				controller.removeElement(id.get(currentLine));
 				fileStr.remove(currentLine);
@@ -1097,42 +1115,39 @@ public class AuthoringApp {
 			}
 		}
 	}
-	
-	public static void addLineAfter(String element, int curLine, int currentID, int prevID){
-		if (prevID == -1){
+
+	public static void addLineAfter(String element, int curLine, int currentID, int prevID) {
+		if (prevID == -1) {
 			fileStr.addFirst(element);
 			id.addFirst(currentID);
 			controller.addElement(element, "main", currentID);
 			currentLine = curLine;
 			controller.setAttribute(currentID);
-		}
-		else{
+		} else {
 			fileStr.add(curLine, element);
 			id.add(curLine, currentID);
-			controller.addElement(element, Integer.toString(prevID), currentID);	
+			controller.addElement(element, Integer.toString(prevID), currentID);
 			currentLine = curLine;
 			controller.setAttribute(id.get(currentLine));
-		}		
+		}
 	}
-	
-	public static void deleteLine(int currentID, int curLine){
+
+	public static void deleteLine(int currentID, int curLine) {
 		controller.removeElement(currentID);
 		fileStr.remove(curLine);
 		id.remove(curLine);
-		if (curLine == 0){
+		if (curLine == 0) {
 			currentLine = 0;
-		}
-		else{
+		} else {
 			currentLine = curLine - 1;
 		}
 		controller.setAttribute(id.get(currentLine));
 	}
-	
+
 	protected static void newLine() {
-		if (currentLine + 1 != fileStr.size()){
+		if (currentLine + 1 != fileStr.size()) {
 			addLine("");
-		}
-		else if (fileStr.getLast() != ""){
+		} else if (fileStr.getLast() != "") {
 			addLine("");
 		}
 	}

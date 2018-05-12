@@ -147,6 +147,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         scenarioPane.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         scenarioPane.setName("scenarioPane"); // NOI18N
         scenarioScrollPane.setViewportView(scenarioPane);
+        scenarioScrollPane.setAutoscrolls(true);
 
         inputTextField.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         inputTextField.setForeground(new java.awt.Color(204, 204, 204));
