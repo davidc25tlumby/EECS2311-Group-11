@@ -3,6 +3,8 @@ package authoringApp;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
@@ -28,14 +30,16 @@ public class AuthoringApp {
 	private static JTextPaneController controller, consoleController;
 	private static int idCount;
 
-	private static int currentLine = 2, cell = 0, col = 0;
+	private static int currentLine = 0, cell = 0, col = 0;
 	private static boolean isSaved = true, isOpened = false;
 	// private static String currentID;
 	private static AudioRecorder recorder;
 	private static boolean checkRecord = false;
 	private static LinkedList<DataNode> undoNode = new LinkedList<DataNode>();
 	private static LinkedList<DataNode> redoNode = new LinkedList<DataNode>();
-	private static int lineFocus = 0;
+	private static int lineFocus = 0, topPadding, bottomPadding;
+	private static int TP_HEIGHT = 30;
+	private static JScrollPane sp;
 
 	/**
 	 * Initializes the application by drawing the GUI and initializing a controller
@@ -267,7 +271,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.printText();
+				controller.removeElement(40);
 			}
 
 		});
@@ -618,6 +622,36 @@ public class AuthoringApp {
 	 * Initializes and implements the JMenuItems that the user will interact with.
 	 */
 	protected static void addActionListeners() {
+		
+		gui.addComponentListener(new ComponentListener(){
+
+			@Override
+			public void componentHidden(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				Rectangle rectangle = ((JScrollPane) compMap.get("scenarioScrollPane")).getVisibleRect();
+				int height = rectangle.height;
+				TP_HEIGHT = height / 19;
+				System.out.println("resized height: " + TP_HEIGHT);
+			}
+
+			@Override
+			public void componentShown(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 
 		((JMenuItem) compMap.get("newMenuItem")).addActionListener(new ActionListener() {
 
@@ -706,6 +740,7 @@ public class AuthoringApp {
 						isOpened = true;
 						((JTextField) compMap.get("inputTextField")).setText("");
 						stateChanged();
+						
 
 					} catch (IOException e1) {
 						e1.printStackTrace();
@@ -838,6 +873,9 @@ public class AuthoringApp {
 				(JScrollPane) compMap.get("scenarioScrollPane"));
 		consoleController = new JTextPaneController((JTextPane) compMap.get("consolePane"),
 				(JScrollPane) compMap.get("consoleScrollPane"));
+		sp = (JScrollPane) compMap.get("scenarioScrollPane");
+		topPadding = 0;
+		bottomPadding = TP_HEIGHT - 1;
 	}
 
 	/**
@@ -1010,7 +1048,7 @@ public class AuthoringApp {
 			currentLine++;
 			controller.setAttribute(id.get(currentLine));
 		}
-
+		setScrollBarValue(4);
 	}
 
 	protected static void performRedo() {
@@ -1045,26 +1083,14 @@ public class AuthoringApp {
 				controller.removeAttribute(id.getFirst());
 				currentLine = id.size() - 2;
 				controller.setAttribute(id.get(currentLine));
+				setScrollBarValue(2);
 			} else {
 				controller.removeAttribute(id.get(currentLine));
 				currentLine--;
 				controller.setAttribute(id.get(currentLine));
+				setScrollBarValue(0);
 			}
 		}
-		if (currentLine < fileStr.size() - 29) {
-			lineFocus -= 19;
-			if (lineFocus < 29) {
-				lineFocus = currentLine;
-				((JScrollPane) compMap.get("scenarioScrollPane")).getVerticalScrollBar().setValue(1);
-			} else
-				((JScrollPane) compMap.get("scenarioScrollPane")).getVerticalScrollBar().setValue(lineFocus);
-		} else {
-			lineFocus = (fileStr.size() - 29) * 19 + 29 - (fileStr.size() - currentLine);
-			((JScrollPane) compMap.get("scenarioScrollPane")).getVerticalScrollBar().setValue(lineFocus);
-		}
-
-		System.out.println(lineFocus);
-
 	}
 
 	protected static void navigateDown() {
@@ -1073,23 +1099,64 @@ public class AuthoringApp {
 				controller.removeAttribute(id.get(currentLine));
 				currentLine = 0;
 				controller.setAttribute(id.getFirst());
+				setScrollBarValue(3);
 			} else {
 				controller.removeAttribute(id.get(currentLine));
 				currentLine++;
 				controller.setAttribute(id.get(currentLine));
+				setScrollBarValue(1);
 			}
 		}
-
-		if (currentLine > 29) {
-			lineFocus += 19;
-			((JScrollPane) compMap.get("scenarioScrollPane")).getVerticalScrollBar().setValue(lineFocus);
-		} else {
-			lineFocus = currentLine;
-			((JScrollPane) compMap.get("scenarioScrollPane")).getVerticalScrollBar().setValue(1);
-
+	}
+	
+	private static void setScrollBarValue(int state) {
+		if (state == 0){
+			if (topPadding > 0){
+				topPadding--;
+				bottomPadding++;
+			}
+			else{
+				lineFocus -= 19;
+			}
 		}
-		System.out.println(lineFocus);
-
+		else if (state == 1){
+			if (bottomPadding > 0){
+				bottomPadding--;
+				topPadding++;
+			}
+			else{
+				lineFocus += 19;
+			}
+		}
+		else if (state == 2){
+			topPadding = 29;
+			bottomPadding = 0;
+			lineFocus = (fileStr.size() - TP_HEIGHT - 1) * 19;
+		}
+		else if (state == 3){
+			topPadding = 0;
+			bottomPadding = 29;
+			lineFocus = 0;
+		}
+		else if (state == 4){
+			if (topPadding < 29){
+				topPadding++;
+				bottomPadding--;
+			}
+			else{
+				lineFocus += 19;
+			}
+		}
+		else if (state == 5){
+			if (topPadding > 0){
+				topPadding--;
+				bottomPadding++;
+			}
+			else{
+				lineFocus -= 19;
+			}
+		}
+		sp.getVerticalScrollBar().setValue(lineFocus);
 	}
 
 	protected static void deleteLine() {
@@ -1113,6 +1180,7 @@ public class AuthoringApp {
 				currentLine--;
 				controller.setAttribute(id.get(currentLine));
 			}
+			setScrollBarValue(5);
 		}
 	}
 
