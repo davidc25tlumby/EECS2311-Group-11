@@ -639,10 +639,31 @@ public class AuthoringApp {
 
 			@Override
 			public void componentResized(ComponentEvent arg0) {
-				Rectangle rectangle = ((JScrollPane) compMap.get("scenarioScrollPane")).getVisibleRect();
-				int height = rectangle.height;
-				TP_HEIGHT = height / 19;
-				System.out.println("resized height: " + TP_HEIGHT);
+				if (isOpened){
+					Rectangle rectangle = ((JScrollPane) compMap.get("scenarioScrollPane")).getVisibleRect();
+					int height = rectangle.height;
+					TP_HEIGHT = height / 19;
+					if (currentLine < TP_HEIGHT){
+						topPadding = currentLine;
+						bottomPadding = TP_HEIGHT - 1 - topPadding;
+						lineFocus = 0;
+						System.out.println("topPad:" + topPadding + "bottomPad:" + bottomPadding + "top");
+					}
+					else if (currentLine > fileStr.size() - TP_HEIGHT){
+						bottomPadding = fileStr.size() - 2 - currentLine;
+						topPadding = TP_HEIGHT - bottomPadding - 1;
+						lineFocus = (fileStr.size() - TP_HEIGHT - 1) * 19;
+						System.out.println("topPad:" + topPadding + "bottomPad:" + bottomPadding + "bottom");
+					}
+					else{
+						topPadding = 0;
+						bottomPadding = TP_HEIGHT - 1 - topPadding;
+						lineFocus = currentLine * 19;
+						System.out.println("topPad:" + topPadding + "bottomPad:" + bottomPadding + "mid");
+					}
+					sp.getVerticalScrollBar().setValue(lineFocus);
+					System.out.println("resized height: " + TP_HEIGHT);
+				}
 			}
 
 			@Override
@@ -1129,17 +1150,17 @@ public class AuthoringApp {
 			}
 		}
 		else if (state == 2){
-			topPadding = 29;
+			topPadding = TP_HEIGHT - 1;
 			bottomPadding = 0;
 			lineFocus = (fileStr.size() - TP_HEIGHT - 1) * 19;
 		}
 		else if (state == 3){
 			topPadding = 0;
-			bottomPadding = 29;
+			bottomPadding = TP_HEIGHT - 1;
 			lineFocus = 0;
 		}
 		else if (state == 4){
-			if (topPadding < 29){
+			if (topPadding < TP_HEIGHT - 1){
 				topPadding++;
 				bottomPadding--;
 			}

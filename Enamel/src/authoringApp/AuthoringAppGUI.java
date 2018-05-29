@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JScrollPane;
 
 /**
  * The GUI of the authoring application.
@@ -148,6 +149,8 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         scenarioPane.setName("scenarioPane"); // NOI18N
         scenarioScrollPane.setViewportView(scenarioPane);
         scenarioScrollPane.setAutoscrolls(true);
+        
+        scenarioScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
         inputTextField.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         inputTextField.setForeground(new java.awt.Color(204, 204, 204));
