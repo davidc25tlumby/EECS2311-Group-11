@@ -21,18 +21,15 @@ import enamel.ToyAuthoring;
 public class AuthoringApp {
 
 	private static JFrame gui;
-	// private static JFileChooser fc = new JFileChooser();
 	private static File f, currentFile;// , error;
 	private static LinkedList<String> fileStr;// , consoleStr;
 	private static LinkedList<Integer> id;
-	// private static JPanel errorPanel;
 	private static HashMap<String, Component> compMap;
 	private static JTextPaneController controller, consoleController;
 	private static int idCount;
-
+	private static String state;
 	private static int currentLine = 0, cell = 0, col = 0;
 	private static boolean isSaved = true, isOpened = false;
-	// private static String currentID;
 	private static AudioRecorder recorder;
 	private static boolean checkRecord = false;
 	private static LinkedList<DataNode> undoNode = new LinkedList<DataNode>();
@@ -66,12 +63,12 @@ public class AuthoringApp {
 
 	}
 
+
 	/**
 	 * Initializes and implements the KeyBindings that will be associated with the
 	 * GUIs JFrame.
 	 */
 	protected static void addKeyBindings() {
-		// TODO Auto-generated method stub
 		JRootPane rp = gui.getRootPane();
 		InputMap im = rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 		ActionMap am = rp.getActionMap();
@@ -108,7 +105,6 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				navigateUp();
 			}
 
@@ -198,7 +194,6 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				deleteLine();
 			}
 
@@ -255,7 +250,6 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				deleteLine();
 			}
 
@@ -271,12 +265,11 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controller.removeElement(40);
+				sp.getVerticalScrollBar().setValue(lineFocus);
 			}
 
 		});
 
-		// TODO Auto-generated method stub
 		((JButton) compMap.get("insertText")).addActionListener(new ActionListener() {
 
 			@Override
@@ -286,7 +279,7 @@ public class AuthoringApp {
 				int v = validString(temp);
 
 				if (v == 0) {
-					nullArgumentException();
+					addLine(temp);
 				} else if (v == 1) {
 					illegalArgumentException("string");
 				} else if (v == 2) {
@@ -627,49 +620,28 @@ public class AuthoringApp {
 
 			@Override
 			public void componentHidden(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
-				
+				//unused
 			}
 
 			@Override
 			public void componentMoved(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
-				
+				//unused
 			}
 
 			@Override
 			public void componentResized(ComponentEvent arg0) {
 				if (isOpened){
+					state = "RESIZE";
 					Rectangle rectangle = ((JScrollPane) compMap.get("scenarioScrollPane")).getVisibleRect();
 					int height = rectangle.height;
 					TP_HEIGHT = height / 19;
-					if (currentLine < TP_HEIGHT){
-						topPadding = currentLine;
-						bottomPadding = TP_HEIGHT - 1 - topPadding;
-						lineFocus = 0;
-						System.out.println("topPad:" + topPadding + "bottomPad:" + bottomPadding + "top");
-					}
-					else if (currentLine > fileStr.size() - TP_HEIGHT){
-						bottomPadding = fileStr.size() - 2 - currentLine;
-						topPadding = TP_HEIGHT - bottomPadding - 1;
-						lineFocus = (fileStr.size() - TP_HEIGHT - 1) * 19;
-						System.out.println("topPad:" + topPadding + "bottomPad:" + bottomPadding + "bottom");
-					}
-					else{
-						topPadding = 0;
-						bottomPadding = TP_HEIGHT - 1 - topPadding;
-						lineFocus = currentLine * 19;
-						System.out.println("topPad:" + topPadding + "bottomPad:" + bottomPadding + "mid");
-					}
-					sp.getVerticalScrollBar().setValue(lineFocus);
-					System.out.println("resized height: " + TP_HEIGHT);
+					refocus();
 				}
 			}
 
 			@Override
 			public void componentShown(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
-				
+				//unused
 			}
 			
 		});
@@ -743,6 +715,7 @@ public class AuthoringApp {
 				} else {
 					try {
 						initializeComponents();
+						state = "NEW";
 						f = fileChooser.openFileChooser(new File("FactoryScenarios/"), "txt");
 						if (f != null) {
 							currentFile = f;
@@ -870,12 +843,52 @@ public class AuthoringApp {
 
 					});
 				}
-				// TODO Auto-generated method stub
-
 			}
 
 		});
 
+	}
+
+	protected static void refocus() {
+		switch (state) {
+			case "ADD_LINE":
+				if (topPadding < TP_HEIGHT - 1){
+					topPadding++;
+					bottomPadding--;
+				}
+				else{
+					lineFocus += 19;
+				}
+				break;
+			case "DELETE_LINE":
+				if (topPadding > 0){
+					topPadding--;
+					bottomPadding++;
+				}
+				else{
+					if (currentLine != 0){
+						lineFocus -= 19;
+					}
+				}
+				break;
+			default:
+				if (currentLine < TP_HEIGHT){
+					topPadding = currentLine;
+					bottomPadding = TP_HEIGHT - 1 - topPadding;
+					lineFocus = 0;
+				}
+				else if (currentLine > fileStr.size() - TP_HEIGHT){
+					bottomPadding = fileStr.size() - 2 - currentLine;
+					topPadding = TP_HEIGHT - bottomPadding - 1;
+					lineFocus = (fileStr.size() - TP_HEIGHT - 1) * 19;
+				}
+				else{
+					topPadding = 0;
+					bottomPadding = TP_HEIGHT - 1 - topPadding;
+					lineFocus = currentLine * 19;
+				}
+		}
+		sp.getVerticalScrollBar().setValue(lineFocus);
 	}
 
 	/**
@@ -883,7 +896,6 @@ public class AuthoringApp {
 	 * method resets the JTextPanes and the LinkedLists of strings and ID's.
 	 */
 	protected static void initializeComponents() {
-		// TODO Auto-generated method stub
 		addKeyBindings();
 		fileStr = new LinkedList<String>();
 		id = new LinkedList<Integer>();
@@ -895,6 +907,33 @@ public class AuthoringApp {
 		consoleController = new JTextPaneController((JTextPane) compMap.get("consolePane"),
 				(JScrollPane) compMap.get("consoleScrollPane"));
 		sp = (JScrollPane) compMap.get("scenarioScrollPane");
+		
+		JTextPane scenarioPane = ((JTextPane) compMap.get("scenarioPane"));
+		scenarioPane.addComponentListener(new ComponentListener(){
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				//unused
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				//unused
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				if (isOpened){
+					refocus();
+				}
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+				//unused
+			}
+			
+		});
 		topPadding = 0;
 		bottomPadding = TP_HEIGHT - 1;
 	}
@@ -1047,8 +1086,8 @@ public class AuthoringApp {
 	}
 
 	public static void addLine(String temp) {
+		state = "ADD_LINE";
 		redoNode.clear();
-
 		if (fileStr.size() == 1) {
 			fileStr.addFirst(temp);
 			idCount++;
@@ -1069,10 +1108,10 @@ public class AuthoringApp {
 			currentLine++;
 			controller.setAttribute(id.get(currentLine));
 		}
-		setScrollBarValue(4);
 	}
 
 	protected static void performRedo() {
+		state = "REDO_OR_UNDO";
 		if (!redoNode.isEmpty()) {
 			controller.removeAttribute(id.get(currentLine));
 			DataNode tempNode = redoNode.pop();
@@ -1086,6 +1125,7 @@ public class AuthoringApp {
 	}
 
 	protected static void performUndo() {
+		state = "REDO_OR_UNDO";
 		if (!undoNode.isEmpty()) {
 			controller.removeAttribute(id.get(currentLine));
 			DataNode tempNode = undoNode.pop();
@@ -1131,6 +1171,7 @@ public class AuthoringApp {
 	}
 	
 	private static void setScrollBarValue(int state) {
+		//move down
 		if (state == 0){
 			if (topPadding > 0){
 				topPadding--;
@@ -1140,6 +1181,7 @@ public class AuthoringApp {
 				lineFocus -= 19;
 			}
 		}
+		//move up
 		else if (state == 1){
 			if (bottomPadding > 0){
 				bottomPadding--;
@@ -1149,39 +1191,23 @@ public class AuthoringApp {
 				lineFocus += 19;
 			}
 		}
+		//move to bottom
 		else if (state == 2){
 			topPadding = TP_HEIGHT - 1;
 			bottomPadding = 0;
 			lineFocus = (fileStr.size() - TP_HEIGHT - 1) * 19;
 		}
+		//move to top
 		else if (state == 3){
 			topPadding = 0;
 			bottomPadding = TP_HEIGHT - 1;
 			lineFocus = 0;
 		}
-		else if (state == 4){
-			if (topPadding < TP_HEIGHT - 1){
-				topPadding++;
-				bottomPadding--;
-			}
-			else{
-				lineFocus += 19;
-			}
-		}
-		else if (state == 5){
-			if (topPadding > 0){
-				topPadding--;
-				bottomPadding++;
-			}
-			else{
-				lineFocus -= 19;
-			}
-		}
 		sp.getVerticalScrollBar().setValue(lineFocus);
 	}
 
 	protected static void deleteLine() {
-		// TODO Auto-generated method stub
+		state = "DELETE_LINE";
 		redoNode.clear();
 		if (fileStr.size() > 1) {
 			if (currentLine == 0) {
@@ -1201,7 +1227,6 @@ public class AuthoringApp {
 				currentLine--;
 				controller.setAttribute(id.get(currentLine));
 			}
-			setScrollBarValue(5);
 		}
 	}
 
