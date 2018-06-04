@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
@@ -765,8 +767,23 @@ public class AuthoringApp {
 		consoleController = new JTextPaneController((JTextPane) compMap.get("consolePane"),
 				(JScrollPane) compMap.get("consoleScrollPane"));
 		sp = (JScrollPane) compMap.get("scenarioScrollPane");
-		consoleSP = (JScrollPane) compMap.get("consoleScrollPane");
 		
+		consoleSP = (JScrollPane) compMap.get("consoleScrollPane");
+		((JTextPane) compMap.get("scenarioPane")).addMouseWheelListener(new MouseWheelListener(){
+
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				// TODO Auto-generated method stub
+				//System.out.println(arg0.getWheelRotation());
+				if (e.getWheelRotation() < 0){
+					navigateUp();
+				}
+				else if (e.getWheelRotation() > 0){
+					navigateDown();
+				}
+			}
+			
+		});
 		JTextPane scenarioPane = ((JTextPane) compMap.get("scenarioPane"));
 		((JTextField) compMap.get("inputTextField")).requestFocus();
 		scenarioPane.addComponentListener(new ComponentListener(){
