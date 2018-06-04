@@ -36,7 +36,7 @@ public class AuthoringApp {
 	private static LinkedList<DataNode> redoNode = new LinkedList<DataNode>();
 	private static int lineFocus = 0, topPadding, bottomPadding;
 	private static int TP_HEIGHT = 30;
-	private static JScrollPane sp;
+	private static JScrollPane sp, consoleSP;
 
 	/**
 	 * Initializes the application by drawing the GUI and initializing a controller
@@ -69,191 +69,59 @@ public class AuthoringApp {
 	 * GUIs JFrame.
 	 */
 	protected static void addKeyBindings() {
+		
 		JRootPane rp = gui.getRootPane();
-		InputMap im = rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-		ActionMap am = rp.getActionMap();
+		JTextPane sp = ((JTextPane) compMap.get("scenarioPane"));
+		JTextPane cp = ((JTextPane) compMap.get("consolePane"));
+		JTextField tf = ((JTextField) compMap.get("inputTextField"));
+		
+		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "navUp");
+		rp.getActionMap().put("navUp", navigateUp);
+		
+		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "navDown");
+		rp.getActionMap().put("navDown", navigateDown);
+		
+		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ENTER"), "newLine");
+		rp.getActionMap().put("newLine", newLine);
+		
+		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
+		rp.getActionMap().put("delLine", deleteLine);
 
-		JTextPane tp = ((JTextPane) compMap.get("scenarioPane"));
-		InputMap im2 = tp.getInputMap(JComponent.WHEN_FOCUSED);
-		ActionMap am2 = tp.getActionMap();
-
-		JTextPane tp2 = ((JTextPane) compMap.get("consolePane"));
-		InputMap im3 = tp2.getInputMap(JComponent.WHEN_FOCUSED);
-		ActionMap am3 = tp2.getActionMap();
-
-		im.put(KeyStroke.getKeyStroke("UP"), "navUp");
-		im.put(KeyStroke.getKeyStroke("DOWN"), "navDown");
-		im.put(KeyStroke.getKeyStroke("ENTER"), "newLine");
-		im.put(KeyStroke.getKeyStroke("DELETE"), "delLine");
-
-		im2.put(KeyStroke.getKeyStroke("UP"), "navUp");
-		im2.put(KeyStroke.getKeyStroke("DOWN"), "navDown");
-		im2.put(KeyStroke.getKeyStroke("ENTER"), "newLine");
-		im2.put(KeyStroke.getKeyStroke("DELETE"), "delLine");
-
-		im3.put(KeyStroke.getKeyStroke("UP"), "navUp");
-		im3.put(KeyStroke.getKeyStroke("DOWN"), "navDown");
-		im3.put(KeyStroke.getKeyStroke("ENTER"), "newLine");
-		im3.put(KeyStroke.getKeyStroke("DELETE"), "delLine");
-
-		am3.put("navUp", new AbstractAction() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -5971069686488190353L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				navigateUp();
-			}
-
-		});
-
-		am3.put("navDown", new AbstractAction() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 6683017700153087856L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				navigateDown();
-			}
-
-		});
-
-		am3.put("newLine", new AbstractAction() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -7879264567501986325L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				newLine();
-			}
-
-		});
-
-		am3.put("delLine", new AbstractAction() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -7593553052034429973L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				deleteLine();
-			}
-
-		});
-
-		am2.put("navUp", new AbstractAction() {
-
-			private static final long serialVersionUID = -5971069686488190353L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				navigateUp();
-			}
-
-		});
-
-		am2.put("navDown", new AbstractAction() {
-
-			private static final long serialVersionUID = 6683017700153087856L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				navigateDown();
-			}
-
-		});
-
-		am2.put("newLine", new AbstractAction() {
-
-			private static final long serialVersionUID = -7879264567501986325L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				newLine();
-			}
-
-		});
-
-		am2.put("delLine", new AbstractAction() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -7593553052034429973L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				deleteLine();
-			}
-
-		});
-
-		am.put("navUp", new AbstractAction() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -5971069686488190353L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				navigateUp();
-			}
-
-		});
-
-		am.put("navDown", new AbstractAction() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 6683017700153087856L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				navigateDown();
-			}
-
-		});
-
-		am.put("newLine", new AbstractAction() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -7879264567501986325L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				newLine();
-			}
-
-		});
-
-		am.put("delLine", new AbstractAction() {
-
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -7593553052034429973L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				deleteLine();
-			}
-
-		});
+		sp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("UP"), "navUp");
+		sp.getActionMap().put("navUp", navigateUp);
+		
+		sp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DOWN"), "navDown");
+		sp.getActionMap().put("navDown", navigateDown);
+		
+		sp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "newLine");
+		sp.getActionMap().put("newLine", newLine);
+		
+		sp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
+		sp.getActionMap().put("delLine", deleteLine);
+		
+		cp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("UP"), "navUp");
+		cp.getActionMap().put("navUp", navigateUp);
+		
+		cp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DOWN"), "navDown");
+		cp.getActionMap().put("navDown", navigateDown);
+		
+		cp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "newLine");
+		cp.getActionMap().put("newLine", newLine);
+		
+		cp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
+		cp.getActionMap().put("delLine", deleteLine);
+		
+		tf.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("UP"), "navUp");
+		tf.getActionMap().put("navUp", navigateUp);
+		
+		tf.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DOWN"), "navDown");
+		tf.getActionMap().put("navDown", navigateDown);
+		
+		tf.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "newLine");
+		tf.getActionMap().put("newLine", newLine);
+		
+		tf.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
+		tf.getActionMap().put("delLine", deleteLine);
 	}
 
 	/**
@@ -274,17 +142,7 @@ public class AuthoringApp {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				String temp = getInputText();
-				int v = validString(temp);
-
-				if (v == 0) {
-					addLine(temp);
-				} else if (v == 1) {
-					illegalArgumentException("string");
-				} else if (v == 2) {
-					addLine(temp);
-				}
+				addLine(getInputText());
 			}
 
 		});
@@ -907,8 +765,10 @@ public class AuthoringApp {
 		consoleController = new JTextPaneController((JTextPane) compMap.get("consolePane"),
 				(JScrollPane) compMap.get("consoleScrollPane"));
 		sp = (JScrollPane) compMap.get("scenarioScrollPane");
+		consoleSP = (JScrollPane) compMap.get("consoleScrollPane");
 		
 		JTextPane scenarioPane = ((JTextPane) compMap.get("scenarioPane"));
+		((JTextField) compMap.get("inputTextField")).requestFocus();
 		scenarioPane.addComponentListener(new ComponentListener(){
 
 			@Override
@@ -971,7 +831,10 @@ public class AuthoringApp {
 	 * Prints into the console a NullArgumentException
 	 */
 	public static void nullArgumentException() {
-		consoleController.addElement("NullArgumentException: No input detected. See \"Help\" for user manual.");
+		printInConsole("NullArgumentException: No input detected. See \"Help\" for user manual.");
+		((JTextField) compMap.get("inputTextField")).requestFocus();
+		((JTextField) compMap.get("inputTextField")).setText("");
+		
 	}
 
 	/**
@@ -981,8 +844,9 @@ public class AuthoringApp {
 	 *            the expected input types.
 	 */
 	public static void illegalArgumentException(String expected) {
-		consoleController
-				.addElement("IllegalArgumentException, Expected: " + expected + ". See \"Help\" for user manual.");
+		printInConsole("IllegalArgumentException, Expected: " + expected + ". See \"Help\" for user manual.");
+		((JTextField) compMap.get("inputTextField")).requestFocus();
+		((JTextField) compMap.get("inputTextField")).setText("");
 	}
 
 	/**
@@ -1001,8 +865,17 @@ public class AuthoringApp {
 			n = cell - 1;
 			range = "[0," + n + "]";
 		}
-		consoleController.addElement("indexOutOfBoundsException: " + type + " value should have a range of " + range
+		printInConsole("indexOutOfBoundsException: " + type + " value should have a range of " + range
 				+ ". See \"Help\" for user manual.");
+		((JTextField) compMap.get("inputTextField")).requestFocus();
+		((JTextField) compMap.get("inputTextField")).setText("");
+	}
+
+	private static void printInConsole(String s) {
+		// TODO Auto-generated method stub
+		consoleController.addElement(s);
+		JScrollBar vertical = consoleSP.getVerticalScrollBar();
+		vertical.setValue(vertical.getMaximum());
 	}
 
 	/**
@@ -1108,6 +981,8 @@ public class AuthoringApp {
 			currentLine++;
 			controller.setAttribute(id.get(currentLine));
 		}
+		((JTextField) compMap.get("inputTextField")).requestFocus();
+		((JTextField) compMap.get("inputTextField")).setText("");
 	}
 
 	protected static void performRedo() {
@@ -1265,4 +1140,48 @@ public class AuthoringApp {
 			addLine("");
 		}
 	}
+	
+	static Action navigateUp = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			navigateUp();
+		}
+	};
+	
+	static Action navigateDown = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			navigateDown();
+		}
+	};
+	
+	static Action newLine = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e) {
+			newLine();
+		}
+	};
+	
+	static Action deleteLine = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e){
+			deleteLine();
+		}
+	};
 }

@@ -132,7 +132,7 @@ public class JTextPaneController extends JTextPane {
 		e = doc.getElement("main");
 		
 		try {
-			doc.insertAfterStart(e, "<p>" + temp + "</p>");
+			doc.insertBeforeEnd(e, "<p>" + temp + "</p>");
 		} catch (BadLocationException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {
