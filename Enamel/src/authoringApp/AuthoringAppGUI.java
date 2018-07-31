@@ -3,6 +3,7 @@ package authoringApp;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 
 /**
  * The GUI of the authoring application.
@@ -284,7 +286,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         editMenuSeperator1.setName("editMenuSeperator"); // NOI18N
         editMenu.add(editMenuSeperator1);
 
-        cutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
+        cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         cutMenuItem.setText("Cut");
         cutMenuItem.setEnabled(false);
         cutMenuItem.setName("cutMenuItem"); // NOI18N

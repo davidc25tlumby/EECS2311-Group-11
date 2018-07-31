@@ -1,10 +1,16 @@
 package authoringApp;
 
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.*;
@@ -39,6 +45,9 @@ public class AuthoringApp {
 	private static int lineFocus = 0, topPadding, bottomPadding;
 	private static int TP_HEIGHT = 30;
 	private static JScrollPane sp, consoleSP;
+	static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+	static String paste = null;
+	
 
 	/**
 	 * Initializes the application by drawing the GUI and initializing a controller
@@ -76,6 +85,46 @@ public class AuthoringApp {
 		JTextPane sp = ((JTextPane) compMap.get("scenarioPane"));
 		JTextPane cp = ((JTextPane) compMap.get("consolePane"));
 		JTextField tf = ((JTextField) compMap.get("inputTextField"));
+
+		KeyStroke ctrlX = KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK);
+		KeyStroke ctrlC = KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK);
+		KeyStroke ctrlV = KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK);
+		
+		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlX, "cut");
+		rp.getActionMap().put("cut", cutLine);
+		
+		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlC, "copy");
+		rp.getActionMap().put("copy", copyLine);
+		
+		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlV, "paste");
+		rp.getActionMap().put("paste", pasteLine);
+		
+		sp.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlX, "cut");
+		sp.getActionMap().put("cut", cutLine);
+		
+		sp.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlC, "copy");
+		sp.getActionMap().put("copy", copyLine);
+		
+		sp.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlV, "paste");
+		sp.getActionMap().put("paste", pasteLine);
+		
+		cp.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlX, "cut");
+		cp.getActionMap().put("cut", cutLine);
+		
+		cp.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlC, "copy");
+		cp.getActionMap().put("copy", copyLine);
+		
+		cp.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlV, "paste");
+		cp.getActionMap().put("paste", pasteLine);
+		
+		tf.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlX, "cut");
+		tf.getActionMap().put("cut", cutLine);
+		
+		tf.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlC, "copy");
+		tf.getActionMap().put("copy", copyLine);
+		
+		tf.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlV, "paste");
+		tf.getActionMap().put("paste", pasteLine);
 		
 		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "navUp");
 		rp.getActionMap().put("navUp", navigateUp);
@@ -88,7 +137,7 @@ public class AuthoringApp {
 		
 		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
 		rp.getActionMap().put("delLine", deleteLine);
-
+		
 		sp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("UP"), "navUp");
 		sp.getActionMap().put("navUp", navigateUp);
 		
@@ -124,6 +173,8 @@ public class AuthoringApp {
 		
 		tf.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
 		tf.getActionMap().put("delLine", deleteLine);
+		
+		
 	}
 
 	/**
@@ -539,6 +590,7 @@ public class AuthoringApp {
 								fileStr.add("Cell " + cell);
 								fileStr.add("Button " + col);
 								((JTextField) compMap.get("inputTextField")).setText("");
+								((JTextField) compMap.get("inputTextField")).setForeground(Color.BLACK);
 								id = controller.newDocCreated(fileStr);
 								idCount = id.getLast();
 								currentLine = 0;
@@ -616,6 +668,13 @@ public class AuthoringApp {
 				}
 			}
 
+		});
+		
+		((JMenuItem) compMap.get("cutMenuItem")).addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+				cutLine();
+			}
 		});
 
 		((JMenuItem) compMap.get("saveAsMenuItem")).addActionListener(new ActionListener() {
@@ -837,6 +896,9 @@ public class AuthoringApp {
 			compMap.get("editRemoveLine").setEnabled(true);
 			compMap.get("undoMenuItem").setEnabled(true);
 			compMap.get("redoMenuItem").setEnabled(true);
+			compMap.get("cutMenuItem").setEnabled(true);
+			compMap.get("copyMenuItem").setEnabled(true);
+			compMap.get("pasteMenuItem").setEnabled(true);
 		}
 	}
 
@@ -1029,6 +1091,41 @@ public class AuthoringApp {
 			}
 		}
 	}
+	
+	protected static void cutLine() {
+		/*try {
+			paste = (String) clipboard.getContents(null).getTransferData(DataFlavor.stringFlavor);
+		} catch (UnsupportedFlavorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(paste);*/
+		StringSelection ss = new StringSelection(fileStr.get(currentLine));
+		clipboard.setContents(ss, ss);	
+		deleteLine();
+	}
+	
+	protected static void copyLine(){
+		StringSelection ss = new StringSelection(fileStr.get(currentLine));
+		clipboard.setContents(ss, ss);	
+	}
+	
+	protected static void pasteLine(){
+		System.out.println("paste line");
+		try {
+			paste = (String) clipboard.getContents(null).getTransferData(DataFlavor.stringFlavor);
+		} catch (UnsupportedFlavorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		addLine(paste);
+	}
 
 	protected static void navigateUp() {
 		if (fileStr.size() > 2) {
@@ -1157,6 +1254,39 @@ public class AuthoringApp {
 			addLine("");
 		}
 	}
+	
+	static Action cutLine = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e){
+			cutLine();
+		}
+	};
+	
+	static Action copyLine = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e){
+			copyLine();
+		}
+	};
+	
+	static Action pasteLine = new AbstractAction() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public void actionPerformed(ActionEvent e){
+			pasteLine();
+		}
+	};
 	
 	static Action navigateUp = new AbstractAction() {
 		/**
