@@ -33,8 +33,6 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 	 */
 	public AuthoringAppGUI() {
 		initComponents();
-       
-		createCompMap();
 	}
 
 	/**
@@ -89,9 +87,16 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 	 */
 	private void initComponents() {
 
-        recordButton = new recordButton("resources/mic14.png");
-        stopButton = new recordButton("resources/stop.png");
-
+        //recordButton = new recordButton("resources/mic14.png");
+        //stopButton = new recordButton("resources/stop.png");
+		
+		recordButton = new javax.swing.JLabel();
+		stopButton = new javax.swing.JLabel();
+		
+		ImageIcon recordImg = new ImageIcon("Images/mic14.png");
+		recordButton.setIcon(recordImg);
+		ImageIcon stopImg = new ImageIcon("Images/stop.png");
+		stopButton.setIcon(stopImg);
 
         scenarioScrollPane = new javax.swing.JScrollPane();
         scenarioPane = new javax.swing.JTextPane();
@@ -469,56 +474,59 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				new AuthoringAppGUI().setVisible(true);
+				new AuthoringApp2().setVisible(true);
 			}
 		});
 	}
-    private recordButton recordButton; 
-    private recordButton stopButton; 
+    //recordButton recordButton; 
+    //recordButton stopButton; 
+    
+    JLabel recordButton;
+    JLabel stopButton;
 
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuBar authoringAppMenuBar;
-    private javax.swing.JScrollPane consoleScrollPane;
-    private javax.swing.JTextPane consoleTextPane;
-    private javax.swing.JMenuItem copyMenuItem;
-    private javax.swing.JMenuItem cutMenuItem;
-    private javax.swing.JButton displayAddButton;
-    private javax.swing.JComboBox<String> displayComboBox;
+    protected javax.swing.JScrollPane consoleScrollPane;
+    protected javax.swing.JTextPane consoleTextPane;
+    protected javax.swing.JMenuItem copyMenuItem;
+    protected javax.swing.JMenuItem cutMenuItem;
+    protected javax.swing.JButton displayAddButton;
+    javax.swing.JComboBox<String> displayComboBox;
     private javax.swing.JLabel editLabel;
     private javax.swing.JMenu editMenu;
     private javax.swing.JPopupMenu.Separator editMenuSeperator1;
-    private javax.swing.JButton editRemoveLine;
-    private javax.swing.JMenuItem exitMenuItem;
+    protected javax.swing.JButton editRemoveLine;
+    protected javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JPopupMenu.Separator fileMenuSeperator1;
     private javax.swing.JPopupMenu.Separator fileMenuSeperator2;
     private javax.swing.JMenuItem userManualMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JPopupMenu.Separator helpMenuSeperator1;
-    private javax.swing.JTextField inputTextField;
-    private javax.swing.JButton insertEndRepeat;
+    protected javax.swing.JTextField inputTextField;
+    protected javax.swing.JButton insertEndRepeat;
     private javax.swing.JLabel insertLabel;
-    private javax.swing.JButton insertPause;
-    private javax.swing.JButton insertRepeat;
-    private javax.swing.JButton insertRepeatButton;
-    private javax.swing.JButton insertResetButtons;
-    private javax.swing.JButton insertSkip;
-    private javax.swing.JButton insertSkipButton;
-    private javax.swing.JButton insertSound;
-    private javax.swing.JButton insertText;
-    private javax.swing.JButton insertUserInput;
-    private javax.swing.JMenuItem loadAndRunMenuItem;
-    private javax.swing.JMenuItem loadScenarioMenuItem;
-    private javax.swing.JMenuItem newMenuItem;
-    private javax.swing.JMenuItem pasteMenuItem;
-    private javax.swing.JMenuItem redoMenuItem;
+    protected javax.swing.JButton insertPause;
+    protected javax.swing.JButton insertRepeat;
+    protected javax.swing.JButton insertRepeatButton;
+    protected javax.swing.JButton insertResetButtons;
+    protected javax.swing.JButton insertSkip;
+    protected javax.swing.JButton insertSkipButton;
+    protected javax.swing.JButton insertSound;
+    protected javax.swing.JButton insertText;
+    protected javax.swing.JButton insertUserInput;
+    protected javax.swing.JMenuItem loadAndRunMenuItem;
+    protected javax.swing.JMenuItem loadScenarioMenuItem;
+    protected javax.swing.JMenuItem newMenuItem;
+    protected javax.swing.JMenuItem pasteMenuItem;
+    protected javax.swing.JMenuItem redoMenuItem;
     private javax.swing.JMenu runMenu;
     private javax.swing.JMenuItem runMenuItem;
-    private javax.swing.JMenuItem saveAsMenuItem;
-    private javax.swing.JMenuItem saveMenuItem;
-    private javax.swing.JTextPane scenarioPane;
-    private javax.swing.JScrollPane scenarioScrollPane;
+    protected javax.swing.JMenuItem saveAsMenuItem;
+    protected javax.swing.JMenuItem saveMenuItem;
+    protected javax.swing.JTextPane scenarioPane;
+    javax.swing.JScrollPane scenarioScrollPane;
     private javax.swing.JRadioButtonMenuItem ttsMenuItem;
-    private javax.swing.JMenuItem undoMenuItem;
-    private javax.swing.JButton jButton1;
+    protected javax.swing.JMenuItem undoMenuItem;
+    protected javax.swing.JButton jButton1;
 }

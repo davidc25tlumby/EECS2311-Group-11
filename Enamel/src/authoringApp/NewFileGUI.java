@@ -4,7 +4,10 @@ import java.awt.Component;
 import java.awt.Container;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.swing.JButton;
 import javax.swing.JMenu;
+import javax.swing.JTextField;
 
 /**
  * Draws a GUI for creating a new scenario file.
@@ -16,12 +19,12 @@ public class NewFileGUI extends javax.swing.JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -7008263644028988740L;
-	private HashMap<String, Component> compMap = new HashMap<String, Component>();
+	//private HashMap<String, Component> compMap = new HashMap<String, Component>();
 
 	/**
 	 * Creates an HashMap of name component pairs for components within this JFrame.
 	 */
-    private void createCompMap() {
+    /*private void createCompMap() {
 		ArrayList<Component> compList = getCompList(this);
 		//System.out.println(compList);
 		for (int i = 0; i < compList.size(); i++){
@@ -29,14 +32,14 @@ public class NewFileGUI extends javax.swing.JFrame {
 				this.compMap.put(compList.get(i).getName(), compList.get(i));
 			}
 		}
-	}
+	}*/
 
     /**
      * Recursively adds components and their child components into an ArrayList.
      * @param c The parent container.
      * @return An ArrayList of the parent container and all it's child components.
      */
-	public ArrayList<Component> getCompList(final Container c) {
+	/*public ArrayList<Component> getCompList(final Container c) {
 		Component[] compArray = c.getComponents();
 		ArrayList<Component> compList = new ArrayList<Component>();
 		for (Component comp: compArray) {
@@ -51,21 +54,21 @@ public class NewFileGUI extends javax.swing.JFrame {
 			}
 		}
 		return compList;
-	}
+	}*/
 	
 	/**
 	 * @return The HashMap of components with the key being their component name.
 	 */
-	public HashMap<String, Component> getCompMap(){
+	/*public HashMap<String, Component> getCompMap(){
 		return this.compMap;
-	}
+	}*/
 	
 	/**
 	 * Initializes the JFrame. Calls methods to initialize components and create an Array of components within this JFrame.
 	 */
     public NewFileGUI() {
         initComponents();
-        createCompMap();
+        //createCompMap();
     }
 
 	/**
@@ -160,6 +163,22 @@ public class NewFileGUI extends javax.swing.JFrame {
                 new NewFileGUI().setVisible(true);
             }
         });
+    }
+    
+    public JButton getCancelButton(){
+    	return createButton;
+    }
+    
+    public JButton getCreateButton(){
+    	return createButton;
+    }
+    
+    public JTextField getNumCell(){
+    	return numCell;
+    }
+    
+    public JTextField getNumCol(){
+    	return numCol;
     }
                 
     private javax.swing.JButton cancelButton;

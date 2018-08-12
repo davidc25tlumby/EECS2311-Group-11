@@ -31,7 +31,7 @@ public class recordButton extends JLabel {
 	    });
 	  }
 
-	  public void addActionListener(ActionListener l) {
+	  public static void addActionListener(ActionListener l) {
 	    listenerList.add(ActionListener.class, l);
 	  }
 

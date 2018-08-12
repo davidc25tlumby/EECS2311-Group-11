@@ -16,13 +16,13 @@ public class AudioRecorder {
 
 	// path of the wav file
 	File wavFile;
+	
+	AudioInputStream ais = null;
 
 	// format of audio filed
 	AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE;
 
-	public AudioRecorder(File f) {
-		wavFile = f;
-
+	public AudioRecorder() {
 	}
 
 	// the line from which audio data is captured
@@ -46,9 +46,6 @@ public class AudioRecorder {
 	 */
 	class CaptureThread extends Thread {
 		public void run() {
-			AudioFileFormat.Type fileType = null;
-			File audioFile = null;
-			fileType = AudioFileFormat.Type.WAVE;
 			// Set the file type and the file extension
 			// based on the selected radio button.
 
@@ -67,17 +64,20 @@ public class AudioRecorder {
 
 				System.out.println("Start capturing...");
 
-				AudioInputStream ais = new AudioInputStream(line);
+				ais = new AudioInputStream(line);
 
 				System.out.println("Start recording...");
 
 				// start recording
-				AudioSystem.write(ais, fileType, wavFile);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} // end catch
 
 		}// end run
+	}
+	
+	public void write(File f) throws IOException{
+		AudioSystem.write(ais, fileType, f);
 	}
 
 	void start() {

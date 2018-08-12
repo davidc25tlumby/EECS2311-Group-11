@@ -1,6 +1,9 @@
 package authoringApp;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -11,28 +14,36 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.text.BadLocationException;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
 
 import enamel.ToyAuthoring;
 
-/**
- * An application to create scenario files that are compatible with a Treasure
- * Braille Box simulation.
- * 
- * @author Xiahan Chen, Huy Hoang Minh Cu, Qasim Mahir
- */
-public class AuthoringApp {
+public class AuthoringApp extends AuthoringAppGUI{
 
-	private static JFrame gui;
 	private static File f, currentFile;// , error;
 	private static LinkedList<String> fileStr;// , consoleStr;
 	private static LinkedList<Integer> id;
-	private static HashMap<String, Component> compMap;
 	private static JTextPaneController controller, consoleController;
 	private static int idCount;
 	private static String state;
@@ -44,154 +55,119 @@ public class AuthoringApp {
 	private static LinkedList<DataNode> redoNode = new LinkedList<DataNode>();
 	private static int lineFocus = 0, topPadding, bottomPadding;
 	private static int TP_HEIGHT = 30;
-	private static JScrollPane sp, consoleSP;
 	static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 	static String paste = null;
 	
-
-	/**
-	 * Initializes the application by drawing the GUI and initializing a controller
-	 * for the JTextPane. LinkedLists are created for an id+string pair that
-	 * represents elements on the JTextPane.
-	 * 
-	 * @param args
-	 *            unused
-	 */
-	public static void main(String[] args) {
-
-		java.awt.EventQueue.invokeLater(new Runnable() {
-
-			public void run() {
-
-				gui = new AuthoringAppGUI();
-				gui.setVisible(true);
-				compMap = ((AuthoringAppGUI) gui).getCompMap();
-				addActionListeners();
-				addEditorButtons();
-			}
-
-		});
-
+	AuthoringApp(){
+		this.setVisible(true);
+		addListeners();
 	}
-
-
-	/**
-	 * Initializes and implements the KeyBindings that will be associated with the
-	 * GUIs JFrame.
-	 */
-	protected static void addKeyBindings() {
-		
-		JRootPane rp = gui.getRootPane();
-		JTextPane sp = ((JTextPane) compMap.get("scenarioPane"));
-		JTextPane cp = ((JTextPane) compMap.get("consolePane"));
-		JTextField tf = ((JTextField) compMap.get("inputTextField"));
+	
+	
+	protected void addKeyBindings(){
 
 		KeyStroke ctrlX = KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK);
 		KeyStroke ctrlC = KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK);
 		KeyStroke ctrlV = KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK);
 		
-		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlX, "cut");
-		rp.getActionMap().put("cut", cutLine);
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlX, "cut");
+		getRootPane().getActionMap().put("cut", cutLine);
 		
-		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlC, "copy");
-		rp.getActionMap().put("copy", copyLine);
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlC, "copy");
+		getRootPane().getActionMap().put("copy", copyLine);
 		
-		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlV, "paste");
-		rp.getActionMap().put("paste", pasteLine);
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ctrlV, "paste");
+		getRootPane().getActionMap().put("paste", pasteLine);
 		
-		sp.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlX, "cut");
-		sp.getActionMap().put("cut", cutLine);
+		scenarioPane.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlX, "cut");
+		scenarioPane.getActionMap().put("cut", cutLine);
 		
-		sp.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlC, "copy");
-		sp.getActionMap().put("copy", copyLine);
+		scenarioPane.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlC, "copy");
+		scenarioPane.getActionMap().put("copy", copyLine);
 		
-		sp.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlV, "paste");
-		sp.getActionMap().put("paste", pasteLine);
+		scenarioPane.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlV, "paste");
+		scenarioPane.getActionMap().put("paste", pasteLine);
 		
-		cp.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlX, "cut");
-		cp.getActionMap().put("cut", cutLine);
+		consoleTextPane.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlX, "cut");
+		consoleTextPane.getActionMap().put("cut", cutLine);
 		
-		cp.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlC, "copy");
-		cp.getActionMap().put("copy", copyLine);
+		consoleTextPane.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlC, "copy");
+		consoleTextPane.getActionMap().put("copy", copyLine);
 		
-		cp.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlV, "paste");
-		cp.getActionMap().put("paste", pasteLine);
+		consoleTextPane.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlV, "paste");
+		consoleTextPane.getActionMap().put("paste", pasteLine);
 		
-		tf.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlX, "cut");
-		tf.getActionMap().put("cut", cutLine);
+		inputTextField.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlX, "cut");
+		inputTextField.getActionMap().put("cut", cutLine);
 		
-		tf.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlC, "copy");
-		tf.getActionMap().put("copy", copyLine);
+		inputTextField.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlC, "copy");
+		inputTextField.getActionMap().put("copy", copyLine);
 		
-		tf.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlV, "paste");
-		tf.getActionMap().put("paste", pasteLine);
+		inputTextField.getInputMap(JComponent.WHEN_FOCUSED).put(ctrlV, "paste");
+		inputTextField.getActionMap().put("paste", pasteLine);
 		
-		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "navUp");
-		rp.getActionMap().put("navUp", navigateUp);
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "navUp");
+		getRootPane().getActionMap().put("navUp", navigateUp);
 		
-		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "navDown");
-		rp.getActionMap().put("navDown", navigateDown);
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "navDown");
+		getRootPane().getActionMap().put("navDown", navigateDown);
 		
-		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ENTER"), "newLine");
-		rp.getActionMap().put("newLine", newLine);
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ENTER"), "newLine");
+		getRootPane().getActionMap().put("newLine", newLine);
 		
-		rp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
-		rp.getActionMap().put("delLine", deleteLine);
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
+		getRootPane().getActionMap().put("delLine", deleteLine);
 		
-		sp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("UP"), "navUp");
-		sp.getActionMap().put("navUp", navigateUp);
+		scenarioPane.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("UP"), "navUp");
+		scenarioPane.getActionMap().put("navUp", navigateUp);
 		
-		sp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DOWN"), "navDown");
-		sp.getActionMap().put("navDown", navigateDown);
+		scenarioPane.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DOWN"), "navDown");
+		scenarioPane.getActionMap().put("navDown", navigateDown);
 		
-		sp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "newLine");
-		sp.getActionMap().put("newLine", newLine);
+		scenarioPane.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "newLine");
+		scenarioPane.getActionMap().put("newLine", newLine);
 		
-		sp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
-		sp.getActionMap().put("delLine", deleteLine);
+		scenarioPane.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
+		scenarioPane.getActionMap().put("delLine", deleteLine);
 		
-		cp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("UP"), "navUp");
-		cp.getActionMap().put("navUp", navigateUp);
+		consoleTextPane.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("UP"), "navUp");
+		consoleTextPane.getActionMap().put("navUp", navigateUp);
 		
-		cp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DOWN"), "navDown");
-		cp.getActionMap().put("navDown", navigateDown);
+		consoleTextPane.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DOWN"), "navDown");
+		consoleTextPane.getActionMap().put("navDown", navigateDown);
 		
-		cp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "newLine");
-		cp.getActionMap().put("newLine", newLine);
+		consoleTextPane.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "newLine");
+		consoleTextPane.getActionMap().put("newLine", newLine);
 		
-		cp.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
-		cp.getActionMap().put("delLine", deleteLine);
+		consoleTextPane.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
+		consoleTextPane.getActionMap().put("delLine", deleteLine);
 		
-		tf.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("UP"), "navUp");
-		tf.getActionMap().put("navUp", navigateUp);
+		inputTextField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("UP"), "navUp");
+		inputTextField.getActionMap().put("navUp", navigateUp);
 		
-		tf.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DOWN"), "navDown");
-		tf.getActionMap().put("navDown", navigateDown);
+		inputTextField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DOWN"), "navDown");
+		inputTextField.getActionMap().put("navDown", navigateDown);
 		
-		tf.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "newLine");
-		tf.getActionMap().put("newLine", newLine);
+		inputTextField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("ENTER"), "newLine");
+		inputTextField.getActionMap().put("newLine", newLine);
 		
-		tf.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
-		tf.getActionMap().put("delLine", deleteLine);
-		
-		
+		inputTextField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"), "delLine");
+		inputTextField.getActionMap().put("delLine", deleteLine);
 	}
+	
+	protected void addListeners() {
 
-	/**
-	 * Initializes and implements the JButtons that the users will interact with.
-	 */
-	protected static void addEditorButtons() {
-
-		((JButton) compMap.get("testButton")).addActionListener(new ActionListener() {
+		jButton1.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				sp.getVerticalScrollBar().setValue(lineFocus);
+				// TODO Auto-generated method stub
+				
 			}
-
+			
 		});
-
-		((JButton) compMap.get("insertText")).addActionListener(new ActionListener() {
+		
+		insertText.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -200,7 +176,7 @@ public class AuthoringApp {
 
 		});
 
-		((JButton) compMap.get("insertPause")).addActionListener(new ActionListener() {
+		insertPause.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -235,7 +211,7 @@ public class AuthoringApp {
 
 		});
 
-		((JButton) compMap.get("insertSkipButton")).addActionListener(new ActionListener() {
+		insertSkipButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -269,7 +245,7 @@ public class AuthoringApp {
 
 		});
 
-		((JButton) compMap.get("insertSkip")).addActionListener(new ActionListener() {
+		insertSkip.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -297,7 +273,7 @@ public class AuthoringApp {
 
 		});
 
-		((JButton) compMap.get("insertUserInput")).addActionListener(new ActionListener() {
+		insertUserInput.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -307,7 +283,7 @@ public class AuthoringApp {
 
 		});
 
-		((JButton) compMap.get("insertRepeatButton")).addActionListener(new ActionListener() {
+		insertRepeatButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -341,7 +317,7 @@ public class AuthoringApp {
 
 		});
 
-		((JButton) compMap.get("insertRepeat")).addActionListener(new ActionListener() {
+		insertRepeat.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				addLine("/~repeat");
@@ -349,7 +325,7 @@ public class AuthoringApp {
 
 		});
 
-		((JButton) compMap.get("insertEndRepeat")).addActionListener(new ActionListener() {
+		insertEndRepeat.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				addLine("/~endrepeat");
@@ -357,14 +333,14 @@ public class AuthoringApp {
 
 		});
 
-		((JButton) compMap.get("insertResetButtons")).addActionListener(new ActionListener() {
+		insertResetButtons.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				addLine("/~reset-buttons");
 			}
 		});
 
-		((JButton) compMap.get("insertSound")).addActionListener(new ActionListener() {
+		insertSound.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				f = fileChooser.openFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
@@ -374,19 +350,18 @@ public class AuthoringApp {
 			}
 		});
 
-		((JButton) compMap.get("editRemoveLine")).addActionListener(new ActionListener() {
+		editRemoveLine.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				deleteLine();
 			}
 		});
 
-		((JButton) compMap.get("displayAddButton")).addActionListener(new ActionListener() {
+		displayAddButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				@SuppressWarnings("rawtypes")
-				JComboBox cb = (JComboBox) compMap.get("displayComboBox");
-				String cbStr = (String) cb.getItemAt(cb.getSelectedIndex());
+				String cbStr = (String) displayComboBox.getItemAt(displayComboBox.getSelectedIndex());
 				String temp = getInputText();
 				String[] s = temp.split("\\s+");
 				int n, m;
@@ -520,14 +495,8 @@ public class AuthoringApp {
 			}
 
 		});
-	}
-
-	/**
-	 * Initializes and implements the JMenuItems that the user will interact with.
-	 */
-	protected static void addActionListeners() {
 		
-		gui.addComponentListener(new ComponentListener(){
+		super.addComponentListener(new ComponentListener(){
 
 			@Override
 			public void componentHidden(ComponentEvent arg0) {
@@ -543,7 +512,7 @@ public class AuthoringApp {
 			public void componentResized(ComponentEvent arg0) {
 				if (isOpened){
 					state = "RESIZE";
-					Rectangle rectangle = ((JScrollPane) compMap.get("scenarioScrollPane")).getVisibleRect();
+					Rectangle rectangle = scenarioScrollPane.getVisibleRect();
 					int height = rectangle.height;
 					TP_HEIGHT = height / 19;
 					refocus();
@@ -557,7 +526,7 @@ public class AuthoringApp {
 			
 		});
 
-		((JMenuItem) compMap.get("newMenuItem")).addActionListener(new ActionListener() {
+		newMenuItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -567,14 +536,14 @@ public class AuthoringApp {
 				} else {
 					initializeComponents();
 					isSaved = false;
-					NewFileGUI temp = new NewFileGUI();
+					NewFileGUI temp = new NewFileGUI(); 
 					temp.setVisible(true);
-					HashMap<String, Component> tempMap = ((NewFileGUI) temp).getCompMap();
-					JTextField numCell = (JTextField) tempMap.get("numCell");
-					JTextField numCol = (JTextField) tempMap.get("numCol");
+					//HashMap<String, Component> tempMap = ((NewFileGUI) temp).getCompMap();
+					JTextField numCell = temp.getNumCell();//(JTextField) tempMap.get("numCell");
+					JTextField numCol = temp.getNumCol();//(JTextField) tempMap.get("numCol");
 
-					((JButton) tempMap.get("createButton")).addActionListener(new ActionListener() {
-
+					//((JButton) tempMap.get("createButton")).addActionListener(new ActionListener() {
+					temp.getCreateButton().addActionListener(new ActionListener(){
 						public void actionPerformed(java.awt.event.ActionEvent evt) {
 
 							String cellStr = numCell.getText();
@@ -589,8 +558,8 @@ public class AuthoringApp {
 
 								fileStr.add("Cell " + cell);
 								fileStr.add("Button " + col);
-								((JTextField) compMap.get("inputTextField")).setText("");
-								((JTextField) compMap.get("inputTextField")).setForeground(Color.BLACK);
+								inputTextField.setText("");
+								inputTextField.setForeground(Color.BLACK);
 								id = controller.newDocCreated(fileStr);
 								idCount = id.getLast();
 								currentLine = 0;
@@ -606,7 +575,8 @@ public class AuthoringApp {
 
 					});
 
-					((JButton) tempMap.get("cancelButton")).addActionListener(new ActionListener() {
+					//((JButton) tempMap.get("cancelButton")).addActionListener(new ActionListener() {
+					temp.getCancelButton().addActionListener(new ActionListener(){
 						public void actionPerformed(java.awt.event.ActionEvent evt) {
 							isOpened = false;
 							temp.dispose();
@@ -617,7 +587,7 @@ public class AuthoringApp {
 			}
 
 		});
-		((JMenuItem) compMap.get("loadScenarioMenuItem")).addActionListener(new ActionListener() {
+		loadScenarioMenuItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -631,7 +601,7 @@ public class AuthoringApp {
 						f = fileChooser.openFileChooser(new File("FactoryScenarios/"), "txt");
 						if (f != null) {
 							currentFile = f;
-							gui.setTitle("Authoring App - " + currentFile.getName());
+							setTitle("Authoring App - " + currentFile.getName());
 							FileParser fp = new FileParser(f);
 							fileStr = fp.getArray();
 						}
@@ -644,7 +614,7 @@ public class AuthoringApp {
 						id.add(-2);
 						isSaved = false;
 						isOpened = true;
-						((JTextField) compMap.get("inputTextField")).setText("");
+						inputTextField.setText("");
 						stateChanged();
 						
 
@@ -655,11 +625,11 @@ public class AuthoringApp {
 			}
 		});
 
-		((JMenuItem) compMap.get("saveMenuItem")).addActionListener(new ActionListener() {
+		saveMenuItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				gui.setTitle("Authoring App - " + currentFile.getName());
+				setTitle("Authoring App - " + currentFile.getName());
 				SaveAsFile save = new SaveAsFile("txt", new File(currentFile.getAbsolutePath()));
 				try {
 					save.stringArrayToFile(fileStr);
@@ -670,21 +640,21 @@ public class AuthoringApp {
 
 		});
 		
-		((JMenuItem) compMap.get("cutMenuItem")).addActionListener(new ActionListener() {
+		cutMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e){
 				cutLine();
 			}
 		});
 
-		((JMenuItem) compMap.get("saveAsMenuItem")).addActionListener(new ActionListener() {
+		saveAsMenuItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				f = fileChooser.saveFileChooser(new File("FactoryScenarios/"), "txt");
 				if (f != null) {
 					currentFile = f;
-					gui.setTitle("Authoring App - " + currentFile.getName());
+					setTitle("Authoring App - " + currentFile.getName());
 					SaveAsFile save = new SaveAsFile("txt", new File(currentFile.getAbsolutePath()));
 					try {
 						save.stringArrayToFile(fileStr);
@@ -695,7 +665,7 @@ public class AuthoringApp {
 			}
 
 		});
-		((JMenuItem) compMap.get("loadAndRunMenuItem")).addActionListener(new ActionListener() {
+		loadAndRunMenuItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -710,7 +680,7 @@ public class AuthoringApp {
 
 		});
 
-		((JMenuItem) compMap.get("exitMenuItem")).addActionListener(new ActionListener() {
+		exitMenuItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -719,7 +689,7 @@ public class AuthoringApp {
 
 		});
 
-		((JMenuItem) compMap.get("undoMenuItem")).addActionListener(new ActionListener() {
+		undoMenuItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -728,7 +698,7 @@ public class AuthoringApp {
 
 		});
 
-		((JMenuItem) compMap.get("redoMenuItem")).addActionListener(new ActionListener() {
+		redoMenuItem.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -737,7 +707,7 @@ public class AuthoringApp {
 
 		});
 
-		((recordButton) compMap.get("recordButton")).addActionListener(new ActionListener() {
+		/*recordButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -748,7 +718,7 @@ public class AuthoringApp {
 					checkRecord = true;
 					recorder = new AudioRecorder(record);
 					recorder.start();
-					((recordButton) compMap.get("stopButton")).addActionListener(new ActionListener() {
+					stopButton.addActionListener(new ActionListener() {
 
 						@Override
 						public void actionPerformed(ActionEvent e) {
@@ -764,11 +734,59 @@ public class AuthoringApp {
 				}
 			}
 
+		});*/
+		
+		/*recordButton.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				File record = fileChooser.saveFileChooser(new File("FactoryScenario/AudioFiles"), "wav");
+				if (record != null){
+					JOptionPane.showMessageDialog(null, "Start recording", "InfoBox: " + "warning", JOptionPane.INFORMATION_MESSAGE);
+					checkRecord = true;
+					recorder = new AudioRecorder(record);
+					recorder.start();
+					
+				}
+			}
+			
+		});*/
+		
+		recordButton.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e){
+				System.out.println("rb clicked");
+				//File record = fileChooser.saveFileChooser(new File("FactoryScenario/AudioFiles"), "wav");
+				//if (record != null){
+					JOptionPane.showMessageDialog(null, "Start recording", "InfoBox: " + "warning", JOptionPane.INFORMATION_MESSAGE);
+					checkRecord = true;
+					recorder = new AudioRecorder();
+					recorder.start();
+				//}
+			}
 		});
-
+		
+		stopButton.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e){
+				System.out.println("sb clicked");
+				if (checkRecord) {
+					File record = fileChooser.saveFileChooser(new File("FactoryScenario/AudioFiles"), "wav");
+					try {
+						recorder.write(record);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					recorder.finish();
+					JOptionPane.showMessageDialog(null, "Record stoped", "InfoBox: " + "Finish",
+							JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		});
+		
 	}
-
-	protected static void refocus() {
+	
+	protected void refocus() {
 		switch (state) {
 			case "ADD_LINE":
 				if (topPadding < TP_HEIGHT - 1){
@@ -807,28 +825,20 @@ public class AuthoringApp {
 					lineFocus = currentLine * 19;
 				}
 		}
-		sp.getVerticalScrollBar().setValue(lineFocus);
+		scenarioScrollPane.getVerticalScrollBar().setValue(lineFocus);
 	}
-
-	/**
-	 * Initializes various objects associated with the JTextPanes. Calling this
-	 * method resets the JTextPanes and the LinkedLists of strings and ID's.
-	 */
-	protected static void initializeComponents() {
+	
+	protected void initializeComponents() {
 		addKeyBindings();
 		fileStr = new LinkedList<String>();
 		id = new LinkedList<Integer>();
 		id.add(0);
-		((JTextPane) compMap.get("scenarioPane")).setText("");
-		((JTextPane) compMap.get("consolePane")).setText("");
-		controller = new JTextPaneController((JTextPane) compMap.get("scenarioPane"),
-				(JScrollPane) compMap.get("scenarioScrollPane"));
-		consoleController = new JTextPaneController((JTextPane) compMap.get("consolePane"),
-				(JScrollPane) compMap.get("consoleScrollPane"));
-		sp = (JScrollPane) compMap.get("scenarioScrollPane");
-		
-		consoleSP = (JScrollPane) compMap.get("consoleScrollPane");
-		((JTextPane) compMap.get("scenarioPane")).addMouseWheelListener(new MouseWheelListener(){
+		scenarioPane.setText("");
+		consoleTextPane.setText("");
+		controller = new JTextPaneController(scenarioPane, scenarioScrollPane);
+		consoleController = new JTextPaneController(consoleTextPane, consoleScrollPane);
+
+		scenarioPane.addMouseWheelListener(new MouseWheelListener(){
 
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
@@ -843,8 +853,8 @@ public class AuthoringApp {
 			}
 			
 		});
-		JTextPane scenarioPane = ((JTextPane) compMap.get("scenarioPane"));
-		((JTextField) compMap.get("inputTextField")).requestFocus();
+
+		inputTextField.requestFocus();
 		scenarioPane.addComponentListener(new ComponentListener(){
 
 			@Override
@@ -873,68 +883,49 @@ public class AuthoringApp {
 		topPadding = 0;
 		bottomPadding = TP_HEIGHT - 1;
 	}
-
-	/**
-	 * Enables the components when a scenario file is opened in the application.
-	 */
-	protected static void stateChanged() {
+	
+	protected void stateChanged() {
 		if (isOpened) {
-			compMap.get("saveMenuItem").setEnabled(true);
-			compMap.get("saveAsMenuItem").setEnabled(true);
-			compMap.get("insertText").setEnabled(true);
-			compMap.get("insertPause").setEnabled(true);
-			compMap.get("insertSkipButton").setEnabled(true);
-			compMap.get("insertSkip").setEnabled(true);
-			compMap.get("insertUserInput").setEnabled(true);
-			compMap.get("insertRepeatButton").setEnabled(true);
-			compMap.get("insertRepeat").setEnabled(true);
-			compMap.get("insertEndRepeat").setEnabled(true);
-			compMap.get("insertResetButtons").setEnabled(true);
-			compMap.get("insertSound").setEnabled(true);
-			compMap.get("displayComboBox").setEnabled(true);
-			compMap.get("displayAddButton").setEnabled(true);
-			compMap.get("editRemoveLine").setEnabled(true);
-			compMap.get("undoMenuItem").setEnabled(true);
-			compMap.get("redoMenuItem").setEnabled(true);
-			compMap.get("cutMenuItem").setEnabled(true);
-			compMap.get("copyMenuItem").setEnabled(true);
-			compMap.get("pasteMenuItem").setEnabled(true);
+			saveMenuItem.setEnabled(true);
+			saveAsMenuItem.setEnabled(true);
+			insertText.setEnabled(true);
+			insertPause.setEnabled(true);
+			insertSkipButton.setEnabled(true);
+			insertSkip.setEnabled(true);
+			insertUserInput.setEnabled(true);
+			insertRepeatButton.setEnabled(true);
+			insertRepeat.setEnabled(true);
+			insertEndRepeat.setEnabled(true);
+			insertResetButtons.setEnabled(true);
+			insertSound.setEnabled(true);
+			displayComboBox.setEnabled(true);
+			displayAddButton.setEnabled(true);
+			editRemoveLine.setEnabled(true);
+			undoMenuItem.setEnabled(true);
+			redoMenuItem.setEnabled(true);
+			cutMenuItem.setEnabled(true);
+			copyMenuItem.setEnabled(true);
+			pasteMenuItem.setEnabled(true);
 		}
 	}
-
-	public static String getInputText() {
-		return ((JTextField) compMap.get("inputTextField")).getText();
+	
+	public String getInputText() {
+		return inputTextField.getText();
 	}
-
-	/**
-	 * Prints into the console a NullArgumentException
-	 */
-	public static void nullArgumentException() {
+	
+	public void nullArgumentException() {
 		printInConsole("NullArgumentException: No input detected. See \"Help\" for user manual.");
-		((JTextField) compMap.get("inputTextField")).requestFocus();
-		((JTextField) compMap.get("inputTextField")).setText("");
-		
+		inputTextField.requestFocus();
+		inputTextField.setText("");
 	}
-
-	/**
-	 * Prints into the console a illegalArgumentException
-	 * 
-	 * @param expected
-	 *            the expected input types.
-	 */
-	public static void illegalArgumentException(String expected) {
+	
+	public void illegalArgumentException(String expected) {
 		printInConsole("IllegalArgumentException, Expected: " + expected + ". See \"Help\" for user manual.");
-		((JTextField) compMap.get("inputTextField")).requestFocus();
-		((JTextField) compMap.get("inputTextField")).setText("");
+		inputTextField.requestFocus();
+		inputTextField.setText("");
 	}
-
-	/**
-	 * Prints into the console an IndexOutOfBoundsException.
-	 * 
-	 * @param type
-	 *            The variable in which the exception occurred.
-	 */
-	public static void indexOutOfBoundsException(String type) {
+	
+	public void indexOutOfBoundsException(String type) {
 		String range = "";
 		int n;
 		if (type == "Button") {
@@ -946,26 +937,18 @@ public class AuthoringApp {
 		}
 		printInConsole("indexOutOfBoundsException: " + type + " value should have a range of " + range
 				+ ". See \"Help\" for user manual.");
-		((JTextField) compMap.get("inputTextField")).requestFocus();
-		((JTextField) compMap.get("inputTextField")).setText("");
+		inputTextField.requestFocus();
+		inputTextField.setText("");
 	}
-
-	private static void printInConsole(String s) {
+	
+	private void printInConsole(String s) {
 		// TODO Auto-generated method stub
 		consoleController.addElement(s);
-		JScrollBar vertical = consoleSP.getVerticalScrollBar();
+		JScrollBar vertical = consoleScrollPane.getVerticalScrollBar();
 		vertical.setValue(vertical.getMaximum());
 	}
-
-	/**
-	 * Checks for the minimum requirements of JTextField inputs. The string should
-	 * not be empty and should not contain the token "/~".
-	 * 
-	 * @param s
-	 *            The String to check
-	 * @return 0 if the string is empty, 1 if it contains "/~", 2 if valid.
-	 */
-	public static int validString(String s) {
+	
+	public int validString(String s) {
 		if (s.isEmpty()) {
 			return 0;
 		} else if (s.contains("/~")) {
@@ -974,28 +957,15 @@ public class AuthoringApp {
 			return 2;
 		}
 	}
-
-	/**
-	 * TODO?? Currently unused and I don't know who put this here.
-	 * 
-	 * @param ext
-	 * @return
-	 */
-	public static boolean validFileFormat(String ext) {
+	
+	public boolean validFileFormat(String ext) {
 		if (ext.contains("ext")) {
 			return true;
 		}
 		return false;
 	}
-
-	/**
-	 * Checks if a string is an integer.
-	 * 
-	 * @param s
-	 *            The string to check.
-	 * @return True if the string is an integer, otherwise false.
-	 */
-	public static boolean isNumeric(String s) {
+	
+	public boolean isNumeric(String s) {
 		try {
 			int n = Integer.parseInt(s);
 		} catch (NumberFormatException e) {
@@ -1003,29 +973,15 @@ public class AuthoringApp {
 		}
 		return true;
 	}
-
-	/**
-	 * Checks if the string is an 8 bit binary value.
-	 * 
-	 * @param s
-	 *            The string to check.
-	 * @return True if the string is binary 8 bit, otherwise false.
-	 */
-	public static boolean isBinaryChar(String s) {
+	
+	public boolean isBinaryChar(String s) {
 		if (s.length() != 8 || !s.matches("[01]+")) {
 			return false;
 		}
 		return true;
 	}
-
-	/**
-	 * Checks if the string is a single character.
-	 * 
-	 * @param s
-	 *            The string to check.
-	 * @return True if the string is a character, otherwise false.
-	 */
-	public static boolean isChar(String s) {
+	
+	public boolean isChar(String s) {
 		if (s.length() != 1) {
 			return false;
 		} else {
@@ -1036,8 +992,8 @@ public class AuthoringApp {
 			return false;
 		}
 	}
-
-	public static void addLine(String temp) {
+	
+	public void addLine(String temp) {
 		state = "ADD_LINE";
 		redoNode.clear();
 		if (fileStr.size() == 1) {
@@ -1060,11 +1016,11 @@ public class AuthoringApp {
 			currentLine++;
 			controller.setAttribute(id.get(currentLine));
 		}
-		((JTextField) compMap.get("inputTextField")).requestFocus();
-		((JTextField) compMap.get("inputTextField")).setText("");
+		inputTextField.requestFocus();
+		inputTextField.setText("");
 	}
-
-	protected static void performRedo() {
+	
+	protected void performRedo() {
 		state = "REDO_OR_UNDO";
 		if (!redoNode.isEmpty()) {
 			controller.removeAttribute(id.get(currentLine));
@@ -1077,8 +1033,8 @@ public class AuthoringApp {
 			}
 		}
 	}
-
-	protected static void performUndo() {
+	
+	protected void performUndo() {
 		state = "REDO_OR_UNDO";
 		if (!undoNode.isEmpty()) {
 			controller.removeAttribute(id.get(currentLine));
@@ -1092,7 +1048,7 @@ public class AuthoringApp {
 		}
 	}
 	
-	protected static void cutLine() {
+	protected void cutLine() {
 		/*try {
 			paste = (String) clipboard.getContents(null).getTransferData(DataFlavor.stringFlavor);
 		} catch (UnsupportedFlavorException e) {
@@ -1108,12 +1064,12 @@ public class AuthoringApp {
 		deleteLine();
 	}
 	
-	protected static void copyLine(){
+	protected void copyLine(){
 		StringSelection ss = new StringSelection(fileStr.get(currentLine));
 		clipboard.setContents(ss, ss);	
 	}
 	
-	protected static void pasteLine(){
+	protected void pasteLine(){
 		System.out.println("paste line");
 		try {
 			paste = (String) clipboard.getContents(null).getTransferData(DataFlavor.stringFlavor);
@@ -1126,8 +1082,8 @@ public class AuthoringApp {
 		}
 		addLine(paste);
 	}
-
-	protected static void navigateUp() {
+	
+	protected void navigateUp() {
 		if (fileStr.size() > 2) {
 			if (currentLine == 0) {
 				controller.removeAttribute(id.getFirst());
@@ -1142,8 +1098,8 @@ public class AuthoringApp {
 			}
 		}
 	}
-
-	protected static void navigateDown() {
+	
+	protected void navigateDown() {
 		if (fileStr.size() > 2) {
 			if (currentLine == fileStr.size() - 2) {
 				controller.removeAttribute(id.get(currentLine));
@@ -1159,7 +1115,7 @@ public class AuthoringApp {
 		}
 	}
 	
-	private static void setScrollBarValue(int state) {
+	private void setScrollBarValue(int state) {
 		//move down
 		if (state == 0){
 			if (topPadding > 0){
@@ -1192,10 +1148,10 @@ public class AuthoringApp {
 			bottomPadding = TP_HEIGHT - 1;
 			lineFocus = 0;
 		}
-		sp.getVerticalScrollBar().setValue(lineFocus);
+		scenarioScrollPane.getVerticalScrollBar().setValue(lineFocus);
 	}
-
-	protected static void deleteLine() {
+	
+	protected void deleteLine() {
 		state = "DELETE_LINE";
 		redoNode.clear();
 		if (fileStr.size() > 1) {
@@ -1218,8 +1174,8 @@ public class AuthoringApp {
 			}
 		}
 	}
-
-	public static void addLineAfter(String element, int curLine, int currentID, int prevID) {
+	
+	public void addLineAfter(String element, int curLine, int currentID, int prevID) {
 		if (prevID == -1) {
 			fileStr.addFirst(element);
 			id.addFirst(currentID);
@@ -1234,8 +1190,8 @@ public class AuthoringApp {
 			controller.setAttribute(id.get(currentLine));
 		}
 	}
-
-	public static void deleteLine(int currentID, int curLine) {
+	
+	public void deleteLine(int currentID, int curLine) {
 		controller.removeElement(currentID);
 		fileStr.remove(curLine);
 		id.remove(curLine);
@@ -1246,8 +1202,8 @@ public class AuthoringApp {
 		}
 		controller.setAttribute(id.get(currentLine));
 	}
-
-	protected static void newLine() {
+	
+	protected void newLine() {
 		if (currentLine + 1 != fileStr.size()) {
 			addLine("");
 		} else if (fileStr.getLast() != "") {
@@ -1255,7 +1211,7 @@ public class AuthoringApp {
 		}
 	}
 	
-	static Action cutLine = new AbstractAction() {
+	 Action cutLine = new AbstractAction() {
 		/**
 		 * 
 		 */
@@ -1266,7 +1222,7 @@ public class AuthoringApp {
 		}
 	};
 	
-	static Action copyLine = new AbstractAction() {
+	Action copyLine = new AbstractAction() {
 		/**
 		 * 
 		 */
@@ -1277,7 +1233,7 @@ public class AuthoringApp {
 		}
 	};
 	
-	static Action pasteLine = new AbstractAction() {
+	Action pasteLine = new AbstractAction() {
 		/**
 		 * 
 		 */
@@ -1288,7 +1244,7 @@ public class AuthoringApp {
 		}
 	};
 	
-	static Action navigateUp = new AbstractAction() {
+	Action navigateUp = new AbstractAction() {
 		/**
 		 * 
 		 */
@@ -1299,7 +1255,7 @@ public class AuthoringApp {
 		}
 	};
 	
-	static Action navigateDown = new AbstractAction() {
+	Action navigateDown = new AbstractAction() {
 		/**
 		 * 
 		 */
@@ -1310,7 +1266,7 @@ public class AuthoringApp {
 		}
 	};
 	
-	static Action newLine = new AbstractAction() {
+	Action newLine = new AbstractAction() {
 		/**
 		 * 
 		 */
@@ -1321,7 +1277,7 @@ public class AuthoringApp {
 		}
 	};
 	
-	static Action deleteLine = new AbstractAction() {
+	Action deleteLine = new AbstractAction() {
 		/**
 		 * 
 		 */
@@ -1331,4 +1287,8 @@ public class AuthoringApp {
 			deleteLine();
 		}
 	};
+	
+	private void save(){
+		//SaveProtocol sp = new SaveProtocol()
+	}
 }
