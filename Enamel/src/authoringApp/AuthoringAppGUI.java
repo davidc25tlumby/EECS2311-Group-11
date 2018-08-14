@@ -25,7 +25,6 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 103899240155095320L;
-	private HashMap<String, Component> compMap = new HashMap<String, Component>();
 
 	/**
 	 * Initializes the JFrame. Calls methods to initialize components and create
@@ -33,53 +32,6 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 	 */
 	public AuthoringAppGUI() {
 		initComponents();
-	}
-
-	/**
-	 * Creates an HashMap of name component pairs for components within this
-	 * JFrame.
-	 */
-	private void createCompMap() {
-		ArrayList<Component> compList = getCompList(this);
-		for (int i = 0; i < compList.size(); i++) {
-			if (compList.get(i).getName() != null) {
-				//System.out.println(compList.get(i).getName());
-				this.compMap.put(compList.get(i).getName(), compList.get(i));
-				System.out.println(compList.get(i).getName());
-			}
-		}
-	}
-
-	/**
-	 * Recursively adds components and their child components into an ArrayList.
-	 * 
-	 * @param c
-	 *            The parent container.
-	 * @return An ArrayList of the parent container and all it's child
-	 *         components.
-	 */
-	public ArrayList<Component> getCompList(final Container c) {
-		Component[] compArray = c.getComponents();
-		ArrayList<Component> compList = new ArrayList<Component>();
-		for (Component comp : compArray) {
-			compList.add(comp);
-			if (comp instanceof JMenu) {
-				for (int i = 0; i < ((JMenu) comp).getMenuComponentCount(); i++) {
-					compList.add(((JMenu) comp).getMenuComponent(i));
-				}
-			} else if (comp instanceof Container) {
-				compList.addAll(getCompList((Container) comp));
-			}
-		}
-		return compList;
-	}
-
-	/**
-	 * @return The HashMap of components with the key being their component
-	 *         name.
-	 */
-	public HashMap<String, Component> getCompMap() {
-		return this.compMap;
 	}
 
 	/**
@@ -93,9 +45,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 		recordButton = new javax.swing.JLabel();
 		stopButton = new javax.swing.JLabel();
 		
-		ImageIcon recordImg = new ImageIcon("Images/mic14.png");
 		recordButton.setIcon(recordImg);
-		ImageIcon stopImg = new ImageIcon("Images/stop.png");
 		stopButton.setIcon(stopImg);
 
         scenarioScrollPane = new javax.swing.JScrollPane();
@@ -169,10 +119,9 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         editRemoveLine.setEnabled(false);
         editRemoveLine.setName("editRemoveLine"); // NOI18N
 
-        insertText.setText("Text (Alt + Enter)");
+        insertText.setText("Text (Enter)");
         insertText.setEnabled(false);
         insertText.setName("insertText"); // NOI18N
-        insertText.setMnemonic(KeyEvent.VK_ENTER);
 
         insertSkipButton.setText("/~skip-button:int string");
         insertSkipButton.setEnabled(false);
@@ -451,30 +400,10 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 	 *            unused
 	 */
 	public static void main(String args[]) {
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(AuthoringAppGUI.class.getName()).log(java.util.logging.Level.SEVERE,
-					null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(AuthoringAppGUI.class.getName()).log(java.util.logging.Level.SEVERE,
-					null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(AuthoringAppGUI.class.getName()).log(java.util.logging.Level.SEVERE,
-					null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(AuthoringAppGUI.class.getName()).log(java.util.logging.Level.SEVERE,
-					null, ex);
-		}
 
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				new AuthoringApp2().setVisible(true);
+				new AuthoringApp().setVisible(true);
 			}
 		});
 	}
@@ -483,7 +412,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
     
     JLabel recordButton;
     JLabel stopButton;
-
+    ImageIcon recordImg = new ImageIcon("Images/mic14.png"), stopImg = new ImageIcon("Images/stop.png");
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuBar authoringAppMenuBar;
     protected javax.swing.JScrollPane consoleScrollPane;

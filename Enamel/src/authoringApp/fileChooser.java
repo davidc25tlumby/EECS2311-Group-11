@@ -13,7 +13,7 @@ public class fileChooser {
 	
 
 	public static File saveFileChooser(File currentDir, String ext) {
-		JFileChooser fc= new JFileChooser();
+		JFileChooser fc = new JFileChooser();
 		
 		fc.setCurrentDirectory(currentDir);
 		int returnVal = fc.showSaveDialog(null);
@@ -26,6 +26,7 @@ public class fileChooser {
 						JOptionPane.ERROR_MESSAGE);
 				return null;
 			} else {
+				System.out.println("close");
 				return fc.getSelectedFile();
 			}
 		}
@@ -68,6 +69,7 @@ public class fileChooser {
 						JOptionPane.ERROR_MESSAGE);
 				return null;
 			} else {
+				System.out.println("open");
 				return fc.getSelectedFile();
 			}
 		}
