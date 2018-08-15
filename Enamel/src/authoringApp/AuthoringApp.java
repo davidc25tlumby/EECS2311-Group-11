@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioSystem;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -58,9 +61,12 @@ public class AuthoringApp extends AuthoringAppGUI {
 	private static int recordCounter = 0;
 	private static boolean hasFileName = false;
 	Timer t = null;
+	AudioRecorder audio;
 
 	AuthoringApp() {
 		this.setVisible(true);
+		controller = new JTextPaneController(scenarioPane, scenarioScrollPane);
+		consoleController = new JTextPaneController(consoleTextPane, consoleScrollPane);
 		this.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e){
 				if (exit() == 1){
@@ -163,16 +169,6 @@ public class AuthoringApp extends AuthoringAppGUI {
 	}
 
 	protected void addListeners() {
-
-		jButton1.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				saveOptionPane("nice", "nice", JOptionPane.YES_NO_CANCEL_OPTION);
-			}
-
-		});
 
 		insertText.addActionListener(new ActionListener() {
 
@@ -854,7 +850,50 @@ public class AuthoringApp extends AuthoringAppGUI {
 	}
 
 	protected void initializeComponents() {
-		addKeyBindings();
+		if (!isOpened){
+			addKeyBindings();
+			
+			scenarioPane.addComponentListener(new ComponentListener() {
+
+				@Override
+				public void componentHidden(ComponentEvent e) {
+					// unused
+				}
+
+				@Override
+				public void componentMoved(ComponentEvent e) {
+					// unused
+				}
+
+				@Override
+				public void componentResized(ComponentEvent e) {
+					if (isOpened) {
+						refocus();
+					}
+				}
+
+				@Override
+				public void componentShown(ComponentEvent e) {
+					// unused
+				}
+
+			});
+			
+			scenarioPane.addMouseWheelListener(new MouseWheelListener() {
+
+				@Override
+				public void mouseWheelMoved(MouseWheelEvent e) {
+					// TODO Auto-generated method stub
+					// System.out.println(arg0.getWheelRotation());
+					if (e.getWheelRotation() < 0) {
+						navigateUp();
+					} else if (e.getWheelRotation() > 0) {
+						navigateDown();
+					}
+				}
+
+			});
+		}
 		fileStr = new LinkedList<String>();
 		id = new LinkedList<Integer>();
 		id.add(0);
@@ -862,48 +901,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 		consoleTextPane.setText("");
 		controller = new JTextPaneController(scenarioPane, scenarioScrollPane);
 		consoleController = new JTextPaneController(consoleTextPane, consoleScrollPane);
-
-		scenarioPane.addMouseWheelListener(new MouseWheelListener() {
-
-			@Override
-			public void mouseWheelMoved(MouseWheelEvent e) {
-				// TODO Auto-generated method stub
-				// System.out.println(arg0.getWheelRotation());
-				if (e.getWheelRotation() < 0) {
-					navigateUp();
-				} else if (e.getWheelRotation() > 0) {
-					navigateDown();
-				}
-			}
-
-		});
-
 		inputTextField.requestFocus();
-		scenarioPane.addComponentListener(new ComponentListener() {
-
-			@Override
-			public void componentHidden(ComponentEvent e) {
-				// unused
-			}
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				// unused
-			}
-
-			@Override
-			public void componentResized(ComponentEvent e) {
-				if (isOpened) {
-					refocus();
-				}
-			}
-
-			@Override
-			public void componentShown(ComponentEvent e) {
-				// unused
-			}
-
-		});
 		topPadding = 0;
 		bottomPadding = TP_HEIGHT - 1;
 	}
@@ -937,8 +935,9 @@ public class AuthoringApp extends AuthoringAppGUI {
 					if (!checkRecord) {
 						checkRecord = true;
 						recordButton.setIcon(stopImg);
-						recorder = new AudioRecorder();
-						recorder.start();
+						playButton.setIcon(playDisabledImg);
+						audio = new AudioRecorder();
+						audio.startRecording();
 						t = new Timer();
 						recordCounter = 0;
 						printInConsole("Start recording");
@@ -956,23 +955,31 @@ public class AuthoringApp extends AuthoringAppGUI {
 						}, 0, 1000);
 					} else {
 						checkRecord = false;
-						recorder.finish();
+						audio.stopRecording();
 						printInConsole("Recording finished");
 						recordButton.setIcon(recordImg);
+						playButton.setIcon(playImg);
 						t.cancel();
 						t.purge();
+						int n = saveOptionPane("Save","Save recording?", JOptionPane.YES_NO_OPTION);
+						if (n == 0){
+							File f = fileChooser.saveFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
+							if (f != null) {
+								audio.writeSoundFile(f);
+							}
+						}
 					}
 				}
 			});
 
 			playButton.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
-					if (!checkRecord) {
-						System.out.println("record");
-						checkRecord = true;
-					} else {
-						System.out.println("stop");
-						checkRecord = false;
+					if (!checkRecord){
+						File sound = fileChooser.openFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
+						if (sound != null){
+							AudioPlayback ap = new AudioPlayback(sound);
+							ap.play();
+						}
 					}
 				}
 			});

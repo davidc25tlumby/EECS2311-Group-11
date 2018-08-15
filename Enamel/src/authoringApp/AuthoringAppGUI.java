@@ -116,7 +116,6 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         userManualMenuItem = new javax.swing.JMenuItem();
         helpMenuSeperator1 = new javax.swing.JPopupMenu.Separator();
         aboutMenuItem = new javax.swing.JMenuItem();
-        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Authoring App");
@@ -283,9 +282,6 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         playButton.setName("playButton");
         authoringAppMenuBar.add(playButton);
 
-        
-        jButton1.setText("use this button for testing");
-
         setJMenuBar(authoringAppMenuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -317,8 +313,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
                         .addComponent(insertSound, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(insertLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(editLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(editRemoveLine, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(editRemoveLine, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -364,7 +359,6 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editRemoveLine, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 32, Short.MAX_VALUE))))
         );
 
@@ -395,8 +389,8 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
     ImageIcon playImg = new ImageIcon("Images/sound512.png"), playDisabledImg = new ImageIcon("Images/soundDisabled512.png");
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuBar authoringAppMenuBar;
-    protected javax.swing.JScrollPane consoleScrollPane;
-    protected javax.swing.JTextPane consoleTextPane;
+    protected static javax.swing.JScrollPane consoleScrollPane;
+    protected static javax.swing.JTextPane consoleTextPane;
     protected javax.swing.JMenuItem copyMenuItem;
     protected javax.swing.JMenuItem cutMenuItem;
     protected javax.swing.JButton displayAddButton;
@@ -433,8 +427,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
     protected javax.swing.JMenuItem runMenuItem;
     protected javax.swing.JMenuItem saveAsMenuItem;
     protected javax.swing.JMenuItem saveMenuItem;
-    protected javax.swing.JTextPane scenarioPane;
-    javax.swing.JScrollPane scenarioScrollPane;
+    protected static javax.swing.JTextPane scenarioPane;
+    static javax.swing.JScrollPane scenarioScrollPane;
     protected javax.swing.JMenuItem undoMenuItem;
-    protected javax.swing.JButton jButton1;
 }

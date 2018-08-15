@@ -1,126 +1,65 @@
 package authoringApp;
 
+
 import java.io.File;
 import java.io.IOException;
-
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
+import org.apache.commons.io.FileUtils;
 
 public class AudioRecorder {
-	// record duration, in milliseconds
-	static final long RECORD_TIME = 60000; // 1 minute
-
-	// path of the wav file
-	File wavFile;
-	
-	AudioInputStream ais = null;
-
-	// format of audio filed
-	AudioFileFormat.Type fileType = AudioFileFormat.Type.WAVE;
-
-	public AudioRecorder() {
-	}
-
-	// the line from which audio data is captured
-	TargetDataLine line;
-
-	/**
-	 * Defines an audio format
-	 */
-	AudioFormat getAudioFormat() {
-		float sampleRate = 16000;
-		int sampleSizeInBits = 8;
-		int channels = 2;
-		boolean signed = true;
-		boolean bigEndian = true;
-		AudioFormat format = new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
-		return format;
-	}
-
-	/**
-	 * Captures the sound and record into a WAV file
-	 */
-	class CaptureThread extends Thread {
-		public void run() {
-			// Set the file type and the file extension
-			// based on the selected radio button.
-
-			try {
-				AudioFormat format = getAudioFormat();
-				DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-
-				// checks if system supports the data line
-				if (!AudioSystem.isLineSupported(info)) {
-					System.out.println("Line not supported");
-					System.exit(0);
-				}
-				line = (TargetDataLine) AudioSystem.getLine(info);
-				line.open(format);
-				line.start(); // start capturing
-
-				System.out.println("Start capturing...");
-
-				ais = new AudioInputStream(line);
-
-				System.out.println("Start recording...");
-
-				// start recording
-			} catch (Exception e) {
-				e.printStackTrace();
-			} // end catch
-
-		}// end run
-	}
-	
-	public void write(File f) throws IOException{
-		AudioSystem.write(ais, fileType, f);
-	}
-
-	void start() {
+	AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
+	DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
+	File audioFile;
+	TargetDataLine targetLine = null;
+	AudioRecorder(){
 		try {
-			new CaptureThread().start();
-
-		} catch (Exception e) {
-			System.out.println(e);
+			targetLine = (TargetDataLine) AudioSystem.getLine(info);
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * Closes the target data line to finish capturing and recording
-	 */
-	void finish() {
-		line.stop();
-		line.close();
-		System.out.println("Finished");
+	
+	public void startRecording(){
+		try{
+			targetLine.open();
+			
+			System.out.println("Start recording");
+			targetLine.start();
+			
+			Thread thread = new Thread(){
+				@Override public void run(){
+					AudioInputStream audioStream = new AudioInputStream(targetLine);
+					audioFile = new File("TEMP_AUDIO_FILE.wav");
+					try {
+						AudioSystem.write(audioStream, AudioFileFormat.Type.WAVE, audioFile);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			};
+			thread.start();
+		}catch(Exception e){
+			
+		}
 	}
-
-	/**
-	 * Entry to run the program
-	 */
-	// public static void main (String[]agrs) {
-	// AudioRecorder recorder = new AudioRecorder();
-	//
-	// // creates a new thread that waits for a specified
-	// // of time before stopping
-	// Thread stopper = new Thread(new Runnable() {
-	// public void run() {
-	// try {
-	// Thread.sleep(RECORD_TIME);
-	// } catch (InterruptedException ex) {
-	// ex.printStackTrace();
-	// }
-	// recorder.finish();
-	// }
-	// });
-	//
-	// stopper.start();
-	//
-	// // start recording
-	// recorder.start();
-	// }
+	
+	public void stopRecording(){
+		targetLine.stop();
+		targetLine.close();
+	}
+	
+	public void writeSoundFile(File f){
+		try {
+			FileUtils.copyFile(audioFile, f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
