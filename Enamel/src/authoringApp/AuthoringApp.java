@@ -17,21 +17,20 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-
 import enamel.ToyAuthoring;
 
 public class AuthoringApp extends AuthoringAppGUI {
@@ -57,9 +56,18 @@ public class AuthoringApp extends AuthoringAppGUI {
 	static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 	static String paste = null;
 	private static int recordCounter = 0;
+	private static boolean hasFileName = false;
 	Timer t = null;
+
 	AuthoringApp() {
 		this.setVisible(true);
+		this.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){
+				if (exit() == 1){
+					System.exit(0);
+				}
+			}
+		});
 		addListeners();
 	}
 
@@ -161,7 +169,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				saveOptionPane("nice");
+				saveOptionPane("nice", "nice", JOptionPane.YES_NO_CANCEL_OPTION);
 			}
 
 		});
@@ -529,18 +537,27 @@ public class AuthoringApp extends AuthoringAppGUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				if (!isSaved) {
-					// execute save then resume action
-				} else {
-					initializeComponents();
+				int n = 0;
+				if (!isSaved){
+					n = saveOptionPane("Save", "Save and/or continue?", JOptionPane.YES_NO_CANCEL_OPTION);
+					if (n == 0){
+						if (hasFileName) {
+							save();
+						} else {
+							saveAs();
+						}
+					}
+				}
+				if (isSaved || n == 1){
 					NewFileGUI temp = new NewFileGUI();
 					temp.setVisible(true);
 					JTextField numCell = temp.getNumCell();
 					JTextField numCol = temp.getNumCol();
-					
+
 					temp.getCreateButton().addActionListener(new ActionListener() {
 						public void actionPerformed(java.awt.event.ActionEvent evt) {
 
+							initializeComponents();
 							String cellStr = numCell.getText();
 							String colCell = numCol.getText();
 							if (isNumeric(cellStr) && isNumeric(colCell)) {
@@ -562,6 +579,8 @@ public class AuthoringApp extends AuthoringAppGUI {
 								controller.addElement("", Integer.toString(id.getLast()), -2);
 								fileStr.addLast("");
 								id.add(-2);
+								setTitle("Authoring App - Untitled.txt");
+								hasFileName = false;
 								temp.dispose();
 							} else {
 								// throw invalid input
@@ -585,35 +604,19 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				if (!isSaved) {
-					// execute save then resume action
-				} else {				
-					try {
-						initializeComponents();
-						state = "NEW";
-						f = fileChooser.openFileChooser(new File("FactoryScenarios/"), "txt");
-						if (f != null) {
-							currentFile = f;
-							setTitle("Authoring App - " + currentFile.getName());
-							FileParser fp = new FileParser(f);
-							fileStr = fp.getArray();
-							id = controller.newDocCreated(fileStr);
-							idCount = id.getLast();
-							currentLine = 0;
-							controller.setAttribute(id.get(currentLine));
-							controller.addElement("", Integer.toString(id.getLast()), -2);
-							fileStr.addLast("");
-							id.add(-2);
-							isSaved = false;
-							isOpened = true;
-							inputTextField.setText("");
-							stateChanged();
+				int n = 0;
+				if (!isSaved){
+					n = saveOptionPane("Save", "Save and/or continue?", JOptionPane.YES_NO_CANCEL_OPTION);
+					if (n == 0){
+						if (hasFileName) {
+							save();
+						} else {
+							saveAs();
 						}
-
-					} catch (IOException e1) {
-						e1.printStackTrace();
 					}
+				}
+				if (isSaved || n == 1){
+					load();
 				}
 			}
 		});
@@ -622,12 +625,10 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setTitle("Authoring App - " + currentFile.getName());
-				SaveAsFile save = new SaveAsFile("txt", new File(currentFile.getAbsolutePath()));
-				try {
-					save.stringArrayToFile(fileStr);
-				} catch (IOException e1) {
-					e1.printStackTrace();
+				if (hasFileName) {
+					save();
+				} else {
+					saveAs();
 				}
 			}
 
@@ -644,17 +645,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				f = fileChooser.saveFileChooser(new File("FactoryScenarios/"), "txt");
-				if (f != null) {
-					currentFile = f;
-					setTitle("Authoring App - " + currentFile.getName());
-					SaveAsFile save = new SaveAsFile("txt", new File(currentFile.getAbsolutePath()));
-					try {
-						save.stringArrayToFile(fileStr);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				}
+				saveAs();
 			}
 
 		});
@@ -662,12 +653,43 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				f = fileChooser.openFileChooser(new File("FactoryScenarios/"), "txt");
-				if (f != null) {
-					currentFile = f;
-					ToyAuthoring ta = new ToyAuthoring(f.getAbsolutePath());
-					ta.start();
+				
+				int n = 0;
+				if (!isSaved){
+					n = saveOptionPane("Save", "Save and/or continue?", JOptionPane.YES_NO_CANCEL_OPTION);
+					if (n == 0){
+						if (hasFileName) {
+							save();
+						} else {
+							saveAs();
+						}
+					}
+				}
+				if (isSaved || n == 1){
+					load();
+					runScenario();
+				}
+			}
 
+		});
+
+		runMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if (!isSaved){
+					int n = saveOptionPane("Save", "Save and continue?", JOptionPane.YES_NO_OPTION);
+					if (n == 0){
+						if (hasFileName) {
+							save();
+						} else {
+							saveAs();
+						}
+					}
+				}
+				if (isSaved){
+					runScenario();
 				}
 			}
 
@@ -677,7 +699,9 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				if (exit() == 1){
+					System.exit(0);
+				}
 			}
 
 		});
@@ -700,57 +724,95 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 		});
 
-		recordButton.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if (!checkRecord) {
-					checkRecord = true;
-					recordButton.setIcon(stopImg);
-					recorder = new AudioRecorder();
-					recorder.start();
-					t = new Timer();
-					recordCounter = 0;
-					printInConsole("Start recording");
-					t.scheduleAtFixedRate(new TimerTask(){
-						@Override
-						public void run(){
-							printRecordTime();
-						}
 
-						private void printRecordTime() {
-							recordCounter++;
-							printInConsole("Recording....." + recordCounter);
-;						}
-					}, 0, 1000);
+	}
+
+	protected int exit() {
+		// TODO Auto-generated method stub
+		int n = 0;
+		if (!isSaved){
+			n = saveOptionPane("Save", "Save and exit?", JOptionPane.YES_NO_CANCEL_OPTION);
+			if (n == 0){
+				if (hasFileName) {
+					save();
 				} else {
-					checkRecord = false;
-					recorder.finish();
-					printInConsole("Recording finished");
-					recordButton.setIcon(recordImg);
-					t.cancel();
-					t.purge();
-					/*File record = fileChooser.saveFileChooser(new File("FactoryScenario/AudioFiles"), "wav");
-					try {
-						recorder.write(record);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}*/
+					saveAs();
 				}
 			}
-		});
+		}
+		if (isSaved || n == 1){
+			return 1;
+		}
+		return 0;
+	}
 
-		stopButton.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if (!checkRecord){
-					System.out.println("record");
-					checkRecord = true;
+	protected void runScenario() {
+		// TODO Auto-generated method stub
+			ToyAuthoring ta = new ToyAuthoring(f.getAbsolutePath());
+			ta.start();
+	}
+
+	protected void load() {
+		// TODO Auto-generated method stub
+			try {
+				state = "NEW";
+				f = fileChooser.openFileChooser(new File("FactoryScenarios/"), "txt");
+				if (f != null) {
+					initializeComponents();
+					currentFile = f;
+					setTitle("Authoring App - " + currentFile.getName());
+					hasFileName = true;
+					FileParser fp = new FileParser(f);
+					fileStr = fp.getArray();
+					id = controller.newDocCreated(fileStr);
+					idCount = id.getLast();
+					currentLine = 0;
+					System.out.println(id.get(currentLine));
+					controller.setAttribute(id.get(currentLine));
+					controller.addElement("", Integer.toString(id.getLast()), -2);
+					fileStr.addLast("");
+					id.add(-2);
+					isSaved = true;
+					isOpened = true;
+					inputTextField.setText("");
+					stateChanged();
 				}
-				else{
-					System.out.println("stop");
-					checkRecord = false;
-				}
+
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			
+		}
+	}
+
+	protected boolean saveAs() {
+		// TODO Auto-generated method stub
+		f = fileChooser.saveFileChooser(new File("FactoryScenarios/"), "txt");
+		if (f != null) {
+			currentFile = f;
+			setTitle("Authoring App - " + currentFile.getName());
+			hasFileName = true;
+			SaveAsFile save = new SaveAsFile("txt", new File(currentFile.getAbsolutePath()));
+			try {
+				save.stringArrayToFile(fileStr);
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
-		});
+			isSaved = true;
+			return true;
+		}
+		return false;
+	}
 
+	protected void save() {
+		// TODO Auto-generated method stub
+		setTitle("Authoring App - " + currentFile.getName());
+		SaveAsFile save = new SaveAsFile("txt", new File(currentFile.getAbsolutePath()));
+		try {
+			save.stringArrayToFile(fileStr);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		isSaved = true;
 	}
 
 	protected void refocus() {
@@ -868,6 +930,55 @@ public class AuthoringApp extends AuthoringAppGUI {
 			cutMenuItem.setEnabled(true);
 			copyMenuItem.setEnabled(true);
 			pasteMenuItem.setEnabled(true);
+			runMenuItem.setEnabled(true);
+			
+			recordButton.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					if (!checkRecord) {
+						checkRecord = true;
+						recordButton.setIcon(stopImg);
+						recorder = new AudioRecorder();
+						recorder.start();
+						t = new Timer();
+						recordCounter = 0;
+						printInConsole("Start recording");
+						t.scheduleAtFixedRate(new TimerTask() {
+							@Override
+							public void run() {
+								printRecordTime();
+							}
+
+							private void printRecordTime() {
+								recordCounter++;
+								printInConsole("Recording....." + recordCounter);
+								;
+							}
+						}, 0, 1000);
+					} else {
+						checkRecord = false;
+						recorder.finish();
+						printInConsole("Recording finished");
+						recordButton.setIcon(recordImg);
+						t.cancel();
+						t.purge();
+					}
+				}
+			});
+
+			playButton.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					if (!checkRecord) {
+						System.out.println("record");
+						checkRecord = true;
+					} else {
+						System.out.println("stop");
+						checkRecord = false;
+					}
+				}
+			});
+			
+			recordButton.setIcon(recordImg);
+			playButton.setIcon(playImg);
 		}
 	}
 
@@ -956,6 +1067,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 	}
 
 	public void addLine(String temp) {
+		isSaved = false;
 		state = "ADD_LINE";
 		redoNode.clear();
 		if (fileStr.size() == 1) {
@@ -1110,6 +1222,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 	}
 
 	protected void deleteLine() {
+		isSaved = false;
 		state = "DELETE_LINE";
 		redoNode.clear();
 		if (fileStr.size() > 1) {
@@ -1134,6 +1247,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 	}
 
 	public void addLineAfter(String element, int curLine, int currentID, int prevID) {
+		isSaved = false;
 		if (prevID == -1) {
 			fileStr.addFirst(element);
 			id.addFirst(currentID);
@@ -1242,15 +1356,23 @@ public class AuthoringApp extends AuthoringAppGUI {
 		}
 	};
 
-	private int saveOptionPane(String s) {
-		if (isSaved){
-			return 0;
-		}
-		else{
-			JFrame f = new JFrame();
-			int operation = JOptionPane.showConfirmDialog(f, s);
-			System.out.println(operation);
+	private int saveOptionPane(String sMsg, String sTitle, int optionType) {
+		int operation = JOptionPane.showConfirmDialog(null, sTitle, sMsg, optionType);
+		/*if (operation == 0) {
+			if (hasFileName){
+				save();
+			}
+			else{
+				boolean b = saveAs();
+				if (b){
+					return 0;
+				}
+			}
 			return operation;
-		}
+		} else {
+			return operation;*/
+		return operation;
+		
 	}
+
 }

@@ -1,15 +1,16 @@
 package authoringApp;
 
-import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
 
-import authoringApp.AudioRecorder02.CaptureThread;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.TargetDataLine;
 
-import java.io.*;
 
-/**
- * A sample program is to demonstrate how to record sound in Java author:
- * www.codejava.net
- */
 public class AudioRecorder {
 	// record duration, in milliseconds
 	static final long RECORD_TIME = 60000; // 1 minute

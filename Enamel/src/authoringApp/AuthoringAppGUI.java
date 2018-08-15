@@ -6,6 +6,9 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
@@ -32,21 +35,43 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 	 */
 	public AuthoringAppGUI() {
 		initComponents();
+		
+		BufferedImage img = null;
+		try{
+			img = ImageIO.read(new File("Images/sound.png"));
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+		
+		Image scaledImg = img.getScaledInstance(14, 14, Image.SCALE_SMOOTH);
+		playImg = new ImageIcon(scaledImg);
+		
+		try{
+			img = ImageIO.read(new File("Images/soundDisabled.png"));
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+	
+		
+		scaledImg = img.getScaledInstance(14, 14, Image.SCALE_SMOOTH);
+		playDisabledImg = new ImageIcon(scaledImg);
+		
+		recordButton.setIcon(recordDisabledImg);
+		blankLabel.setIcon(blankImg);
+		playButton.setIcon(playDisabledImg);
 	}
 
 	/**
 	 * Initializes all the components within this JFrame.
 	 */
 	private void initComponents() {
-
+		
         //recordButton = new recordButton("resources/mic14.png");
         //stopButton = new recordButton("resources/stop.png");
 		
 		recordButton = new javax.swing.JLabel();
-		stopButton = new javax.swing.JLabel();
-		
-		recordButton.setIcon(recordImg);
-		stopButton.setIcon(stopImg);
+		blankLabel = new javax.swing.JLabel();
+		playButton = new javax.swing.JLabel();
 
         scenarioScrollPane = new javax.swing.JScrollPane();
         scenarioPane = new javax.swing.JTextPane();
@@ -88,7 +113,6 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         runMenuItem = new javax.swing.JMenuItem();
         loadAndRunMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
-        ttsMenuItem = new javax.swing.JRadioButtonMenuItem();
         userManualMenuItem = new javax.swing.JMenuItem();
         helpMenuSeperator1 = new javax.swing.JPopupMenu.Separator();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -96,14 +120,11 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Authoring App");
-        setName("JFrame"); // NOI18N
         setSize(new java.awt.Dimension(1500, 1000));
 
-        scenarioScrollPane.setName("scenarioScrollPane"); // NOI18N
 
         scenarioPane.setEditable(false);
         scenarioPane.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        scenarioPane.setName("scenarioPane"); // NOI18N
         scenarioScrollPane.setViewportView(scenarioPane);
         scenarioScrollPane.setAutoscrolls(true);
         
@@ -112,66 +133,51 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         inputTextField.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         inputTextField.setForeground(new java.awt.Color(204, 204, 204));
         inputTextField.setText("(Insert text/argument)");
-        inputTextField.setName("inputTextField"); // NOI18N
 
         editRemoveLine.setText("Remove Line (Del)");
         editRemoveLine.setToolTipText("");
         editRemoveLine.setEnabled(false);
-        editRemoveLine.setName("editRemoveLine"); // NOI18N
 
         insertText.setText("Text (Enter)");
         insertText.setEnabled(false);
-        insertText.setName("insertText"); // NOI18N
 
         insertSkipButton.setText("/~skip-button:int string");
         insertSkipButton.setEnabled(false);
-        insertSkipButton.setName("insertSkipButton"); // NOI18N
 
         insertRepeatButton.setText("/~repeat-button:int");
         insertRepeatButton.setEnabled(false);
-        insertRepeatButton.setName("insertRepeatButton"); // NOI18N
 
         insertRepeat.setText("/~repeat");
         insertRepeat.setEnabled(false);
-        insertRepeat.setName("insertRepeat"); // NOI18N
 
         insertUserInput.setText("/~user-input");
         insertUserInput.setEnabled(false);
-        insertUserInput.setName("insertUserInput"); // NOI18N
 
         insertResetButtons.setText("/~reset-buttons");
         insertResetButtons.setEnabled(false);
-        insertResetButtons.setName("insertResetButtons"); // NOI18N
 
         insertEndRepeat.setText("/~endrepeat");
         insertEndRepeat.setEnabled(false);
-        insertEndRepeat.setName("insertEndRepeat"); // NOI18N
 
         insertSound.setText("/~sound:filename.ext");
         insertSound.setEnabled(false);
-        insertSound.setName("insertSound"); // NOI18N
 
         insertLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         insertLabel.setText("Insert:");
-        insertLabel.setName("insertLabel"); // NOI18N
 
         insertPause.setText("/~pause:int");
         insertPause.setEnabled(false);
-        insertPause.setName("insertPause"); // NOI18N
 
         displayComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "/~disp-string:string", "/~disp-clearAll", "/~disp-clear-cell:int", "/~disp-cell-pins:int string", "/~disp-cell-char:int char", "/~disp-cell-raise:int1 int2", "/~disp-cell-lower:int1 int2" }));
         displayComboBox.setToolTipText("");
         displayComboBox.setEnabled(false);
         displayComboBox.setLightWeightPopupEnabled(false);
-        displayComboBox.setName("displayComboBox"); // NOI18N
 
         displayAddButton.setText("+");
         displayAddButton.setEnabled(false);
-        displayAddButton.setName("displayAddButton"); // NOI18N
 
         insertSkip.setText("/~skipString");
         insertSkip.setEnabled(false);
-        insertSkip.setName("insertSkip"); // NOI18N
 
         consoleTextPane.setEditable(false);
         consoleTextPane.setName("consolePane");
@@ -180,121 +186,91 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 
         editLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         editLabel.setText("Edit:");
-        editLabel.setName("insertLabel"); // NOI18N
 
-        authoringAppMenuBar.setName("authoringAppMenuBar"); // NOI18N
 
         fileMenu.setText("File");
-        fileMenu.setName("fileMenu"); // NOI18N
 
         newMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         newMenuItem.setText("New");
-        newMenuItem.setName("newMenuItem"); // NOI18N
         fileMenu.add(newMenuItem);
 
         loadScenarioMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
         loadScenarioMenuItem.setText("Load scenario");
-        loadScenarioMenuItem.setName("loadScenarioMenuItem"); // NOI18N
         fileMenu.add(loadScenarioMenuItem);
 
-        fileMenuSeperator1.setName("fileMenuSeperator1"); // NOI18N
         fileMenu.add(fileMenuSeperator1);
 
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveMenuItem.setText("Save");
         saveMenuItem.setToolTipText("");
         saveMenuItem.setEnabled(false);
-        saveMenuItem.setName("saveMenuItem"); // NOI18N
         fileMenu.add(saveMenuItem);
 
         saveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         saveAsMenuItem.setText("Save as..");
         saveAsMenuItem.setEnabled(false);
-        saveAsMenuItem.setName("saveAsMenuItem"); // NOI18N
         fileMenu.add(saveAsMenuItem);
 
-        fileMenuSeperator2.setName("fileMenuSeperator"); // NOI18N
         fileMenu.add(fileMenuSeperator2);
 
         exitMenuItem.setText("Exit");
-        exitMenuItem.setName("exitMenuItem"); // NOI18N
         fileMenu.add(exitMenuItem);
 
         authoringAppMenuBar.add(fileMenu);
 
         editMenu.setText("Edit");
-        editMenu.setName("editMenu"); // NOI18N
 
         undoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
         undoMenuItem.setText("Undo");
         undoMenuItem.setEnabled(false);
-        undoMenuItem.setName("undoMenuItem"); // NOI18N
         editMenu.add(undoMenuItem);
 
         redoMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
         redoMenuItem.setText("Redo");
         redoMenuItem.setEnabled(false);
-        redoMenuItem.setName("redoMenuItem"); // NOI18N
         editMenu.add(redoMenuItem);
 
-        editMenuSeperator1.setName("editMenuSeperator"); // NOI18N
         editMenu.add(editMenuSeperator1);
 
         cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         cutMenuItem.setText("Cut");
         cutMenuItem.setEnabled(false);
-        cutMenuItem.setName("cutMenuItem"); // NOI18N
         editMenu.add(cutMenuItem);
 
         copyMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
         copyMenuItem.setText("Copy");
         copyMenuItem.setEnabled(false);
-        copyMenuItem.setName("copyMenuItem"); // NOI18N
         editMenu.add(copyMenuItem);
 
         pasteMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
         pasteMenuItem.setText("Paste");
         pasteMenuItem.setEnabled(false);
-        pasteMenuItem.setName("pasteMenuItem"); // NOI18N
         editMenu.add(pasteMenuItem);
 
         authoringAppMenuBar.add(editMenu);
 
         runMenu.setText("Run");
-        runMenu.setName("runMenu"); // NOI18N
 
         runMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, 0));
         runMenuItem.setText("Run");
         runMenuItem.setEnabled(false);
-        runMenuItem.setName("runMenuItem"); // NOI18N
         runMenu.add(runMenuItem);
 
         loadAndRunMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, java.awt.event.InputEvent.CTRL_MASK));
         loadAndRunMenuItem.setText("Load & run");
         loadAndRunMenuItem.setToolTipText("");
-        loadAndRunMenuItem.setName("loadAndRunMenuItem"); // NOI18N
         runMenu.add(loadAndRunMenuItem);
 
         authoringAppMenuBar.add(runMenu);
 
         helpMenu.setText("Help");
-        helpMenu.setName("helpMenu"); // NOI18N
-
-        ttsMenuItem.setSelected(true);
-        ttsMenuItem.setText("Text-to-speech");
-        ttsMenuItem.setActionCommand("Text-to-speech ");
-        ttsMenuItem.setName("ttsMenuItem"); // NOI18N
-        helpMenu.add(ttsMenuItem);
 
         userManualMenuItem.setText("User Manual");
-        userManualMenuItem.setName("userManualMenuItem"); // NOI18N
         helpMenu.add(userManualMenuItem);
 
-        helpMenuSeperator1.setName("helpMenuSeperator1"); // NOI18N
         helpMenu.add(helpMenuSeperator1);
 
         aboutMenuItem.setText("About");
-        aboutMenuItem.setName("aboutMenuItem"); // NOI18N
         helpMenu.add(aboutMenuItem);
 
         authoringAppMenuBar.add(helpMenu);
@@ -302,11 +278,13 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         recordButton.setName("recordButton");
         authoringAppMenuBar.add(recordButton);
         
-        stopButton.setName("stopButton");
-        authoringAppMenuBar.add(stopButton);
+        authoringAppMenuBar.add(blankLabel);
+        
+        playButton.setName("playButton");
+        authoringAppMenuBar.add(playButton);
+
         
         jButton1.setText("use this button for testing");
-        jButton1.setName("testButton"); // NOI18N
 
         setJMenuBar(authoringAppMenuBar);
 
@@ -411,8 +389,10 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
     //recordButton stopButton; 
     
     JLabel recordButton;
-    JLabel stopButton;
-    ImageIcon recordImg = new ImageIcon("Images/mic14.png"), stopImg = new ImageIcon("Images/stop.png");
+    JLabel playButton;
+    JLabel blankLabel;
+    ImageIcon recordImg = new ImageIcon("Images/mic14.png"), stopImg = new ImageIcon("Images/stop.png"), recordDisabledImg = new ImageIcon("Images/micDisabled14.png"), blankImg = new ImageIcon("Images/blank14.png");
+    ImageIcon playImg = new ImageIcon("Images/sound512.png"), playDisabledImg = new ImageIcon("Images/soundDisabled512.png");
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuBar authoringAppMenuBar;
     protected javax.swing.JScrollPane consoleScrollPane;
@@ -450,12 +430,11 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
     protected javax.swing.JMenuItem pasteMenuItem;
     protected javax.swing.JMenuItem redoMenuItem;
     private javax.swing.JMenu runMenu;
-    private javax.swing.JMenuItem runMenuItem;
+    protected javax.swing.JMenuItem runMenuItem;
     protected javax.swing.JMenuItem saveAsMenuItem;
     protected javax.swing.JMenuItem saveMenuItem;
     protected javax.swing.JTextPane scenarioPane;
     javax.swing.JScrollPane scenarioScrollPane;
-    private javax.swing.JRadioButtonMenuItem ttsMenuItem;
     protected javax.swing.JMenuItem undoMenuItem;
     protected javax.swing.JButton jButton1;
 }
