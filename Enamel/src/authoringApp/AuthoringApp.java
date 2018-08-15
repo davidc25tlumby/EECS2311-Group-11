@@ -974,13 +974,11 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 			playButton.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
-					if (!checkRecord){
 						File sound = fileChooser.openFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
 						if (sound != null){
 							AudioPlayback ap = new AudioPlayback(sound);
 							ap.play();
 						}
-					}
 				}
 			});
 			
