@@ -1,6 +1,7 @@
 package authoringApp;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -21,12 +22,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioSystem;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -39,23 +38,25 @@ import enamel.ToyAuthoring;
 public class AuthoringApp extends AuthoringAppGUI {
 
 	/**
+	 * Contains the functionality of the App and the various interactions with
+	 * GUI components.
 	 * 
+	 * @author Xiahan Chen, Huy Hoang Minh Cu, Qasim Mahir
 	 */
 	private static final long serialVersionUID = 1L;
-	private static File f, currentFile;// , error;
-	private static LinkedList<String> fileStr;// , consoleStr;
+	private static File f, currentFile;
+	private static LinkedList<String> fileStr;
 	private static LinkedList<Integer> id;
 	private static JTextPaneController controller, consoleController;
 	private static int idCount;
 	private static String state;
 	private static int currentLine = 0, cell = 0, col = 0;
 	private static boolean isSaved = true, isOpened = false;
-	private static AudioRecorder recorder;
 	private static boolean checkRecord = false;
 	private static LinkedList<DataNode> undoNode = new LinkedList<DataNode>();
 	private static LinkedList<DataNode> redoNode = new LinkedList<DataNode>();
 	private static int lineFocus = 0, topPadding, bottomPadding;
-	private static int TP_HEIGHT = 30;
+	private static int TP_HEIGHT = 25;
 	static Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 	static String paste = null;
 	private static int recordCounter = 0;
@@ -63,13 +64,16 @@ public class AuthoringApp extends AuthoringAppGUI {
 	Timer t = null;
 	AudioRecorder audio;
 
+	/**
+	 * Initializes the text panes and overrides default JFrame exit method.
+	 */
 	AuthoringApp() {
 		this.setVisible(true);
 		controller = new JTextPaneController(scenarioPane, scenarioScrollPane);
 		consoleController = new JTextPaneController(consoleTextPane, consoleScrollPane);
-		this.addWindowListener(new WindowAdapter(){
-			public void windowClosing(WindowEvent e){
-				if (exit() == 1){
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				if (exit() == 1) {
 					System.exit(0);
 				}
 			}
@@ -77,6 +81,9 @@ public class AuthoringApp extends AuthoringAppGUI {
 		addListeners();
 	}
 
+	/**
+	 * Adds key bindings for shortcuts.
+	 */
 	protected void addKeyBindings() {
 
 		KeyStroke ctrlX = KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK);
@@ -168,6 +175,9 @@ public class AuthoringApp extends AuthoringAppGUI {
 		inputTextField.getActionMap().put("delLine", deleteLine);
 	}
 
+	/**
+	 * Implementation of action listeners for various components.
+	 */
 	protected void addListeners() {
 
 		insertText.addActionListener(new ActionListener() {
@@ -534,9 +544,9 @@ public class AuthoringApp extends AuthoringAppGUI {
 			public void actionPerformed(ActionEvent e) {
 
 				int n = 0;
-				if (!isSaved){
-					n = saveOptionPane("Save", "Save and/or continue?", JOptionPane.YES_NO_CANCEL_OPTION);
-					if (n == 0){
+				if (!isSaved) {
+					n = optionPane("Save", "Save and/or continue?", JOptionPane.YES_NO_CANCEL_OPTION);
+					if (n == 0) {
 						if (hasFileName) {
 							save();
 						} else {
@@ -544,7 +554,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 						}
 					}
 				}
-				if (isSaved || n == 1){
+				if (isSaved || n == 1) {
 					NewFileGUI temp = new NewFileGUI();
 					temp.setVisible(true);
 					JTextField numCell = temp.getNumCell();
@@ -579,7 +589,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 								hasFileName = false;
 								temp.dispose();
 							} else {
-								// throw invalid input
+								optionPane("Warning", "Invalid input", JOptionPane.DEFAULT_OPTION);
 							}
 						}
 
@@ -601,9 +611,9 @@ public class AuthoringApp extends AuthoringAppGUI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int n = 0;
-				if (!isSaved){
-					n = saveOptionPane("Save", "Save and/or continue?", JOptionPane.YES_NO_CANCEL_OPTION);
-					if (n == 0){
+				if (!isSaved) {
+					n = optionPane("Save", "Save and/or continue?", JOptionPane.YES_NO_CANCEL_OPTION);
+					if (n == 0) {
 						if (hasFileName) {
 							save();
 						} else {
@@ -611,7 +621,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 						}
 					}
 				}
-				if (isSaved || n == 1){
+				if (isSaved || n == 1) {
 					load();
 				}
 			}
@@ -649,11 +659,11 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 				int n = 0;
-				if (!isSaved){
-					n = saveOptionPane("Save", "Save and/or continue?", JOptionPane.YES_NO_CANCEL_OPTION);
-					if (n == 0){
+				if (!isSaved) {
+					n = optionPane("Save", "Save and/or continue?", JOptionPane.YES_NO_CANCEL_OPTION);
+					if (n == 0) {
 						if (hasFileName) {
 							save();
 						} else {
@@ -661,7 +671,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 						}
 					}
 				}
-				if (isSaved || n == 1){
+				if (isSaved || n == 1) {
 					load();
 					runScenario();
 				}
@@ -673,10 +683,9 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				if (!isSaved){
-					int n = saveOptionPane("Save", "Save and continue?", JOptionPane.YES_NO_OPTION);
-					if (n == 0){
+				if (!isSaved) {
+					int n = optionPane("Save", "Save and continue?", JOptionPane.YES_NO_OPTION);
+					if (n == 0) {
 						if (hasFileName) {
 							save();
 						} else {
@@ -684,7 +693,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 						}
 					}
 				}
-				if (isSaved){
+				if (isSaved) {
 					runScenario();
 				}
 			}
@@ -695,7 +704,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (exit() == 1){
+				if (exit() == 1) {
 					System.exit(0);
 				}
 			}
@@ -720,15 +729,43 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 		});
 
+		userManualMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					Desktop desktop = java.awt.Desktop.getDesktop();
+					URI uri = new URI("http://www.teamlumby.com");
+					desktop.browse(uri);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+		});
+
+		aboutMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				optionPane("About", "v1.0. Downloadable resources at http://www.teamlumby.com",
+						JOptionPane.DEFAULT_OPTION);
+			}
+
+		});
 
 	}
 
+	/**
+	 * Checks if file has been saved when exit command as been requested.
+	 * 
+	 * @return 0 if file hasn't been saved, 1 otherwise.
+	 */
 	protected int exit() {
-		// TODO Auto-generated method stub
 		int n = 0;
-		if (!isSaved){
-			n = saveOptionPane("Save", "Save and exit?", JOptionPane.YES_NO_CANCEL_OPTION);
-			if (n == 0){
+		if (!isSaved) {
+			n = optionPane("Save", "Save and exit?", JOptionPane.YES_NO_CANCEL_OPTION);
+			if (n == 0) {
 				if (hasFileName) {
 					save();
 				} else {
@@ -736,52 +773,59 @@ public class AuthoringApp extends AuthoringAppGUI {
 				}
 			}
 		}
-		if (isSaved || n == 1){
+		if (isSaved || n == 1) {
 			return 1;
 		}
 		return 0;
 	}
 
+	/**
+	 * Runs scenario in ToyAuthoring of enamel package.
+	 */
 	protected void runScenario() {
-		// TODO Auto-generated method stub
-			ToyAuthoring ta = new ToyAuthoring(f.getAbsolutePath());
-			ta.start();
+		ToyAuthoring ta = new ToyAuthoring(f.getAbsolutePath());
+		ta.start();
 	}
 
+	/**
+	 * Loads a new scenario into the text pane.
+	 */
 	protected void load() {
-		// TODO Auto-generated method stub
-			try {
-				state = "NEW";
-				f = fileChooser.openFileChooser(new File("FactoryScenarios/"), "txt");
-				if (f != null) {
-					initializeComponents();
-					currentFile = f;
-					setTitle("Authoring App - " + currentFile.getName());
-					hasFileName = true;
-					FileParser fp = new FileParser(f);
-					fileStr = fp.getArray();
-					id = controller.newDocCreated(fileStr);
-					idCount = id.getLast();
-					currentLine = 0;
-					System.out.println(id.get(currentLine));
-					controller.setAttribute(id.get(currentLine));
-					controller.addElement("", Integer.toString(id.getLast()), -2);
-					fileStr.addLast("");
-					id.add(-2);
-					isSaved = true;
-					isOpened = true;
-					inputTextField.setText("");
-					stateChanged();
-				}
+		try {
+			state = "NEW";
+			f = fileChooser.openFileChooser(new File("FactoryScenarios/"), "txt");
+			if (f != null) {
+				initializeComponents();
+				currentFile = f;
+				setTitle("Authoring App - " + currentFile.getName());
+				hasFileName = true;
+				FileParser fp = new FileParser(f);
+				fileStr = fp.getArray();
+				id = controller.newDocCreated(fileStr);
+				idCount = id.getLast();
+				currentLine = 0;
+				controller.setAttribute(id.get(currentLine));
+				controller.addElement("", Integer.toString(id.getLast()), -2);
+				fileStr.addLast("");
+				id.add(-2);
+				isSaved = true;
+				isOpened = true;
+				inputTextField.setText("");
+				stateChanged();
+			}
 
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			
+		} catch (IOException e1) {
+			e1.printStackTrace();
+
 		}
 	}
 
+	/**
+	 * Opens a fileChooser so a name can be entered for the file.
+	 * 
+	 * @return true if the file has been saved, otherwise false.
+	 */
 	protected boolean saveAs() {
-		// TODO Auto-generated method stub
 		f = fileChooser.saveFileChooser(new File("FactoryScenarios/"), "txt");
 		if (f != null) {
 			currentFile = f;
@@ -799,8 +843,10 @@ public class AuthoringApp extends AuthoringAppGUI {
 		return false;
 	}
 
+	/**
+	 * Saves the current scenario as the current file name.
+	 */
 	protected void save() {
-		// TODO Auto-generated method stub
 		setTitle("Authoring App - " + currentFile.getName());
 		SaveAsFile save = new SaveAsFile("txt", new File(currentFile.getAbsolutePath()));
 		try {
@@ -811,6 +857,10 @@ public class AuthoringApp extends AuthoringAppGUI {
 		isSaved = true;
 	}
 
+	/**
+	 * Readjusts the text pane when the dimensions of the JFrame has changed
+	 * such that the current line is still in focus.
+	 */
 	protected void refocus() {
 		switch (state) {
 		case "ADD_LINE":
@@ -849,10 +899,14 @@ public class AuthoringApp extends AuthoringAppGUI {
 		scenarioScrollPane.getVerticalScrollBar().setValue(lineFocus);
 	}
 
+	/**
+	 * Initializes and/or resets values for variables and components used by the
+	 * scenario.
+	 */
 	protected void initializeComponents() {
-		if (!isOpened){
+		if (!isOpened) {
 			addKeyBindings();
-			
+
 			scenarioPane.addComponentListener(new ComponentListener() {
 
 				@Override
@@ -878,13 +932,11 @@ public class AuthoringApp extends AuthoringAppGUI {
 				}
 
 			});
-			
+
 			scenarioPane.addMouseWheelListener(new MouseWheelListener() {
 
 				@Override
 				public void mouseWheelMoved(MouseWheelEvent e) {
-					// TODO Auto-generated method stub
-					// System.out.println(arg0.getWheelRotation());
 					if (e.getWheelRotation() < 0) {
 						navigateUp();
 					} else if (e.getWheelRotation() > 0) {
@@ -906,6 +958,9 @@ public class AuthoringApp extends AuthoringAppGUI {
 		bottomPadding = TP_HEIGHT - 1;
 	}
 
+	/**
+	 * Enables all buttons.
+	 */
 	protected void stateChanged() {
 		if (isOpened) {
 			saveMenuItem.setEnabled(true);
@@ -929,7 +984,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 			copyMenuItem.setEnabled(true);
 			pasteMenuItem.setEnabled(true);
 			runMenuItem.setEnabled(true);
-			
+
 			recordButton.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
 					if (!checkRecord) {
@@ -961,8 +1016,8 @@ public class AuthoringApp extends AuthoringAppGUI {
 						playButton.setIcon(playImg);
 						t.cancel();
 						t.purge();
-						int n = saveOptionPane("Save","Save recording?", JOptionPane.YES_NO_OPTION);
-						if (n == 0){
+						int n = optionPane("Save", "Save recording?", JOptionPane.YES_NO_OPTION);
+						if (n == 0) {
 							File f = fileChooser.saveFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
 							if (f != null) {
 								audio.writeSoundFile(f);
@@ -974,35 +1029,53 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 			playButton.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
-						File sound = fileChooser.openFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
-						if (sound != null){
-							AudioPlayback ap = new AudioPlayback(sound);
-							ap.play();
-						}
+					File sound = fileChooser.openFileChooser(new File("FactoryScenarios/AudioFiles"), "wav");
+					if (sound != null) {
+						AudioPlayback ap = new AudioPlayback(sound);
+						ap.play();
+					}
 				}
 			});
-			
+
 			recordButton.setIcon(recordImg);
 			playButton.setIcon(playImg);
 		}
 	}
 
+	/**
+	 * @return Text within the JTextField.
+	 */
 	public String getInputText() {
 		return inputTextField.getText();
 	}
 
+	/**
+	 * Prints a NullArgumentException in the app console.
+	 */
 	public void nullArgumentException() {
 		printInConsole("NullArgumentException: No input detected. See \"Help\" for user manual.");
 		inputTextField.requestFocus();
 		inputTextField.setText("");
 	}
 
+	/**
+	 * Prints an IllegalArgumentException in the app console.
+	 * 
+	 * @param expected
+	 *            The expected input.
+	 */
 	public void illegalArgumentException(String expected) {
 		printInConsole("IllegalArgumentException, Expected: " + expected + ". See \"Help\" for user manual.");
 		inputTextField.requestFocus();
 		inputTextField.setText("");
 	}
 
+	/**
+	 * Prints an IndexOutOfBoundsException in the app console.
+	 * 
+	 * @param type
+	 *            The type of variable for the scenario.
+	 */
 	public void indexOutOfBoundsException(String type) {
 		String range = "";
 		int n;
@@ -1019,13 +1092,24 @@ public class AuthoringApp extends AuthoringAppGUI {
 		inputTextField.setText("");
 	}
 
+	/**
+	 * 
+	 * @param s
+	 *            The string to print in the app console.
+	 */
 	private void printInConsole(String s) {
-		// TODO Auto-generated method stub
 		consoleController.addElement(s);
 		JScrollBar vertical = consoleScrollPane.getVerticalScrollBar();
 		vertical.setValue(vertical.getMaximum());
 	}
 
+	/**
+	 * 
+	 * @param s
+	 *            The string to check
+	 * @return 0 if the string is empty, 1 if a keyphrase modifier exists, 2 if
+	 *         valid.
+	 */
 	public int validString(String s) {
 		if (s.isEmpty()) {
 			return 0;
@@ -1036,13 +1120,12 @@ public class AuthoringApp extends AuthoringAppGUI {
 		}
 	}
 
-	public boolean validFileFormat(String ext) {
-		if (ext.contains("ext")) {
-			return true;
-		}
-		return false;
-	}
-
+	/**
+	 * 
+	 * @param s
+	 *            The number (as a string) to check.
+	 * @return True if numeric, false otherwise.
+	 */
 	public boolean isNumeric(String s) {
 		try {
 			Integer.parseInt(s);
@@ -1052,6 +1135,13 @@ public class AuthoringApp extends AuthoringAppGUI {
 		return true;
 	}
 
+	/**
+	 * Checks if a given string is of length 8 consisting of only 0s or 1s.
+	 * 
+	 * @param s
+	 *            The binary string to check.
+	 * @return True if the string is binary, false otherwise.
+	 */
 	public boolean isBinaryChar(String s) {
 		if (s.length() != 8 || !s.matches("[01]+")) {
 			return false;
@@ -1059,6 +1149,13 @@ public class AuthoringApp extends AuthoringAppGUI {
 		return true;
 	}
 
+	/**
+	 * Checks if a given string is only one character which is a letter.
+	 * 
+	 * @param s
+	 *            The string to check for char.
+	 * @return True if the string is a letter character, false otherwise.
+	 */
 	public boolean isChar(String s) {
 		if (s.length() != 1) {
 			return false;
@@ -1071,6 +1168,12 @@ public class AuthoringApp extends AuthoringAppGUI {
 		}
 	}
 
+	/**
+	 * Adds a string at the current indexed line of the scenario.
+	 * 
+	 * @param temp
+	 *            The string to append to the scenario.
+	 */
 	public void addLine(String temp) {
 		isSaved = false;
 		state = "ADD_LINE";
@@ -1099,6 +1202,9 @@ public class AuthoringApp extends AuthoringAppGUI {
 		inputTextField.setText("");
 	}
 
+	/**
+	 * Redo last scenario change.
+	 */
 	protected void performRedo() {
 		state = "REDO_OR_UNDO";
 		if (!redoNode.isEmpty()) {
@@ -1113,6 +1219,9 @@ public class AuthoringApp extends AuthoringAppGUI {
 		}
 	}
 
+	/**
+	 * Undo last scenario change.
+	 */
 	protected void performUndo() {
 		state = "REDO_OR_UNDO";
 		if (!undoNode.isEmpty()) {
@@ -1127,39 +1236,41 @@ public class AuthoringApp extends AuthoringAppGUI {
 		}
 	}
 
+	/**
+	 * Removes the current line of the scenario while saving it to the
+	 * clipboard.
+	 */
 	protected void cutLine() {
-		/*
-		 * try { paste = (String)
-		 * clipboard.getContents(null).getTransferData(DataFlavor.stringFlavor);
-		 * } catch (UnsupportedFlavorException e) { // TODO Auto-generated catch
-		 * block e.printStackTrace(); } catch (IOException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 * System.out.println(paste);
-		 */
 		StringSelection ss = new StringSelection(fileStr.get(currentLine));
 		clipboard.setContents(ss, ss);
 		deleteLine();
 	}
 
+	/**
+	 * Saves the current line of the scenario to the clipboard.
+	 */
 	protected void copyLine() {
 		StringSelection ss = new StringSelection(fileStr.get(currentLine));
 		clipboard.setContents(ss, ss);
 	}
 
+	/**
+	 * Paste the contents of the clipboard to the current line of the scenario.
+	 */
 	protected void pasteLine() {
-		System.out.println("paste line");
 		try {
 			paste = (String) clipboard.getContents(null).getTransferData(DataFlavor.stringFlavor);
 		} catch (UnsupportedFlavorException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		addLine(paste);
 	}
 
+	/**
+	 * Moves the highlighter up in the text pane.
+	 */
 	protected void navigateUp() {
 		if (fileStr.size() > 2) {
 			if (currentLine == 0) {
@@ -1176,6 +1287,9 @@ public class AuthoringApp extends AuthoringAppGUI {
 		}
 	}
 
+	/**
+	 * Moves the highlighter down in the text pane.
+	 */
 	protected void navigateDown() {
 		if (fileStr.size() > 2) {
 			if (currentLine == fileStr.size() - 2) {
@@ -1192,6 +1306,13 @@ public class AuthoringApp extends AuthoringAppGUI {
 		}
 	}
 
+	/**
+	 * Sets the scroll bar position for the scenario text pane.
+	 * 
+	 * @param state
+	 *            The change to the scroll bar. 0 = Move up, 1 = Move down, 2 =
+	 *            Move to bottom, 3 = Move to top.
+	 */
 	private void setScrollBarValue(int state) {
 		// move down
 		if (state == 0) {
@@ -1226,6 +1347,10 @@ public class AuthoringApp extends AuthoringAppGUI {
 		scenarioScrollPane.getVerticalScrollBar().setValue(lineFocus);
 	}
 
+	/**
+	 * Deletes the current line of the scenario while pushing that line onto the
+	 * stack of undo nodes.
+	 */
 	protected void deleteLine() {
 		isSaved = false;
 		state = "DELETE_LINE";
@@ -1251,6 +1376,18 @@ public class AuthoringApp extends AuthoringAppGUI {
 		}
 	}
 
+	/**
+	 * Adds a line to the scenario.
+	 * 
+	 * @param element
+	 *            The string to append in valid HTML format.
+	 * @param curLine
+	 *            The new value for the currentLine.
+	 * @param currentID
+	 *            The ID for the new line being appended.
+	 * @param prevID
+	 *            The ID of the line directly before the new line.
+	 */
 	public void addLineAfter(String element, int curLine, int currentID, int prevID) {
 		isSaved = false;
 		if (prevID == -1) {
@@ -1268,6 +1405,14 @@ public class AuthoringApp extends AuthoringAppGUI {
 		}
 	}
 
+	/**
+	 * Deletes a line from the scenario.
+	 * 
+	 * @param currentID
+	 *            The ID of the line being deleted.
+	 * @param curLine
+	 *            The position of the line that is being deleted.
+	 */
 	public void deleteLine(int currentID, int curLine) {
 		controller.removeElement(currentID);
 		fileStr.remove(curLine);
@@ -1280,6 +1425,9 @@ public class AuthoringApp extends AuthoringAppGUI {
 		controller.setAttribute(id.get(currentLine));
 	}
 
+	/**
+	 * Appends the text field string into the scenario.
+	 */
 	protected void newLine() {
 		addLine(getInputText());
 	}
@@ -1361,23 +1509,20 @@ public class AuthoringApp extends AuthoringAppGUI {
 		}
 	};
 
-	private int saveOptionPane(String sMsg, String sTitle, int optionType) {
+	/**
+	 * Opens a JOptionPane.
+	 * 
+	 * @param sMsg
+	 *            The message to display for the user.
+	 * @param sTitle
+	 *            The title of the JFrame.
+	 * @param optionType
+	 *            The type of JOptionPane e.g. JOptionPane.YES_NO_CANCEL_OPTION.
+	 * @return
+	 */
+	private int optionPane(String sMsg, String sTitle, int optionType) {
 		int operation = JOptionPane.showConfirmDialog(null, sTitle, sMsg, optionType);
-		/*if (operation == 0) {
-			if (hasFileName){
-				save();
-			}
-			else{
-				boolean b = saveAs();
-				if (b){
-					return 0;
-				}
-			}
-			return operation;
-		} else {
-			return operation;*/
 		return operation;
-		
 	}
 
 }

@@ -3,12 +3,10 @@ package authoringApp;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.LinkedList;
-
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleContext;
@@ -33,7 +31,6 @@ public class JTextPaneController extends JTextPane {
 
 	HTMLDocument doc;
 	Element e;
-	//SimpleAttributeSet aset = new SimpleAttributeSet();
 	AttributeSet highlight, white;
 
 	/**
@@ -58,9 +55,11 @@ public class JTextPaneController extends JTextPane {
 		StyleContext scHighlight = StyleContext.getDefaultStyleContext();
 		StyleContext scWhite = StyleContext.getDefaultStyleContext();
 		highlight = scHighlight.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.WHITE);
-		highlight = scHighlight.addAttributes(highlight, scHighlight.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Background, Color.BLUE));
+		highlight = scHighlight.addAttributes(highlight,
+				scHighlight.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Background, Color.BLUE));
 		white = scWhite.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.BLACK);
-		white = scWhite.addAttributes(white, scWhite.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Background, Color.WHITE));
+		white = scWhite.addAttributes(white,
+				scWhite.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Background, Color.WHITE));
 	}
 
 	/**
@@ -104,11 +103,13 @@ public class JTextPaneController extends JTextPane {
 	 * @param temp
 	 *            The String to be inserted.
 	 * @param i
-	 *            The id to be inserted after.
+	 *            The ID to be inserted after.
+	 * @param j
+	 *            the ID of element being added.
 	 */
 	public void addElement(String temp, String i, int j) {
 		e = doc.getElement(i);
-		if (i == "main"){
+		if (i == "main") {
 			try {
 				doc.insertAfterStart(e, "<p id=\"" + j + "\">" + temp + "</p>");
 			} catch (BadLocationException e1) {
@@ -116,8 +117,7 @@ public class JTextPaneController extends JTextPane {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-		}
-		else{
+		} else {
 			try {
 				doc.insertAfterEnd(e, "<p id=\"" + j + "\">" + temp + "</p>");
 			} catch (BadLocationException e1) {
@@ -127,10 +127,16 @@ public class JTextPaneController extends JTextPane {
 			}
 		}
 	}
-	
-	public void addElement(String temp){
+
+	/**
+	 * Adds an element to the end of the document.
+	 * 
+	 * @param temp
+	 *            The element to append.
+	 */
+	public void addElement(String temp) {
 		e = doc.getElement("main");
-		
+
 		try {
 			doc.insertBeforeEnd(e, "<p>" + temp + "</p>");
 		} catch (BadLocationException e1) {
@@ -138,28 +144,56 @@ public class JTextPaneController extends JTextPane {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 	}
-	
-	public void removeElement(int i){
+
+	/**
+	 * Removes an element.
+	 * 
+	 * @param i
+	 *            The ID of the element to remove.
+	 */
+	public void removeElement(int i) {
 		e = doc.getElement(new Integer(i).toString());
 		doc.removeElement(e);
 	}
-	
-	public void removeAttribute(int i){
+
+	/**
+	 * Removes the attributes of an element.
+	 * 
+	 * @param i
+	 *            The ID of the element which attributes will be removed.
+	 */
+	public void removeAttribute(int i) {
 		e = doc.getElement(new Integer(i).toString());
-		doc.setParagraphAttributes(e.getStartOffset(),0 , white, false);	
+		doc.setParagraphAttributes(e.getStartOffset(), 0, white, false);
 	}
-	
-	public void setAttribute(int i){
+
+	/**
+	 * Highlights an element.
+	 * 
+	 * @param i
+	 *            The ID of the element to highlight.
+	 */
+	public void setAttribute(int i) {
 		e = doc.getElement(new Integer(i).toString());
 		doc.setParagraphAttributes(e.getStartOffset(), 0, highlight, false);
 	}
-	
-	public void printText(){
+
+	/**
+	 * For debugging. Prints the HTML document in the console.
+	 */
+	public void printText() {
 		System.out.println(tp.getText());
 	}
 
+	/**
+	 * 
+	 * @param id
+	 *            The ID of the element to retrieve.
+	 * @return The Element identified by the ID.
+	 * @throws BadLocationException
+	 */
 	public Element getElement(String id) throws BadLocationException {
 		return doc.getElement(id);
 	}

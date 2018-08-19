@@ -1,20 +1,14 @@
 package authoringApp;
 
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
@@ -30,8 +24,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 	private static final long serialVersionUID = 103899240155095320L;
 
 	/**
-	 * Initializes the JFrame. Calls methods to initialize components and create
-	 * an Array of components within this JFrame.
+	 * Initializes the JFrame. Calls methods to initialize components.
 	 */
 	public AuthoringAppGUI() {
 		initComponents();
@@ -66,13 +59,9 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 	 */
 	private void initComponents() {
 		
-        //recordButton = new recordButton("resources/mic14.png");
-        //stopButton = new recordButton("resources/stop.png");
-		
 		recordButton = new javax.swing.JLabel();
 		blankLabel = new javax.swing.JLabel();
 		playButton = new javax.swing.JLabel();
-
         scenarioScrollPane = new javax.swing.JScrollPane();
         scenarioPane = new javax.swing.JTextPane();
         inputTextField = new javax.swing.JTextField();
@@ -120,7 +109,6 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Authoring App");
         setSize(new java.awt.Dimension(1500, 1000));
-
 
         scenarioPane.setEditable(false);
         scenarioPane.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -366,7 +354,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 	}
 
 	/**
-	 * Sets the style of the GUI and calls the constructor.
+	 * Calls the constructor and makes it visible.
 	 * 
 	 * @param args
 	 *            unused
@@ -379,15 +367,13 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
 			}
 		});
 	}
-    //recordButton recordButton; 
-    //recordButton stopButton; 
     
     JLabel recordButton;
     JLabel playButton;
     JLabel blankLabel;
     ImageIcon recordImg = new ImageIcon("Images/mic14.png"), stopImg = new ImageIcon("Images/stop.png"), recordDisabledImg = new ImageIcon("Images/micDisabled14.png"), blankImg = new ImageIcon("Images/blank14.png");
     ImageIcon playImg = new ImageIcon("Images/sound512.png"), playDisabledImg = new ImageIcon("Images/soundDisabled512.png");
-    private javax.swing.JMenuItem aboutMenuItem;
+    protected javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JMenuBar authoringAppMenuBar;
     protected static javax.swing.JScrollPane consoleScrollPane;
     protected static javax.swing.JTextPane consoleTextPane;
@@ -403,7 +389,7 @@ public class AuthoringAppGUI extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JPopupMenu.Separator fileMenuSeperator1;
     private javax.swing.JPopupMenu.Separator fileMenuSeperator2;
-    private javax.swing.JMenuItem userManualMenuItem;
+    protected javax.swing.JMenuItem userManualMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JPopupMenu.Separator helpMenuSeperator1;
     protected javax.swing.JTextField inputTextField;
