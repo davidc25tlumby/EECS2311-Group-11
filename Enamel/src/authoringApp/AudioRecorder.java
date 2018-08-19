@@ -38,8 +38,6 @@ public class AudioRecorder {
 	public void startRecording() {
 		try {
 			targetLine.open();
-
-			System.out.println("Start recording");
 			targetLine.start();
 
 			Thread thread = new Thread() {

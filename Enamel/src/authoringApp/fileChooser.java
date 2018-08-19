@@ -36,7 +36,6 @@ public class fileChooser {
 						JOptionPane.ERROR_MESSAGE);
 				return null;
 			} else {
-				System.out.println("close");
 				return fc.getSelectedFile();
 			}
 		}
@@ -65,7 +64,6 @@ public class fileChooser {
 						JOptionPane.ERROR_MESSAGE);
 				return null;
 			} else {
-				System.out.println("open");
 				return fc.getSelectedFile();
 			}
 		}
