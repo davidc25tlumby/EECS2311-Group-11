@@ -735,7 +735,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					Desktop desktop = java.awt.Desktop.getDesktop();
-					URI uri = new URI("http://www.teamlumby.com");
+					URI uri = new URI("http://www.teamlumby.com/davidc25/blogs/authoringApp/Documents");
 					desktop.browse(uri);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -748,7 +748,7 @@ public class AuthoringApp extends AuthoringAppGUI {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				optionPane("About", "v1.0. Downloadable resources at http://www.teamlumby.com",
+				optionPane("About", "v1.0. Downloadable resources at http://www.teamlumby.com/davidc25/blogs/authoringApp",
 						JOptionPane.DEFAULT_OPTION);
 			}
 

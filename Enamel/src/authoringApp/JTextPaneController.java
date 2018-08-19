@@ -27,7 +27,6 @@ public class JTextPaneController extends JTextPane {
 	 */
 	private static final long serialVersionUID = 4947922282601680749L;
 	private JTextPane tp;
-	private JScrollPane sp;
 
 	HTMLDocument doc;
 	Element e;
